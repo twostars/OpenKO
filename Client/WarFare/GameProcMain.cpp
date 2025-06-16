@@ -2606,7 +2606,7 @@ bool CGameProcMain::MsgRecv_UserIn(Packet& pkt, bool bWithFX)
 		if(iLMax > 80) iLMax = 80;
 
 		std::string szMsg;
-		GetTextF(IDS_WANT_PARTY_MEMBER, &szMsg, iLMin, iLMax);
+		// GetTextF(IDS_WANT_PARTY_MEMBER, &szMsg, iLMin, iLMax);
 		pUPC->InfoStringSet(szMsg, 0xff00ff00);
 	}
 

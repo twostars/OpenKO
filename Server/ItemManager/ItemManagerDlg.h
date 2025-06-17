@@ -11,7 +11,6 @@
 #include "SharedMem.h"
 #include "DBAgent.h"
 #include "define.h"
-#include "STLMap.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CItemManagerDlg dialog

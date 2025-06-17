@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <Keyword>MFCProj</Keyword>
-    <ProjectGuid>{023CD26D-5809-4716-A245-B1E146C6E7FE}</ProjectGuid>
+    <ProjectGuid>{2208D5F7-EB5B-4B13-A89B-CFE279B4307B}</ProjectGuid>
   </PropertyGroup>
   <Import Project="..\..\props\platform_root.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -49,7 +49,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;WIN32;AI_SERVER;_WINDOWS;_3DSERVER;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;WIN32;_WINDOWS;_3DSERVER;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>.\;..\;..\..\Server\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -83,12 +83,10 @@
       <Culture>0x0412</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\Client\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <Bscmake>
@@ -116,117 +114,50 @@
       <Culture>0x0412</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <AdditionalLibraryDirectories>..\..\Client\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CircularBuffer.cpp" />
-    <ClCompile Include="Compress.cpp" />
-    <ClCompile Include="Extern.cpp" />
-    <ClCompile Include="GameSocket.cpp" />
-    <ClCompile Include="global.cpp" />
-    <ClCompile Include="Ini.cpp" />
-    <ClCompile Include="IOCPort.cpp" />
-    <ClCompile Include="IOCPSocket2.cpp" />
-    <ClCompile Include="MagicProcess.cpp" />
-    <ClCompile Include="MagicTableSet.cpp" />
-    <ClCompile Include="MagicType1Set.cpp" />
-    <ClCompile Include="MagicType2Set.cpp" />
-    <ClCompile Include="MagicType3Set.cpp" />
-    <ClCompile Include="MagicType4Set.cpp" />
-    <ClCompile Include="MakeDefensiveTableSet.cpp" />
-    <ClCompile Include="MakeGradeItemTableSet.cpp" />
-    <ClCompile Include="MakeLareItemTableSet.cpp" />
-    <ClCompile Include="MakeWeaponTableSet.cpp" />
-    <ClCompile Include="MAP.cpp" />
-    <ClCompile Include="MonTableSet.cpp" />
-    <ClCompile Include="N3BASE\N3ShapeMgr.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Npc.cpp" />
-    <ClCompile Include="NpcItem.cpp" />
-    <ClCompile Include="NpcItemSet.cpp" />
-    <ClCompile Include="NpcMagicProcess.cpp" />
-    <ClCompile Include="NpcPosSet.cpp" />
-    <ClCompile Include="NpcTable.cpp" />
-    <ClCompile Include="NpcTableSet.cpp" />
-    <ClCompile Include="NpcThread.cpp" />
-    <ClCompile Include="Party.cpp" />
-    <ClCompile Include="PartyUser.cpp" />
-    <ClCompile Include="PathFind.cpp" />
-    <ClCompile Include="Region.cpp" />
-    <ClCompile Include="RoomEvent.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="ServerDlg.cpp" />
+    <ClCompile Include="DBAgent.cpp" />
+    <ClCompile Include="ItemManager.cpp" />
+    <ClCompile Include="ItemManagerDlg.cpp" />
+    <ClCompile Include="SharedMem.cpp" />
     <ClCompile Include="StdAfx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="User.cpp" />
-    <ClCompile Include="ZoneInfoSet.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CircularBuffer.h" />
-    <ClInclude Include="Compress.h" />
+    <ResourceCompile Include="ItemManager.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DBAgent.h" />
     <ClInclude Include="Define.h" />
-    <ClInclude Include="Extern.h" />
-    <ClInclude Include="GameSocket.h" />
-    <ClInclude Include="global.h" />
-    <ClInclude Include="IMPLODE.H" />
-    <ClInclude Include="Ini.h" />
-    <ClInclude Include="IOCPort.h" />
-    <ClInclude Include="IOCPSocket2.h" />
-    <ClInclude Include="MagicProcess.h" />
-    <ClInclude Include="MagicTableSet.h" />
-    <ClInclude Include="MagicType1Set.h" />
-    <ClInclude Include="MagicType2Set.h" />
-    <ClInclude Include="MagicType3Set.h" />
-    <ClInclude Include="MagicType4Set.h" />
-    <ClInclude Include="MakeDefensiveTableSet.h" />
-    <ClInclude Include="MakeGradeItemTableSet.h" />
-    <ClInclude Include="MakeLareItemTableSet.h" />
-    <ClInclude Include="MakeWeaponTableSet.h" />
-    <ClInclude Include="MAP.h" />
-    <ClInclude Include="MonTableSet.h" />
-    <ClInclude Include="N3BASE\My_3DStruct.h" />
-    <ClInclude Include="N3BASE\My_Macro.h" />
-    <ClInclude Include="N3BASE\N3ShapeMgr.h" />
-    <ClInclude Include="N3BASE\StdAfxBase.h" />
-    <ClInclude Include="Npc.h" />
-    <ClInclude Include="NpcItem.h" />
-    <ClInclude Include="NpcItemSet.h" />
-    <ClInclude Include="NpcMagicProcess.h" />
-    <ClInclude Include="NpcPosSet.h" />
-    <ClInclude Include="NpcTable.h" />
-    <ClInclude Include="NpcTableSet.h" />
-    <ClInclude Include="NpcThread.h" />
-    <ClInclude Include="Packet.h" />
-    <ClInclude Include="Party.h" />
-    <ClInclude Include="PartyUser.h" />
-    <ClInclude Include="PathFind.h" />
-    <ClInclude Include="Region.h" />
+    <ClInclude Include="ItemManager.h" />
+    <ClInclude Include="ItemManagerDlg.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="RoomEvent.h" />
-    <ClInclude Include="Server.h" />
-    <ClInclude Include="ServerDlg.h" />
+    <ClInclude Include="SharedMem.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="User.h" />
-    <ClInclude Include="ZoneInfoSet.h" />
+    <ClInclude Include="STLMap.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Server.ico" />
+    <Image Include="res\ItemManager.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Server.rc" />
+    <CustomBuild Include="res\ItemManager.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

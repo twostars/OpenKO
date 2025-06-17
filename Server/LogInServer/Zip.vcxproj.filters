@@ -2,31 +2,31 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{897c0bda-134d-4f46-b82d-4e880cccea2c}</UniqueIdentifier>
+      <UniqueIdentifier>{d2010d4b-b993-473b-9684-85765c86f10f}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{5471cbe1-54b7-4b02-9569-b005ffeb6055}</UniqueIdentifier>
+      <UniqueIdentifier>{0ab2791f-2378-43cb-81a9-9a1cf6917d0d}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AutoBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CentralDir.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZipArchive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZipAutoBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZipCentralDir.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ZipException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZipFileHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZipInternalInfo.cpp">
@@ -37,6 +37,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AutoBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CentralDir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -46,16 +55,7 @@
     <ClInclude Include="ZipArchive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ZipAutoBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZipCentralDir.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZipException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZipFileHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZipInternalInfo.h">
@@ -64,8 +64,15 @@
     <ClInclude Include="ZipStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Appnote.txt" />
+    <Text Include="Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="zlib.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Zip.htm" />
   </ItemGroup>
 </Project>

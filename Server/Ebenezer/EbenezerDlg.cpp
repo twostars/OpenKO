@@ -2776,15 +2776,13 @@ void CEbenezerDlg::DeleteAllNpcList(int flag)
 	TRACE("*** DeleteAllNpcList - Start *** \n");
 
 	CUser* pUser = NULL;
-	C3DMap* pMap = NULL;
-	int i=0;
 
 	// region Npc Array Delete
-	for(i=0; i<m_ZoneArray.size(); i++)	{
-		pMap = (C3DMap*)m_ZoneArray[i];
+	for(C3DMap* pMap : m_ZoneArray)
+	{
 		if( !pMap )	continue;
 
-		for( i=0; i<pMap->GetXRegionMax(); i++ ) {
+		for( int i=0; i<pMap->GetXRegionMax(); i++ ) {
 			for( int j=0; j<pMap->GetZRegionMax(); j++ ) {
 				if( !pMap->m_ppRegion[i][j].m_RegionNpcArray.IsEmpty() )
 					pMap->m_ppRegion[i][j].m_RegionNpcArray.DeleteAllData();

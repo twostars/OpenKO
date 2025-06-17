@@ -45,6 +45,8 @@ ItemEditor/Object/
 bin/
 Debug/
 Release/
+Zip_Debug/
+Zip_Release/
 Tool_Debug/
 Tool_Release/
 x64/

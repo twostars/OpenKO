@@ -8,7 +8,6 @@
 #if !defined(AFX_ZIPSTORAGE_H__941824FE_3320_4794_BDE3_BE334ED8984B__INCLUDED_)
 #define AFX_ZIPSTORAGE_H__941824FE_3320_4794_BDE3_BE334ED8984B__INCLUDED_
 
-#include "ZipBigFile.h"	// Added by ClassView
 #include "ZipAutoBuffer.h"	// Added by ClassView
 #if _MSC_VER > 1000
 #pragma once
@@ -70,7 +69,7 @@ public:
 	void Open(LPCTSTR szPathName, int iMode, int iVolumeSize);
 	void Write(void *pBuf, DWORD iSize, bool bAtOnce);
 	DWORD Read(void* pBuf, DWORD iSize, bool bAtOnce);
-	CZipBigFile m_internalfile;
+	CFile m_internalfile;
 	CFile* m_pFile;
 	CZipStorage();
 	virtual ~CZipStorage();

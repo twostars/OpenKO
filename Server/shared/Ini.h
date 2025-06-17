@@ -1,9 +1,6 @@
-#pragma once
+﻿#pragma once
 
-#define	INI_SECTION_START	'['
-#define	INI_SECTION_END		']'
-#define	INI_KEY_SEPARATOR	'='
-#define	INI_NEWLINE			"\n"
+#include <map>
 
 class CIni
 {

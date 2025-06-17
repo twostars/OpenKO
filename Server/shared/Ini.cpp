@@ -1,20 +1,25 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Ini.h"
 #include <iostream>
 #include <fstream>
-#include "tstring.h"
+#include "string_utilities.h"
 
-#define INI_BUFFER 512
+#define	INI_SECTION_START	'['
+#define	INI_SECTION_END		']'
+#define	INI_KEY_SEPARATOR	'='
+#define	INI_NEWLINE			"\n"
 
-CIni::CIni(const char *lpFilename)
+constexpr int INI_BUFFER = 512;
+
+CIni::CIni(const char* lpFilename)
 {
 	m_szFileName = lpFilename;
 	Load(lpFilename);
 }
 
-bool CIni::Load(const char * lpFilename /*= nullptr*/)
+bool CIni::Load(const char* lpFilename /*= nullptr*/)
 {
-	const char * fn = (lpFilename == nullptr ? m_szFileName.c_str() : lpFilename);
+	const char* fn = (lpFilename == nullptr ? m_szFileName.c_str() : lpFilename);
 	std::ifstream file(fn);
 	if (!file)
 	{
@@ -27,7 +32,7 @@ bool CIni::Load(const char * lpFilename /*= nullptr*/)
 	// If an invalid section is hit
 	// Ensure that we don't place key/value pairs
 	// from the invalid section into the previously loaded section.
-	bool bSkipNextSection = false; 
+	bool bSkipNextSection = false;
 	while (!file.eof())
 	{
 		std::string line;
@@ -86,18 +91,21 @@ bool CIni::Load(const char * lpFilename /*= nullptr*/)
 	return true;
 }
 
-void CIni::Save(const char * lpFilename /*= nullptr*/)
+void CIni::Save(const char* lpFilename /*= nullptr*/)
 {
-	const char * fn = (lpFilename == nullptr ? m_szFileName.c_str() : lpFilename);
-	FILE * fp = fopen(fn, "w");
-	foreach (sectionItr, m_configMap)
+	const char* fn = (lpFilename == nullptr ? m_szFileName.c_str() : lpFilename);
+	FILE* fp = fopen(fn, "w");
+	if (fp == nullptr)
+		return;
+
+	for (const auto& [sectionName, keyValuePairs] : m_configMap)
 	{
 		// Start the section
-		fprintf(fp, "[%s]" INI_NEWLINE, sectionItr->first.c_str());
+		fprintf(fp, "[%s]" INI_NEWLINE, sectionName.c_str());
 
 		// Now list out all the key/value pairs
-		foreach (keyItr, sectionItr->second)
-			fprintf(fp, "%s=%s" INI_NEWLINE, keyItr->first.c_str(), keyItr->second.c_str());
+		for (const auto& [key, value] : keyValuePairs)
+			fprintf(fp, "%s=%s" INI_NEWLINE, key.c_str(), value.c_str());
 
 		// Use a trailing newline to finish the section, to make it easier to read
 		fprintf(fp, INI_NEWLINE);
@@ -124,7 +132,7 @@ bool CIni::GetBool(const char* lpAppName, const char* lpKeyName, const bool bDef
 	return GetInt(lpAppName, lpKeyName, bDefault) == 1;
 }
 
-void CIni::GetString(const char* lpAppName, const char* lpKeyName, const char* lpDefault, std::string & lpOutString, bool bAllowEmptyStrings /*= true*/)
+void CIni::GetString(const char* lpAppName, const char* lpKeyName, const char* lpDefault, std::string& lpOutString, bool bAllowEmptyStrings /*= true*/)
 {
 	ConfigMap::iterator sectionItr = m_configMap.find(lpAppName);
 	if (sectionItr != m_configMap.end())

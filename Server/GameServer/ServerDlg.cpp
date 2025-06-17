@@ -16,7 +16,6 @@
 #include "NpcItemSet.h"
 #include "NpcTableSet.h"
 #include "MonTableSet.h"
-#include "RNpcPosSet.h"
 #include "MakeWeaponTableSet.h"
 #include "MakeDefensiveTableSet.h"
 #include "MakeGradeItemTableSet.h"
@@ -189,7 +188,7 @@ BOOL CServerDlg::OnInitDialog()
 	m_byTestMode = NOW_TEST_MODE;
 
 	// User Point Init
-	for(i=0; i<MAX_USER; i++)
+	for(int i=0; i<MAX_USER; i++)
 		m_pUser[i] = NULL;
 
 	// Server Start
@@ -235,7 +234,7 @@ BOOL CServerDlg::OnInitDialog()
 	//----------------------------------------------------------------------
 	m_Iocport.Init(MAX_SOCKET,1, 1);
 
-	for(i=0; i<MAX_SOCKET; i++) {
+	for(int i=0; i<MAX_SOCKET; i++) {
 		m_Iocport.m_SockArrayInActive[i] = new CGameSocket;
 	}
 
@@ -963,8 +962,6 @@ BOOL CServerDlg::CreateNpcThread()
 	CNpcTable*	pNpcTable = NULL;
 	CRoomEvent* pRoom = NULL;
 
-	// sungyong test
-	//CRNpcPosSet NpcPosSet;		// 한마리 테스트용
 	CNpcPosSet NpcPosSet;
 
 	char szPath[500];
@@ -1867,7 +1864,7 @@ int CServerDlg::Send(char* pData, int length, int nZone)
 }
 // ~sungyong 2002.05.23
 
-void CServerDlg::OnGameServerLogin( WPARAM wParam )
+LRESULT CServerDlg::OnGameServerLogin(WPARAM wParam, LPARAM lParam)
 {
 /*	if( m_bNpcInfoDown ) {
 		m_ZoneNpcList.push_back(wParam);
@@ -1875,6 +1872,7 @@ void CServerDlg::OnGameServerLogin( WPARAM wParam )
 	}
 
 	AllNpcInfo( wParam );	*/
+	return 0;
 }
 
 void CServerDlg::GameServerAcceptThread()
@@ -2174,7 +2172,7 @@ BOOL CServerDlg::SetSummonNpcData(CNpc* pNpc, int zone, float fx, float fz)
 
 	int test = 0;
 	
-	for(i = 0; i < NPC_NUM; i++ ) {
+	for(int i = 0; i < NPC_NUM; i++ ) {
 		test = m_arEventNpcThread[0]->m_ThreadInfo.m_byNpcUsed[i];
 		TRACE("setsummon == %d, used=%d\n", i, test);
 		if( m_arEventNpcThread[0]->m_ThreadInfo.m_byNpcUsed[i] == 0 )	{

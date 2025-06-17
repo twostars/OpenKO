@@ -12,20 +12,19 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <Keyword>MFCProj</Keyword>
-    <ProjectGuid>{C564AC8F-ADF8-4B90-B8CD-0834F7DB144B}</ProjectGuid>
+    <ProjectGuid>{023CD26D-5809-4716-A245-B1E146C6E7FE}</ProjectGuid>
   </PropertyGroup>
   <Import Project="..\..\props\platform_root.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>Static</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -35,6 +34,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <Import Project="$(PropsDir)cp949_strings.props" />
+  <Import Project="$(PropsDir)directx9.props" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <OutDir>..\bin\$(Configuration)\</OutDir>
@@ -48,7 +48,16 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;WIN32;AI_SERVER;_WINDOWS;_3DSERVER;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>.\;..\;..\..\Server\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>..\..\Server\shared\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>shared.lib;;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -60,12 +69,10 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;WIN32;NDEBUG;_WINDOWS;_3DSERVER;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <BrowseInformation>false</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -77,7 +84,7 @@
     <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\..\Client\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -96,23 +103,23 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_3DSERVER;_REPENT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0000</Culture>
+      <Culture>0x0412</Culture>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <GenerateMapFile>true</GenerateMapFile>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <AdditionalLibraryDirectories>..\..\Client\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -122,34 +129,104 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Aujard.cpp" />
-    <ClCompile Include="AujardDlg.cpp" />
-    <ClCompile Include="DBAgent.cpp" />
-    <ClCompile Include="ItemTableSet.cpp" />
-    <ClCompile Include="SharedMem.cpp" />
+    <ClCompile Include="CircularBuffer.cpp" />
+    <ClCompile Include="Compress.cpp" />
+    <ClCompile Include="Extern.cpp" />
+    <ClCompile Include="GameSocket.cpp" />
+    <ClCompile Include="global.cpp" />
+    <ClCompile Include="Ini.cpp" />
+    <ClCompile Include="IOCPort.cpp" />
+    <ClCompile Include="IOCPSocket2.cpp" />
+    <ClCompile Include="MagicProcess.cpp" />
+    <ClCompile Include="MagicTableSet.cpp" />
+    <ClCompile Include="MagicType1Set.cpp" />
+    <ClCompile Include="MagicType2Set.cpp" />
+    <ClCompile Include="MagicType3Set.cpp" />
+    <ClCompile Include="MagicType4Set.cpp" />
+    <ClCompile Include="MakeDefensiveTableSet.cpp" />
+    <ClCompile Include="MakeGradeItemTableSet.cpp" />
+    <ClCompile Include="MakeLareItemTableSet.cpp" />
+    <ClCompile Include="MakeWeaponTableSet.cpp" />
+    <ClCompile Include="MAP.cpp" />
+    <ClCompile Include="MonTableSet.cpp" />
+    <ClCompile Include="N3BASE\N3ShapeMgr.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Npc.cpp" />
+    <ClCompile Include="NpcItem.cpp" />
+    <ClCompile Include="NpcItemSet.cpp" />
+    <ClCompile Include="NpcMagicProcess.cpp" />
+    <ClCompile Include="NpcPosSet.cpp" />
+    <ClCompile Include="NpcTable.cpp" />
+    <ClCompile Include="NpcTableSet.cpp" />
+    <ClCompile Include="NpcThread.cpp" />
+    <ClCompile Include="Party.cpp" />
+    <ClCompile Include="PartyUser.cpp" />
+    <ClCompile Include="PathFind.cpp" />
+    <ClCompile Include="Region.cpp" />
+    <ClCompile Include="RoomEvent.cpp" />
+    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="ServerDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="ZoneInfoSet.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Aujard.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Aujard.h" />
-    <ClInclude Include="AujardDlg.h" />
-    <ClInclude Include="DBAgent.h" />
+    <ClInclude Include="CircularBuffer.h" />
+    <ClInclude Include="Compress.h" />
     <ClInclude Include="Define.h" />
-    <ClInclude Include="ItemTableSet.h" />
+    <ClInclude Include="Extern.h" />
+    <ClInclude Include="GameSocket.h" />
+    <ClInclude Include="global.h" />
+    <ClInclude Include="IMPLODE.H" />
+    <ClInclude Include="Ini.h" />
+    <ClInclude Include="IOCPort.h" />
+    <ClInclude Include="IOCPSocket2.h" />
+    <ClInclude Include="MagicProcess.h" />
+    <ClInclude Include="MagicTableSet.h" />
+    <ClInclude Include="MagicType1Set.h" />
+    <ClInclude Include="MagicType2Set.h" />
+    <ClInclude Include="MagicType3Set.h" />
+    <ClInclude Include="MagicType4Set.h" />
+    <ClInclude Include="MakeDefensiveTableSet.h" />
+    <ClInclude Include="MakeGradeItemTableSet.h" />
+    <ClInclude Include="MakeLareItemTableSet.h" />
+    <ClInclude Include="MakeWeaponTableSet.h" />
+    <ClInclude Include="MAP.h" />
+    <ClInclude Include="MonTableSet.h" />
+    <ClInclude Include="N3BASE\My_3DStruct.h" />
+    <ClInclude Include="N3BASE\My_Macro.h" />
+    <ClInclude Include="N3BASE\N3ShapeMgr.h" />
+    <ClInclude Include="N3BASE\StdAfxBase.h" />
+    <ClInclude Include="Npc.h" />
+    <ClInclude Include="NpcItem.h" />
+    <ClInclude Include="NpcItemSet.h" />
+    <ClInclude Include="NpcMagicProcess.h" />
+    <ClInclude Include="NpcPosSet.h" />
+    <ClInclude Include="NpcTable.h" />
+    <ClInclude Include="NpcTableSet.h" />
+    <ClInclude Include="NpcThread.h" />
+    <ClInclude Include="Packet.h" />
+    <ClInclude Include="Party.h" />
+    <ClInclude Include="PartyUser.h" />
+    <ClInclude Include="PathFind.h" />
+    <ClInclude Include="Region.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SharedMem.h" />
+    <ClInclude Include="RoomEvent.h" />
+    <ClInclude Include="Server.h" />
+    <ClInclude Include="ServerDlg.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="STLMap.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="ZoneInfoSet.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Aujard.ico" />
+    <Image Include="res\Server.ico" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="res\Aujard.rc2" />
+    <ResourceCompile Include="Server.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

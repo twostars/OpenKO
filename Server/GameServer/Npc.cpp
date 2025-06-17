@@ -301,7 +301,7 @@ void CNpc::InitMagicValuable()
 		m_MagicType4[i].fStartTime = 0.0f;
 	}
 
-	for(i=0; i<MAX_MAGIC_TYPE3; i++)	{
+	for(int i=0; i<MAX_MAGIC_TYPE3; i++)	{
 		m_MagicType3[i].sHPAttackUserID = -1;
 		m_MagicType3[i].sHPAmount = 0;
 		m_MagicType3[i].byHPDuration = 0;
@@ -3701,7 +3701,7 @@ int CNpc::GetDefense()
 }
 
 //	Damage 계산, 만약 m_iHP 가 0 이하이면 사망처리
-BOOL CNpc::SetDamage(int nAttackType, int nDamage, TCHAR *id, int uid, CIOCPort* pIOCP)
+BOOL CNpc::SetDamage(int nAttackType, int nDamage, const char* id, int uid, CIOCPort* pIOCP)
 {
 	int i=0, len=0;
 	int userDamage = 0;
@@ -4570,11 +4570,11 @@ void CNpc::SendAll(CIOCPort* pIOCP, TCHAR *pBuf, int nLength)
 }
 // ~sungyong 2002.05.22
 
-void CNpc::NpcTrace(TCHAR *pMsg)
+void CNpc::NpcTrace(const TCHAR* pMsg)
 {
 	//if(g_bDebug == FALSE) return;
 
-	CString szMsg = _T("");
+	CString szMsg;
 	szMsg.Format(_T("%s : uid = %d, name = %s, xpos = %f, zpos = %f\n"), pMsg, m_sNid+NPC_BAND, m_strName, m_fCurX, m_fCurZ);
 	TRACE(szMsg);
 }

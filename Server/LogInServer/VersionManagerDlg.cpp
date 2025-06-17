@@ -6,7 +6,6 @@
 #include "VersionManagerDlg.h"
 #include "IOCPSocket2.h"
 #include "VersionSet.h"
-#include "SettingDlg.h"
 #include "User.h"
 
 #ifdef _DEBUG
@@ -29,7 +28,6 @@ CVersionManagerDlg::CVersionManagerDlg(CWnd* pParent /*=NULL*/)
 	
 	memset( m_strFtpUrl, NULL, 256 );
 	memset( m_strFilePath, NULL, 256 );
-	memset( m_strDefaultPath, NULL, _MAX_PATH );
 	m_nLastVersion = 0;
 	memset( m_ODBCName, NULL, 32 );
 	memset( m_ODBCLogin, NULL, 32 );
@@ -51,7 +49,6 @@ BEGIN_MESSAGE_MAP(CVersionManagerDlg, CDialog)
 	//{{AFX_MSG_MAP(CVersionManagerDlg)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_SETTING, OnVersionSetting)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -122,7 +119,6 @@ BOOL CVersionManagerDlg::GetInfoFromIni()
 	GetPrivateProfileString( "ODBC", "UID", "", m_ODBCLogin, 32, inipath );
 	GetPrivateProfileString( "ODBC", "PWD", "", m_ODBCPwd, 32, inipath );
 	GetPrivateProfileString( "ODBC", "TABLE", "", m_TableName, 32, inipath );
-	GetPrivateProfileString( "CONFIGURATION", "DEFAULT_PATH", "", m_strDefaultPath, 256, inipath );
 
 	m_nServerCount = GetPrivateProfileInt( "SERVER_LIST", "COUNT", 0, inipath );
 
@@ -203,17 +199,4 @@ BOOL CVersionManagerDlg::DestroyWindow()
 	m_ServerList.clear();
 
 	return CDialog::DestroyWindow();
-}
-
-void CVersionManagerDlg::OnVersionSetting() 
-{
-	CString errorstr, inipath;
-	inipath.Format( "%s\\Version.ini", GetProgPath() );
-	CSettingDlg	setdlg(m_nLastVersion, this);
-	
-	strcpy( setdlg.m_strDefaultPath, m_strDefaultPath );
-	if( setdlg.DoModal() == IDOK ) {
-		strcpy( m_strDefaultPath, setdlg.m_strDefaultPath );
-		WritePrivateProfileString("CONFIGURATION", "DEFAULT_PATH", m_strDefaultPath, inipath);
-	}
 }

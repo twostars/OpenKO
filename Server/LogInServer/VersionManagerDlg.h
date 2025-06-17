@@ -32,7 +32,6 @@ public:
 
 	char	m_strFtpUrl[256];
 	char	m_strFilePath[256];
-	char	m_strDefaultPath[_MAX_PATH];
 
 	int		m_nLastVersion;
 
@@ -71,7 +70,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
-	afx_msg void OnVersionSetting();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

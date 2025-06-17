@@ -19,9 +19,10 @@ CIni::~CIni()
 
 }
 
-int CIni::GetProfileInt(char* lpAppName,
-							  char* lpKeyName,
-							  int nDefault)
+int CIni::GetProfileInt(
+	const char* lpAppName,
+	const char* lpKeyName,
+	int nDefault)
 {
 	if (m_szFileName[0] == '\0') {
 		m_nError = 0X01;
@@ -40,9 +41,10 @@ int CIni::GetProfileInt(char* lpAppName,
 	return GetPrivateProfileInt(lpAppName,lpKeyName,nDefault,m_szFileName);
 }
 
-char* CIni::GetProfileString(char* lpAppName,
-							  char* lpKeyName,
-							  char* lpDefault)
+char* CIni::GetProfileString(
+	const char* lpAppName,
+	const char* lpKeyName,
+	const char* lpDefault)
 {
 	static char retString[200]="";
 	if (m_szFileName[0] == '\0') {
@@ -51,7 +53,7 @@ char* CIni::GetProfileString(char* lpAppName,
 		strcpy(retString , "");
 		return retString;
 	}
-	
+
 	char tmpReturn[500];
 	DWORD ret=GetPrivateProfileString(lpAppName,lpKeyName,"",tmpReturn,500,m_szFileName);
 	if (!ret) {
@@ -63,7 +65,8 @@ char* CIni::GetProfileString(char* lpAppName,
 
 }
 
-bool CIni::SetPath(const char* filename)
+bool CIni::SetPath(
+	const char* filename)
 {
 	char Buf[256], Path[256];
 	char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
@@ -80,9 +83,10 @@ bool CIni::SetPath(const char* filename)
 	return true;
 }
 
-int CIni::SetProfileInt(char* lpAppName,
-							  char* lpKeyName,
-							  int nDefault)
+int CIni::SetProfileInt(
+	const char* lpAppName,
+	const char* lpKeyName,
+	int nDefault)
 {
 	int nRet  = -1;
 	if (m_szFileName[0] == '\0') {
@@ -99,9 +103,10 @@ int CIni::SetProfileInt(char* lpAppName,
 	return nRet;
 }
 
-int CIni::SetProfileString(char* lpAppName,
-							  char* lpKeyName,
-							  char* lpDefault)
+int CIni::SetProfileString(
+	const char* lpAppName,
+	const char* lpKeyName,
+	const char* lpDefault)
 {
 	int nRet  = -1;
 	if (m_szFileName[0] == '\0') {

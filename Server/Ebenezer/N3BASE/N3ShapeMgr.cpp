@@ -165,6 +165,7 @@ bool CN3ShapeMgr::Load(HANDLE hFile)
 bool CN3ShapeMgr::LoadCollisionData(HANDLE hFile)
 {
 	DWORD dwRWC;
+
 	ReadFile(hFile, &m_fMapWidth, 4, &dwRWC, NULL); // Shape Count
 	ReadFile(hFile, &m_fMapLength, 4, &dwRWC, NULL); // Shape Count
 	this->Create(m_fMapWidth, m_fMapLength);
@@ -421,7 +422,7 @@ void CN3ShapeMgr::GenerateCollisionData()
 					if(dwOC0 & dwOC1) bWriteID = false; // 두 끝점이 같은 변의 외부에 있다.
 					else if(dwOC0 == 0 && dwOC1 == 0) bWriteID = true;// 선분이 사각형 내부에 있음
 					else if((dwOC0 == 0 && dwOC1 != 0) || (dwOC0 != 0 && dwOC1 == 0)) bWriteID = true;// 선분 한점은 셀의 내부에 한점은 외부에 있음.
-					else if((dwOC0 & dwOC1) == 0) // 두 L점 모두 셀 외부에 있지만 판단을 다시 해야 한다.
+					else if((dwOC0 & dwOC1) == 0) // 두 꿑점 모두 셀 외부에 있지만 판단을 다시 해야 한다.
 					{
 						float fXCross = vEdge[j][0].x + (fZMax - vEdge[j][0].z) * (vEdge[j][1].x - vEdge[j][0].x) / (vEdge[j][1].z - vEdge[j][0].z); // 위의 변과의 교차점을 계산하고..
 						if(fXCross < fXMin) bWriteID = false; // 완전히 외곽에 있다.
@@ -935,7 +936,7 @@ int CN3ShapeMgr::SubCellPathThru(const __Vector3& vFrom, const __Vector3& vAt, _
 			if(dwOC0 & dwOC1) bPathThru = false; // 두 끝점이 같은 변의 외부에 있다.
 			else if(dwOC0 == 0 && dwOC1 == 0) bPathThru = true;// 선분이 사각형 내부에 있음
 			else if((dwOC0 == 0 && dwOC1 != 0) || (dwOC0 != 0 && dwOC1 == 0)) bPathThru = true;// 선분 한점은 셀의 내부에 한점은 외부에 있음.
-			else if((dwOC0 & dwOC1) == 0) // 두 L점 모두 셀 외부에 있지만 판단을 다시 해야 한다.
+			else if((dwOC0 & dwOC1) == 0) // 두 꿑점 모두 셀 외부에 있지만 판단을 다시 해야 한다.
 			{
 				float fXCross = vFrom.x + (fZMax - vFrom.z) * (vAt.x - vFrom.x) / (vAt.z - vFrom.z); // 위의 변과의 교차점을 계산하고..
 				if(fXCross < fXMin) bPathThru = false; // 완전히 외곽에 있다.

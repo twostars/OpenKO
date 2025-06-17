@@ -1,6 +1,8 @@
 ﻿#if !defined(AFX_STDAFX_H__N3BASE__INCLUDED_)
 #define AFX_STDAFX_H__N3BASE__INCLUDED_
 
+#define _WIN32_WINNT _WIN32_WINNT_MAXVER
+
 // TODO: reference additional headers your program requires here
 #include "AfxVer_.h"
 

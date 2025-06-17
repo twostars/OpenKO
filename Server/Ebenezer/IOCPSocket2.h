@@ -12,7 +12,7 @@
 #include "IOCPort.h"
 #include "Define.h"
 // Cryption
-#include "JvCryption.h"
+#include <shared/JvCryption.h>
 ///~
 
 
@@ -86,7 +86,7 @@ protected:
 	// Cryption
 	CJvCryption			jct;
 	int					m_CryptionFlag;
-	T_KEY				m_Public_key;
+	uint64_t			m_Public_key;
 	DWORD				m_Sen_val;
 	DWORD				m_Rec_val;
 	///~

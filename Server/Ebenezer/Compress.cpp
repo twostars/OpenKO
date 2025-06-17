@@ -1,7 +1,7 @@
 ﻿// Compress.cpp : implementation of the CMainFrame class
 //
 #include "stdafx.h"
-#include "implode.h"
+#include <shared/pkware/pklib.h>
 #include "Compress.h"
 
 #define DO_CRC_INSTREAM          1
@@ -83,7 +83,7 @@ UINT ReadBuffer(PCHAR buffer, UINT *iSize, void *pParam)
 
 	if (pCM->m_nMode == COMPRESSING )
 	{
-		pCM->m_dwCrc = crc32( buffer, &iRead, &pCM->m_dwCrc );
+		pCM->m_dwCrc = crc32pk( buffer, &iRead, &pCM->m_dwCrc );
 	}
 
 	return iRead;
@@ -133,7 +133,7 @@ void WriteBuffer(PCHAR buffer, UINT *iSize, void *pParam)
 
 	if (pCM->m_nMode == UNCOMPRESSING )
 	{
-		pCM->m_dwCrc = crc32( buffer, iSize, &pCM->m_dwCrc );
+		pCM->m_dwCrc = crc32pk( buffer, iSize, &pCM->m_dwCrc );
 	}
 
 	return;

@@ -21,10 +21,6 @@ extern CRITICAL_SECTION g_region_critical;
 extern CRITICAL_SECTION g_LogFile_critical;
 extern BYTE g_serverdown_flag;
 
-// Cryption
-extern T_KEY g_private_key;
-///~
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -44,7 +40,6 @@ void CUser::Initialize()
 	// Cryption
 	Make_public_key();
 	jct.SetPublicKey(m_Public_key);
-	jct.SetPrivateKey(g_private_key);
 
 	m_CryptionFlag = 0;
 	m_Sen_val = 0;
@@ -2973,7 +2968,7 @@ void CUser::SetSlotItemValue()	// 착용한 아이템의 값(타격률, 회피�
 	}
 
 // Also add the weight of items in the inventory....
-	for(i=0 ; i < HAVE_MAX+SLOT_MAX ; i++)  {
+	for(int i=0 ; i < HAVE_MAX+SLOT_MAX ; i++)  {
 		if(m_pUserData->m_sItemArray[i].nNum <= 0) continue;
 
 		pTable = m_pMain->m_ItemtableArray.GetData( m_pUserData->m_sItemArray[i].nNum );
@@ -4135,7 +4130,7 @@ void CUser::ItemMove(char *pBuf)
 	if( (dir == ITEM_SLOT_INVEN ) && ( srcpos == HEAD || srcpos == BREAST || srcpos == SHOULDER || srcpos == LEFTHAND || srcpos == RIGHTHAND || srcpos == LEG || srcpos == GLOVE || srcpos == FOOT) ) 
 		UserLookChange( srcpos, 0, 0 );		// 해제
 
-	// AI Server에 바?데이타 전송....
+	// AI Server에 바끤 데이타 전송....
 	Send2AI_UserUpdateInfo();
 
 	return;
@@ -4525,7 +4520,7 @@ void CUser::BundleOpenReq(char *pBuf)
 BOOL CUser::IsValidName(char *name)
 {
 	// sungyong tw
-	char* szInvalids[] = {	"~", "`", "!", "@", "#", "$", "%", "^", "&", "*",
+	const char* szInvalids[] = {	"~", "`", "!", "@", "#", "$", "%", "^", "&", "*",
 							"(", ")", "-", "+", "=", "|", "\\", "<", ">", ",",
 							".", "?", "/", "{", "[", "}", "]", "\"", "\'", " ",
 							"　", "운영자", "나이트", "도우미", "Knight", "Noahsystem", "Wizgate", "Mgame", "노아시스템", "위즈게이트", "엠게임"};
@@ -5128,6 +5123,7 @@ void CUser::PartyInsert()	// 본인이 추가 된다.  리더에게 패킷이 �
 		Send( send_buff, send_index );	// 추가된 사람에게 기존 인원 다 받게함..
 	}
 
+	int i;
 	for( i=0; i<8; i++ ) {
 		if( pParty->uid[i] == -1 ) {		// Party Structure 에 추가
 			pParty->uid[i] = m_Sid;
@@ -5183,10 +5179,10 @@ void CUser::PartyInsert()	// 본인이 추가 된다.  리더에게 패킷이 �
 	SetByte( send_buff, PARTY_INSERT, send_index );
 	SetShort( send_buff, pParty->wIndex, send_index );
 	SetByte( send_buff, byIndex, send_index );
-	SetShort( send_buff, pParty->uid[i], send_index );
-	//SetShort( send_buff, pParty->sHp[i], send_index );
-	//SetByte( send_buff, pParty->bLevel[i], send_index );
-	//SetShort( send_buff, pParty->sClass[i], send_index );
+	SetShort( send_buff, pParty->uid[byIndex], send_index );
+	//SetShort( send_buff, pParty->sHp[byIndex], send_index );
+	//SetByte( send_buff, pParty->bLevel[byIndex], send_index );
+	//SetShort( send_buff, pParty->sClass[byIndex], send_index );
 	m_pMain->Send_AIServer(m_pUserData->m_bZone, send_buff, send_index);
 }
 
@@ -5236,7 +5232,7 @@ void CUser::PartyRemove(int memberid)
 	SetShort( send_buff, memberid, send_index );
 	m_pMain->Send_PartyMember( m_sPartyIndex, send_buff, send_index );	// 삭제된 인원을 브로드캐스팅..제거될 사람한테두 패킷이 간다.
 
-	for( i=0; i<8; i++ ) {			// 파티가 유효한 경우 에는 파티 리스트에서 뺀다.
+	for( int i=0; i<8; i++ ) {			// 파티가 유효한 경우 에는 파티 리스트에서 뺀다.
 		if( pParty->uid[i] != -1 ) {
 			if( pParty->uid[i] == memberid ) {
 				pParty->uid[i] = -1;
@@ -5977,7 +5973,8 @@ void CUser::ChatTargetSelect(char *pBuf)
 	if( idlen > MAX_ID_SIZE || idlen < 0 ) return;
 	GetString( chatid, pBuf, idlen, index );
 
-	for( int i=0; i<MAX_USER; i++ ) {
+	int i;
+	for( i=0; i<MAX_USER; i++ ) {
 		pUser = (CUser*)m_pMain->m_Iocport.m_SockArray[i];
 		if( pUser && pUser->GetState() == STATE_GAMESTART ) {
 			if( _strnicmp( chatid, pUser->m_pUserData->m_id, MAX_ID_SIZE ) == 0 ) {
@@ -6729,7 +6726,7 @@ void CUser::Type4Duration(float currenttime)
 
 		SetSlotItemValue();
 		SetUserAbility();
-		Send2AI_UserUpdateInfo();	// AI Server에 바?데이타 전송....		
+		Send2AI_UserUpdateInfo();	// AI Server에 바끤 데이타 전송....
 
 		/*	Send Party Packet.....
 		if (m_sPartyIndex != -1) {
@@ -7835,7 +7832,7 @@ void CUser::GoldChange(short tid, int gold)
 
 			if( usercount == 0 ) return;
 
-			for( i=0; i<8; i++ ) {		
+			for( int i=0; i<8; i++ ) {		
 				if( pParty->uid[i] != -1 || pParty->uid[i] >= MAX_USER ) {
 					CUser * pUser = NULL;
 					pUser = (CUser*)m_pMain->m_Iocport.m_SockArray[pParty->uid[i]];
@@ -9938,7 +9935,8 @@ BOOL CUser::RobItem(int itemid, short count)
 	pTable = m_pMain->m_ItemtableArray.GetData( itemid );
 	if( !pTable ) return FALSE;
 
-	for ( int i = SLOT_MAX ; i < SLOT_MAX + HAVE_MAX * type ; i++ ) {
+	int i;
+	for ( i = SLOT_MAX ; i < SLOT_MAX + HAVE_MAX * type ; i++ ) {
 		if( m_pUserData->m_sItemArray[i].nNum == itemid ) {		
 			if (!pTable->m_bCountable) {	// Remove item from inventory (Non-countable items)
 				m_pUserData->m_sItemArray[i].nNum = 0;

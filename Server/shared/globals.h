@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#ifndef _WIN32 
-#include <sys/time.h>
-#endif
-
 #include "version.h"
 #include "packets.h"
 #include "Packet.h"
@@ -23,29 +19,21 @@ constexpr int MAX_IP_SIZE	= 15; // IPv4 addresses are max ###.###.###.### (3*4 +
 
 #define VIEW_DISTANCE		48
 
-#define DAY                HOUR   * 24
-
-#define HOUR               MINUTE * 60
-// Define a minute as 60s.
-#define MINUTE				60u
-// Define a second as 1000ms.
-#define SECOND				1000u
-
-enum NameType
+enum e_NameType
 {
-	TYPE_ACCOUNT,
-	TYPE_CHARACTER
+	NAME_TYPE_ACCOUNT,
+	NAME_TYPE_CHARACTER
 };
 
-enum Nation
+enum e_Nation
 {
-	ALL = 0,
-	KARUS,
-	ELMORAD,
-	NONE
+	NATION_ALL = 0,
+	NATION_KARUS,
+	NATION_ELMORAD,
+	NATION_NONE
 };
 
-enum NpcState
+enum e_NpcState
 {
 	NPC_DEAD = 0,
 	NPC_LIVE,
@@ -287,49 +275,14 @@ constexpr int CLAN_SYMBOL_COST		= 5000000;
 #define NEWCHAR_POINTS_REMAINING			uint8_t(10)
 #define NEWCHAR_STAT_TOO_LOW				uint8_t(11)
 
-enum ItemFlag
+enum e_ItemFlag
 {
 	ITEM_FLAG_NONE		= 0,
 	ITEM_FLAG_RENTED	= 1,
 	ITEM_FLAG_DUPLICATE = 3
 };
 
-struct	_ITEM_DATA
-{
-	uint32_t		nNum;
-	int16_t		sDuration;
-	uint16_t		sCount;	
-	uint8_t		bFlag; // see ItemFlag
-	uint16_t		sRemainingRentalTime; // in minutes
-	uint32_t		nExpirationTime; // in unix time
-	uint64_t		nSerialNum;
-	bool		IsSelling;
-
-	INLINE bool isRented() { return bFlag == ITEM_FLAG_RENTED; }
-	INLINE bool isDuplicate() { return bFlag == ITEM_FLAG_DUPLICATE; }
-};
-
-enum HairData
-{
-	HAIR_R,
-	HAIR_G,
-	HAIR_B,
-	HAIR_TYPE
-};
-
-struct _MERCH_DATA
-{
-	uint32_t nNum;
-	int16_t sDuration;
-	uint16_t sCount;
-	uint16_t bCount;
-	uint64_t nSerialNum;
-	uint32_t nPrice;
-	uint8_t bOriginalSlot;
-	bool IsSoldOut;
-};
-
-enum AuthorityTypes
+enum e_Authority
 {
 	AUTHORITY_GAME_MASTER			= 0,
 	AUTHORITY_PLAYER				= 1,
@@ -339,17 +292,7 @@ enum AuthorityTypes
 	AUTHORITY_BANNED				= 255
 };
 
-enum StatType
-{
-	STAT_STR = 0,
-	STAT_STA = 1,
-	STAT_DEX = 2,
-	STAT_INT = 3, 
-	STAT_CHA = 4, // MP
-	STAT_COUNT
-};
-
-enum AttackResult
+enum e_AttackResult
 {
 	ATTACK_FAIL					= 0,
 	ATTACK_SUCCESS				= 1,
@@ -358,7 +301,5 @@ enum AttackResult
 	MAGIC_ATTACK_TARGET_DEAD	= 4
 };
 
-int32_t myrand(int32_t min, int32_t max);
 uint64_t RandUInt64();
-bool CheckPercent(int16_t percent);
 time_t getMSTime();

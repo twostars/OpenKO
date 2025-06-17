@@ -15,29 +15,12 @@ INLINE void SeedRNG()
 	}
 }
 
-int32_t myrand(int32_t min, int32_t max)
-{
-	std::lock_guard<std::recursive_mutex> lock(s_rngLock);
-	SeedRNG();
-	if (min > max) std::swap(min, max);
-	std::uniform_int_distribution<int32_t> dist(min, max);
-	return dist(s_randomNumberGenerator);
-}
-
 uint64_t RandUInt64()
 {
 	std::lock_guard<std::recursive_mutex> lock(s_rngLock);
 	SeedRNG();
 	std::uniform_int_distribution<uint64_t> dist;
 	return dist(s_randomNumberGenerator);
-}
-
-bool CheckPercent(int16_t percent)
-{
-	if (percent < 0 || percent > 1000) 
-		return false;
-
-	return (percent > myrand(0, 1000));
 }
 
 time_t getMSTime()

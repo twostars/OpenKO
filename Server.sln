@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deps", "deps", "{9D5EEECB-6
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Aujard", "Server\Aujard\Aujard.vcxproj", "{C564AC8F-ADF8-4B90-B8CD-0834F7DB144B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\GameServer\Server.vcxproj", "{023CD26D-5809-4716-A245-B1E146C6E7FE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AIServer", "Server\AIServer\AIServer.vcxproj", "{023CD26D-5809-4716-A245-B1E146C6E7FE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C2FEB024-8E46-4533-918B-7196CAAA4E7D} = {C2FEB024-8E46-4533-918B-7196CAAA4E7D}
 	EndProjectSection
@@ -19,7 +19,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ebenezer", "Server\Ebenezer
 		{C2FEB024-8E46-4533-918B-7196CAAA4E7D} = {C2FEB024-8E46-4533-918B-7196CAAA4E7D}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VersionManager", "Server\LogInServer\VersionManager.vcxproj", "{D5FAD895-323C-4BE1-A066-3E70BB8C2BB4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VersionManager", "Server\VersionManager\VersionManager.vcxproj", "{D5FAD895-323C-4BE1-A066-3E70BB8C2BB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -299,7 +299,6 @@ DWORD WINAPI SendThreadMain(LPVOID pVoid)
 	int size = 0, index = 0;
 
 	SEND_DATA*			pSendData			= NULL;
-	list<_SEND_DATA*>::iterator	Iter;
 
 	int	i = 0, count = 0;
 
@@ -322,7 +321,7 @@ DWORD WINAPI SendThreadMain(LPVOID pVoid)
 			}
 
 			while(pIocp->m_SendDataList.size()) {
-				Iter = pIocp->m_SendDataList.begin();
+				auto Iter = pIocp->m_SendDataList.begin();
 				pSendData = (*Iter);
 				count = -1;
 				// SendPacket

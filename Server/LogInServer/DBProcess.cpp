@@ -132,12 +132,10 @@ BOOL CDBProcess::LoadVersionList()
 
 	m_pMain->m_nLastVersion = 0;
 
-	map<string,_VERSION_INFO*>::iterator	Iter1, Iter2;
-	Iter1 = m_pMain->m_VersionList.m_UserTypeMap.begin();
-	Iter2 = m_pMain->m_VersionList.m_UserTypeMap.end();
-	for( ; Iter1 != Iter2; Iter1++ ) {
-		if( m_pMain->m_nLastVersion < ((*Iter1).second)->sVersion )
-			m_pMain->m_nLastVersion = ((*Iter1).second)->sVersion;
+	for (const auto& [_, pInfo] : m_pMain->m_VersionList)
+	{
+		if (m_pMain->m_nLastVersion < pInfo->sVersion)
+			m_pMain->m_nLastVersion = pInfo->sVersion;
 	}
 
 	return TRUE;

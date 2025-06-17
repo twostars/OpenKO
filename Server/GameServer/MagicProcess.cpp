@@ -740,11 +740,9 @@ void CMagicProcess::AreaAttackDamage(int magictype, int rx, int rz, int magicid,
 	int* pNpcIDList = NULL;
 
 	EnterCriticalSection( &g_region_critical );
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 
-	Iter1 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.begin();
+	auto Iter2 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.end();
 
 	total_mon = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.GetSize();
 	pNpcIDList = new int[total_mon];

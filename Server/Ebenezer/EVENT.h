@@ -10,8 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include "EVENT_DATA.h"
-#pragma warning(disable : 4786)
-#include "STLMap.h"
+#include <shared/STLMap.h>
 
 typedef CSTLMap <EVENT_DATA>				EventDataArray;
 

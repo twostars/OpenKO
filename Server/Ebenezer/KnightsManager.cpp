@@ -162,17 +162,11 @@ fail_return:
 	pUser->Send( send_buff, send_index );
 }
 
-BOOL CKnightsManager::IsAvailableName( const char *strname)
+BOOL CKnightsManager::IsAvailableName(const char* strname)
 {
-	CKnights* pKnights;
-	map < int, CKnights* >::iterator		Iter1, Iter2;
-	
-	Iter1 = m_pMain->m_KnightsArray.m_UserTypeMap .begin();
-	Iter2 = m_pMain->m_KnightsArray.m_UserTypeMap.end();
-
-	for( ; Iter1 != Iter2; Iter1++ ) {
-		pKnights = (*Iter1).second;
-		if( _strnicmp( pKnights->m_strName, strname, MAX_ID_SIZE ) == 0 )
+	for (const auto& [_, pKnights] : m_pMain->m_KnightsArray)
+	{
+		if (_strnicmp(pKnights->m_strName, strname, MAX_ID_SIZE) == 0)
 			return FALSE;
 	}
 
@@ -188,17 +182,18 @@ int CKnightsManager::GetKnightsIndex( int nation )
 	if( nation == ELMORAD )	knightindex = 15000;
 	// ~sungyong tw
 
-	map < int, CKnights* >::iterator		Iter1, Iter2;
-	
-	Iter1 = m_pMain->m_KnightsArray.m_UserTypeMap.begin();
-	Iter2 = m_pMain->m_KnightsArray.m_UserTypeMap.end();
-
-	for( ; Iter1 != Iter2; Iter1++ ) {
-		if( knightindex < ((*Iter1).second)->m_sIndex )	{
-			if( nation == KARUS )	{							// sungyong,, 카루스와 전쟁존의 합침으로 인해서,,,
-				if( ((*Iter1).second)->m_sIndex >= 15000 )	continue;
+	for (const auto& [_, pKnights] : m_pMain->m_KnightsArray)
+	{
+		if (knightindex < pKnights->m_sIndex)
+		{
+			if (nation == KARUS)
+			{
+				// sungyong,, 카루스와 전쟁존의 합침으로 인해서,,,
+				if (pKnights->m_sIndex >= 15000)
+					continue;
 			}
-			knightindex = ((*Iter1).second)->m_sIndex;
+
+			knightindex = pKnights->m_sIndex;
 		}
 	}
 
@@ -559,18 +554,14 @@ void CKnightsManager::AllKnightsList(CUser *pUser, char* pBuf)
 	int send_index = 0, buff_index = 0, count = 0, page = 0, index = 0, start = 0;
 	char send_buff[4096]; memset( send_buff, 0x00, 4096 );
 	char temp_buff[4096]; memset( temp_buff, 0x00, 4096 );
-	map < int, CKnights*>::iterator Iter1, Iter2;
-	CKnights* pKnights = NULL;
 
 	if( !pUser ) return;
 
 	page = GetShort( pBuf, index );
 	start = page * 10;			// page : 0 ~
 
-	Iter1 = m_pMain->m_KnightsArray.m_UserTypeMap.begin();
-	Iter2 = m_pMain->m_KnightsArray.m_UserTypeMap.end();
-	for( ; Iter1 != Iter2; Iter1++ ) {
-		pKnights = (*Iter1).second;
+	for (const auto& [_, pKnights] : m_pMain->m_KnightsArray)
+	{
 		if( !pKnights ) continue;
 		if( pKnights->m_byFlag != KNIGHTS_TYPE ) continue;		// 기사단 리스트만 받자
 		if( pKnights->m_byNation != pUser->m_pUserData->m_bNation ) continue;

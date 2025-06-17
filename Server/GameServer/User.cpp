@@ -1055,11 +1055,9 @@ void CUser::HealAreaCheck(int rx, int rz)
 	int* pNpcIDList = NULL;
 
 	EnterCriticalSection( &g_region_critical );
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 
-	Iter1 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.begin();
+	auto Iter2 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.end();
 
 	total_mon = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.GetSize();
 	pNpcIDList = new int[total_mon];
@@ -1096,19 +1094,18 @@ void CUser::HealAreaCheck(int rx, int rz)
 void CUser::WriteUserLog()
 {
 	CString string;
-	list<_USERLOG*>::iterator	Iter;
 
-	for( Iter = m_UserLogList.begin(); Iter != m_UserLogList.end(); Iter++ ) {
-		//string.ReleaseBuffer();
-		if( (*Iter)->byFlag == USER_LOGIN )
-			string.Format( "%d-%d-%d %d:%d, %s, %d, %s\r\n", (*Iter)->t.GetYear(), (*Iter)->t.GetMonth(), (*Iter)->t.GetDay(), (*Iter)->t.GetHour(), (*Iter)->t.GetMinute(), "LogIn", (*Iter)->byLevel, (*Iter)->strUserID);
-		else if( (*Iter)->byFlag == USER_LOGOUT )
-			string.Format( "%d-%d-%d %d:%d, %s, %d, %s\r\n", (*Iter)->t.GetYear(), (*Iter)->t.GetMonth(), (*Iter)->t.GetDay(), (*Iter)->t.GetHour(), (*Iter)->t.GetMinute(), "LogOut", (*Iter)->byLevel, (*Iter)->strUserID);
-		else if( (*Iter)->byFlag == USER_LEVEL_UP )
-			string.Format( "%d-%d-%d %d:%d, %s, %d, %s\r\n", (*Iter)->t.GetYear(), (*Iter)->t.GetMonth(), (*Iter)->t.GetDay(), (*Iter)->t.GetHour(), (*Iter)->t.GetMinute(), "LevelUp", (*Iter)->byLevel, (*Iter)->strUserID);
-		EnterCriticalSection( &g_LogFileWrite );
+	for (const _USERLOG* pUserLog : m_UserLogList)
+	{
+		if (pUserLog->byFlag == USER_LOGIN)
+			string.Format("%d-%d-%d %d:%d, %s, %d, %s\r\n", pUserLog->t.GetYear(), pUserLog->t.GetMonth(), pUserLog->t.GetDay(), pUserLog->t.GetHour(), pUserLog->t.GetMinute(), "LogIn", pUserLog->byLevel, pUserLog->strUserID);
+		else if (pUserLog->byFlag == USER_LOGOUT)
+			string.Format("%d-%d-%d %d:%d, %s, %d, %s\r\n", pUserLog->t.GetYear(), pUserLog->t.GetMonth(), pUserLog->t.GetDay(), pUserLog->t.GetHour(), pUserLog->t.GetMinute(), "LogOut", pUserLog->byLevel, pUserLog->strUserID);
+		else if (pUserLog->byFlag == USER_LEVEL_UP)
+			string.Format("%d-%d-%d %d:%d, %s, %d, %s\r\n", pUserLog->t.GetYear(), pUserLog->t.GetMonth(), pUserLog->t.GetDay(), pUserLog->t.GetHour(), pUserLog->t.GetMinute(), "LevelUp", pUserLog->byLevel, pUserLog->strUserID);
+		EnterCriticalSection(&g_LogFileWrite);
 		m_pMain->m_UserLogFile.Write(string, string.GetLength());
-		LeaveCriticalSection( &g_LogFileWrite );
+		LeaveCriticalSection(&g_LogFileWrite);
 	}
 
 	InitUserLog();

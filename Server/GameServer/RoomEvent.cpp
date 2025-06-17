@@ -230,8 +230,6 @@ CNpc* CRoomEvent::GetNpcPtr( int sid )
 	int nMonsterid = 0, count = 0;
 	
 	EnterCriticalSection( &g_region_critical );
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 
 	int nMonster = m_mapRoomNpcArray.GetSize();
 	if( nMonster == 0 )	{
@@ -240,8 +238,8 @@ CNpc* CRoomEvent::GetNpcPtr( int sid )
 		return NULL;
 	}
 	
-	Iter1 = m_mapRoomNpcArray.m_UserTypeMap.begin();
-	Iter2 = m_mapRoomNpcArray.m_UserTypeMap.end();
+	auto Iter1 = m_mapRoomNpcArray.begin();
+	auto Iter2 = m_mapRoomNpcArray.end();
 
 	pIDList = new int[nMonster];
 	for( ; Iter1 != Iter2; Iter1++ ) {
@@ -282,8 +280,6 @@ BOOL  CRoomEvent::CheckMonsterCount( int sid, int count, int type )
 	BOOL bRetValue = FALSE;
 	
 	EnterCriticalSection( &g_region_critical );
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 
 	int nMonster = m_mapRoomNpcArray.GetSize();
 	if( nMonster == 0 )	{
@@ -292,8 +288,8 @@ BOOL  CRoomEvent::CheckMonsterCount( int sid, int count, int type )
 		return NULL;
 	}
 	
-	Iter1 = m_mapRoomNpcArray.m_UserTypeMap.begin();
-	Iter2 = m_mapRoomNpcArray.m_UserTypeMap.end();
+	auto Iter1 = m_mapRoomNpcArray.begin();
+	auto Iter2 = m_mapRoomNpcArray.end();
 
 	pIDList = new int[nMonster];
 	for( ; Iter1 != Iter2; Iter1++ ) {

@@ -1954,11 +1954,9 @@ float CNpc::FindEnemyExpand(int nRX, int nRZ, float fCompDis, int nType)
 		CUser* pUser = NULL;
 
 		EnterCriticalSection( &g_region_critical );
-		map < int, int* >::iterator		Iter1;
-		map < int, int* >::iterator		Iter2;
 		
-		Iter1 = pMap->m_ppRegion[nRX][nRZ].m_RegionUserArray.m_UserTypeMap.begin();
-		Iter2 = pMap->m_ppRegion[nRX][nRZ].m_RegionUserArray.m_UserTypeMap.end();
+		auto Iter1 = pMap->m_ppRegion[nRX][nRZ].m_RegionUserArray.begin();
+		auto Iter2 = pMap->m_ppRegion[nRX][nRZ].m_RegionUserArray.end();
 
 		int nUser= pMap->m_ppRegion[nRX][nRZ].m_RegionUserArray.GetSize();
 		//TRACE("FindEnemyExpand type1,, region_x=%d, region_z=%d, user=%d, mon=%d\n", nRX, nRZ, nUser, nMonster);
@@ -2026,11 +2024,9 @@ float CNpc::FindEnemyExpand(int nRX, int nRZ, float fCompDis, int nType)
 		CNpc* pNpc = NULL;
 	
 		EnterCriticalSection( &g_region_critical );
-		map < int, int* >::iterator		Iter1;
-		map < int, int* >::iterator		Iter2;
 		
-		Iter1 = pMap->m_ppRegion[nRX][nRZ].m_RegionNpcArray.m_UserTypeMap.begin();
-		Iter2 = pMap->m_ppRegion[nRX][nRZ].m_RegionNpcArray.m_UserTypeMap.end();
+		auto Iter1 = pMap->m_ppRegion[nRX][nRZ].m_RegionNpcArray.begin();
+		auto Iter2 = pMap->m_ppRegion[nRX][nRZ].m_RegionNpcArray.end();
 
 		int nMonster= pMap->m_ppRegion[nRX][nRZ].m_RegionNpcArray.GetSize();
 		//TRACE("FindEnemyExpand type1,, region_x=%d, region_z=%d, user=%d, mon=%d\n", nRX, nRZ, nUser, nMonster);
@@ -4248,11 +4244,9 @@ void CNpc::FindFriendRegion(int x, int z, MAP* pMap, _TargetHealer* pHealer, int
 	int total_mon = 0, count = 0, nid = 0;
 
 	EnterCriticalSection( &g_region_critical );
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 
-	Iter1 = pMap->m_ppRegion[x][z].m_RegionNpcArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[x][z].m_RegionNpcArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[x][z].m_RegionNpcArray.begin();
+	auto Iter2 = pMap->m_ppRegion[x][z].m_RegionNpcArray.end();
 
 	total_mon = pMap->m_ppRegion[x][z].m_RegionNpcArray.GetSize();
 	pNpcIDList = new int[total_mon];
@@ -4668,10 +4662,8 @@ BOOL CNpc::GetUserInViewRange(int x, int z)
 	float fDis = 0.0f; 
 	int nUserid = 0;
 
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
-	Iter1 = pMap->m_ppRegion[x][z].m_RegionUserArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[x][z].m_RegionUserArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[x][z].m_RegionUserArray.begin();
+	auto Iter2 = pMap->m_ppRegion[x][z].m_RegionUserArray.end();
 
 	for( ; Iter1 != Iter2; Iter1++ )	{
 		nUserid = *( (*Iter1).second );

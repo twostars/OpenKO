@@ -11,13 +11,15 @@
 #include "define.h"
 #include "Iocport.h"
 #include "DBProcess.h"
-#include "STLMap.h"
 #include <vector>
 #include <string>
+
+#include <shared/STLMap.h>
+
 /////////////////////////////////////////////////////////////////////////////
 // CVersionManagerDlg dialog
 
-typedef CSTLMap <string, _VERSION_INFO>	VersionInfoList;
+typedef CSTLMap <_VERSION_INFO, std::string>	VersionInfoList;
 typedef std::vector <_SERVER_INFO*>	ServerInfoList;
 
 class CVersionManagerDlg : public CDialog

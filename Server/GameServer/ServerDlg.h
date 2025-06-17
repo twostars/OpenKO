@@ -26,7 +26,7 @@
 
 #include "extern.h"			// 전역 객체
 
-#include "STLMap.h"
+#include <shared/STLMap.h>
 #include <vector>
 #include <list>
 

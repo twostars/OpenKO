@@ -20,11 +20,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ebenezer", "Server\Ebenezer
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VersionManager", "Server\LogInServer\VersionManager.vcxproj", "{D5FAD895-323C-4BE1-A066-3E70BB8C2BB4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{13A14615-88C2-4935-91D3-80630C13B091} = {13A14615-88C2-4935-91D3-80630C13B091}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Zip", "Server\LogInServer\Zip.vcxproj", "{13A14615-88C2-4935-91D3-80630C13B091}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,17 +47,12 @@ Global
 		{D5FAD895-323C-4BE1-A066-3E70BB8C2BB4}.Debug|Win32.Build.0 = Debug|Win32
 		{D5FAD895-323C-4BE1-A066-3E70BB8C2BB4}.Release|Win32.ActiveCfg = Release|Win32
 		{D5FAD895-323C-4BE1-A066-3E70BB8C2BB4}.Release|Win32.Build.0 = Release|Win32
-		{13A14615-88C2-4935-91D3-80630C13B091}.Debug|Win32.ActiveCfg = Debug|Win32
-		{13A14615-88C2-4935-91D3-80630C13B091}.Debug|Win32.Build.0 = Debug|Win32
-		{13A14615-88C2-4935-91D3-80630C13B091}.Release|Win32.ActiveCfg = Release|Win32
-		{13A14615-88C2-4935-91D3-80630C13B091}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C2FEB024-8E46-4533-918B-7196CAAA4E7D} = {9D5EEECB-6F40-493E-9D35-58BE18DF0690}
-		{13A14615-88C2-4935-91D3-80630C13B091} = {9D5EEECB-6F40-493E-9D35-58BE18DF0690}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {023E6273-2767-4477-85B6-B02DF66FB3DB}

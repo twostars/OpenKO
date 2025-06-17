@@ -9,8 +9,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#pragma warning(disable : 4786)
-
 #include "IOCPSocket2.h"
 #include "define.h"
 #include "GameDefine.h"
@@ -23,7 +21,7 @@
 
 #include <list>
 typedef	 std::list<_EXCHANGE_ITEM*>		ItemList;
-typedef  list<int>				UserEventList;	// 이밴트를 위하여 ^^;
+typedef  std::list<int>				UserEventList;	// 이밴트를 위하여 ^^;
 
 #define BANISH_DELAY_TIME    30
 

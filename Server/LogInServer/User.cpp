@@ -155,33 +155,28 @@ fail_return:
 
 void CUser::SendDownloadInfo(int version)
 {
-	int send_index = 0, filecount = 0;
-	_VERSION_INFO *pInfo = NULL;
-	std::set <string>	downloadset;
-	char buff[2048]; memset( buff, 0x00, 2048 );
+	int send_index = 0;
+	std::set <std::string>	downloadset;
+	char buff[2048];
 
-	std::map <string, _VERSION_INFO*>::iterator	Iter1, Iter2;
-	Iter1 = m_pMain->m_VersionList.m_UserTypeMap.begin();
-	Iter2 = m_pMain->m_VersionList.m_UserTypeMap.end();
-	for( ; Iter1 != Iter2; Iter1++ ) {
-		pInfo = (*Iter1).second;
-		if( pInfo->sVersion > version )
+	for (const auto& [_, pInfo] : m_pMain->m_VersionList)
+	{
+		if (pInfo->sVersion > version)
 			downloadset.insert(pInfo->strCompName);
 	}
 
-	SetByte( buff, LS_DOWNLOADINFO_REQ, send_index );
-	SetShort( buff, strlen( m_pMain->m_strFtpUrl), send_index );
-	SetString( buff, m_pMain->m_strFtpUrl, strlen( m_pMain->m_strFtpUrl), send_index );
-	SetShort( buff, strlen( m_pMain->m_strFilePath), send_index );
-	SetString( buff, m_pMain->m_strFilePath, strlen( m_pMain->m_strFilePath), send_index );
-	SetShort( buff, downloadset.size(), send_index );
-	
-	std::set <string>::iterator filenameIter1, filenameIter2;
-	filenameIter1 = downloadset.begin();
-	filenameIter2 = downloadset.end();
-	for(; filenameIter1 != filenameIter2; filenameIter1++ ) {
-		SetShort( buff, strlen( (*filenameIter1).c_str() ), send_index );
-		SetString( buff, (char*)((*filenameIter1).c_str()), strlen( (*filenameIter1).c_str() ), send_index );
+	SetByte(buff, LS_DOWNLOADINFO_REQ, send_index);
+	SetShort(buff, strlen(m_pMain->m_strFtpUrl), send_index);
+	SetString(buff, m_pMain->m_strFtpUrl, strlen(m_pMain->m_strFtpUrl), send_index);
+	SetShort(buff, strlen(m_pMain->m_strFilePath), send_index);
+	SetString(buff, m_pMain->m_strFilePath, strlen(m_pMain->m_strFilePath), send_index);
+	SetShort(buff, downloadset.size(), send_index);
+
+	for (const std::string& filename : downloadset)
+	{
+		SetShort(buff, (short) filename.size(), send_index);
+		SetString(buff, filename.c_str(), (int) filename.size(), send_index);
 	}
-	Send( buff, send_index );
+
+	Send(buff, send_index);
 }

@@ -24,7 +24,7 @@
 #include "EVENT.h"
 #include "UdpSocket.h"
 
-#include "STLMap.h"
+#include <shared/STLMap.h>
 #include <vector>
 
 /////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,6 @@ public:
 	void FlySanta();
 	void BattleZoneCurrentUsers();
 	BOOL LoadKnightsRankTable();
-	void GetCaptainUserPtr();
 	void Send_CommandChat( char* pBuf, int len, int nation, CUser* pExceptUser = NULL );
 	BOOL LoadBattleTable();
 	void Send_UDP_All( char* pBuf, int len, int group_type = 0 );

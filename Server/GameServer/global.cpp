@@ -58,13 +58,13 @@ float Getfloat(char* sBuf, int& index)
 	return *(float*)(sBuf+index-4);
 }
 
-void SetString(char* tBuf, char* sBuf, int len, int& index)
+void SetString(char* tBuf, const char* sBuf, int len, int& index)
 {
 	CopyMemory(tBuf+index, sBuf, len);
 	index += len;
 }
 
-void SetVarString(TCHAR *tBuf, TCHAR* sBuf, int len, int &index)
+void SetVarString(TCHAR *tBuf, const TCHAR* sBuf, int len, int &index)
 {
 	*(tBuf+index) = (BYTE)len;
 	index ++;

@@ -489,8 +489,7 @@ void CIOCPort::PutOldSid(int sid)
 		return;
 	}
 
-	list<int>::iterator  Iter;
-	Iter = find( m_SidList.begin(), m_SidList.end(), sid );
+	auto Iter = std::find( m_SidList.begin(), m_SidList.end(), sid );
 	if( Iter != m_SidList.end() )
 		return;
 	

@@ -214,7 +214,6 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SharedMem.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="STLMap.h" />
     <ClInclude Include="UdpSocket.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="ZoneInfoSet.h" />

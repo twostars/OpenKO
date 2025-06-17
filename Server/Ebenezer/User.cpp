@@ -5388,7 +5388,6 @@ void CUser::ExchangeAdd(char *pBuf)
 	CUser* pUser = NULL;
 	_EXCHANGE_ITEM* pItem = NULL;
 	_ITEM_TABLE* pTable = NULL;
-	list<_EXCHANGE_ITEM*>::iterator	Iter;
 	char buff[256];	memset( buff, 0x00, 256 );
 	BYTE pos;
 	BOOL bAdd = TRUE, bGold = FALSE;
@@ -5416,9 +5415,11 @@ void CUser::ExchangeAdd(char *pBuf)
 	if( itemid == ITEM_GOLD ) {
 		if( count > m_pUserData->m_iGold ) goto add_fail;
 		if( count <= 0 ) goto add_fail;
-		for( Iter = m_ExchangeItemList.begin(); Iter != m_ExchangeItemList.end(); Iter++ ) {
-			if( (*Iter)->itemid == ITEM_GOLD ) {
-				(*Iter)->count += count;
+		for (_EXCHANGE_ITEM* pExchangeItem : m_ExchangeItemList)
+		{
+			if (pExchangeItem->itemid == ITEM_GOLD)
+			{
+				pExchangeItem->count += count;
 				m_pUserData->m_iGold -= count;
 				bAdd = FALSE;
 				break;
@@ -5430,9 +5431,11 @@ void CUser::ExchangeAdd(char *pBuf)
 	else if( m_MirrorItem[pos].nNum == itemid ) {
 		if( m_MirrorItem[pos].sCount < count ) goto add_fail;
 		if( pTable->m_bCountable ) {		// 중복허용 아이템
-			for( Iter = m_ExchangeItemList.begin(); Iter != m_ExchangeItemList.end(); Iter++ ) {
-				if( (*Iter)->itemid == itemid ) {
-					(*Iter)->count += count;
+			for (_EXCHANGE_ITEM* pExchangeItem : m_ExchangeItemList)
+			{
+				if (pExchangeItem->itemid == itemid)
+				{
+					pExchangeItem->count += count;
 					m_MirrorItem[pos].sCount -= count;
 					bAdd = FALSE;
 					break;
@@ -5452,8 +5455,10 @@ void CUser::ExchangeAdd(char *pBuf)
 	}
 	else
 		goto add_fail;
-	for( Iter = m_ExchangeItemList.begin(); Iter != m_ExchangeItemList.end(); Iter++ ) {
-		if( (*Iter)->itemid == ITEM_GOLD ) {
+	for (_EXCHANGE_ITEM* pExchangeItem : m_ExchangeItemList)
+	{
+		if (pExchangeItem->itemid == ITEM_GOLD)
+		{
 			bGold = TRUE;
 			break;
 		}
@@ -5516,18 +5521,21 @@ void CUser::ExchangeDecide()
 		pUser->Send( buff, send_index );
 	}
 	else {										// 둘다 승인한 경우
-		list<_EXCHANGE_ITEM*>::iterator	Iter;
 		if( !ExecuteExchange() || !pUser->ExecuteExchange() ) {				// 교환 실패
-			for( Iter = m_ExchangeItemList.begin(); Iter != m_ExchangeItemList.end(); Iter++ ) {
-				if( (*Iter)->itemid == ITEM_GOLD ) {
-					m_pUserData->m_iGold += (*Iter)->count;		// 돈만 백업
+			for (_EXCHANGE_ITEM* pExchangeItem : m_ExchangeItemList)
+			{
+				if (pExchangeItem->itemid == ITEM_GOLD)
+				{
+					m_pUserData->m_iGold += pExchangeItem->count;		// 돈만 백업
 					break;
 				}
 			}
 			
-			for( Iter = pUser->m_ExchangeItemList.begin(); Iter != pUser->m_ExchangeItemList.end(); Iter++ ) {
-				if( (*Iter)->itemid == ITEM_GOLD ) {
-					pUser->m_pUserData->m_iGold += (*Iter)->count;		// 돈만 백업
+			for (_EXCHANGE_ITEM* pExchangeItem : pUser->m_ExchangeItemList)
+			{
+				if (pExchangeItem->itemid == ITEM_GOLD)
+				{
+					pUser->m_pUserData->m_iGold += pExchangeItem->count;		// 돈만 백업
 					break;
 				}
 			}
@@ -5547,13 +5555,14 @@ void CUser::ExchangeDecide()
 			SetByte( buff, 0x01, send_index );
 			SetDWORD( buff, m_pUserData->m_iGold, send_index );
 			SetShort( buff, pUser->m_ExchangeItemList.size(), send_index );
-			for( Iter = pUser->m_ExchangeItemList.begin(); Iter != pUser->m_ExchangeItemList.end(); Iter++ ) {
-				SetByte( buff, (*Iter)->pos, send_index );		// 새로 들어갈 인벤토리 위치
-				SetDWORD( buff, (*Iter)->itemid, send_index );
-				SetShort( buff, (*Iter)->count, send_index );
-				SetShort( buff, (*Iter)->duration, send_index );
+			for (_EXCHANGE_ITEM* pExchangeItem : pUser->m_ExchangeItemList)
+			{
+				SetByte(buff, pExchangeItem->pos, send_index);		// 새로 들어갈 인벤토리 위치
+				SetDWORD(buff, pExchangeItem->itemid, send_index);
+				SetShort(buff, pExchangeItem->count, send_index);
+				SetShort(buff, pExchangeItem->duration, send_index);
 
-				ItemLogToAgent( m_pUserData->m_id, pUser->m_pUserData->m_id, ITEM_EXCHANGE_GET, (*Iter)->nSerialNum, (*Iter)->itemid, (*Iter)->count, (*Iter)->duration );
+				ItemLogToAgent(m_pUserData->m_id, pUser->m_pUserData->m_id, ITEM_EXCHANGE_GET, pExchangeItem->nSerialNum, pExchangeItem->itemid, pExchangeItem->count, pExchangeItem->duration);
 			}
 			Send( buff, send_index );		// 나한테 보내고...
 
@@ -5563,13 +5572,14 @@ void CUser::ExchangeDecide()
 			SetByte( buff, 0x01, send_index );
 			SetDWORD( buff, pUser->m_pUserData->m_iGold, send_index );
 			SetShort( buff, m_ExchangeItemList.size(), send_index );
-			for( Iter = m_ExchangeItemList.begin(); Iter != m_ExchangeItemList.end(); Iter++ ) {
-				SetByte( buff, (*Iter)->pos, send_index );		// 새로 들어갈 인벤토리 위치
-				SetDWORD( buff, (*Iter)->itemid, send_index );
-				SetShort( buff, (*Iter)->count, send_index );
-				SetShort( buff, (*Iter)->duration, send_index );
+			for (_EXCHANGE_ITEM* pExchangeItem : m_ExchangeItemList)
+			{
+				SetByte(buff, pExchangeItem->pos, send_index);		// 새로 들어갈 인벤토리 위치
+				SetDWORD(buff, pExchangeItem->itemid, send_index);
+				SetShort(buff, pExchangeItem->count, send_index);
+				SetShort(buff, pExchangeItem->duration, send_index);
 
-				ItemLogToAgent( m_pUserData->m_id, pUser->m_pUserData->m_id, ITEM_EXCHANGE_PUT, (*Iter)->nSerialNum, (*Iter)->itemid, (*Iter)->count, (*Iter)->duration );
+				ItemLogToAgent(m_pUserData->m_id, pUser->m_pUserData->m_id, ITEM_EXCHANGE_PUT, pExchangeItem->nSerialNum, pExchangeItem->itemid, pExchangeItem->count, pExchangeItem->duration);
 			}
 			pUser->Send( buff, send_index );	// 상대방도 보내준다. 
 
@@ -5599,10 +5609,11 @@ void CUser::ExchangeCancel()
 	pUser = (CUser*)m_pMain->m_Iocport.m_SockArray[m_sExchangeUser];
 	if( !pUser ) bFind = FALSE;
 
-	list<_EXCHANGE_ITEM*>::iterator	Iter;
-	for( Iter = m_ExchangeItemList.begin(); Iter != m_ExchangeItemList.end(); Iter++ ) {
-		if( (*Iter)->itemid == ITEM_GOLD ) {
-			m_pUserData->m_iGold += (*Iter)->count;		// 돈만 백업
+	for (_EXCHANGE_ITEM* pExchangeItem : m_ExchangeItemList)
+	{
+		if (pExchangeItem->itemid == ITEM_GOLD)
+		{
+			m_pUserData->m_iGold += pExchangeItem->count;		// 돈만 백업
 			break;
 		}
 	}
@@ -5660,9 +5671,10 @@ BOOL CUser::ExecuteExchange()
 	pUser = (CUser*)m_pMain->m_Iocport.m_SockArray[m_sExchangeUser];
 	if( !pUser ) return FALSE;
 
-	list<_EXCHANGE_ITEM*>::iterator	Iter;
 	int iCount = pUser->m_ExchangeItemList.size(); 
-	for( Iter = pUser->m_ExchangeItemList.begin(); Iter != pUser->m_ExchangeItemList.end(); Iter++ ) {
+	auto Iter = pUser->m_ExchangeItemList.begin();
+	for (; Iter != pUser->m_ExchangeItemList.end(); Iter++)
+	{
 //	비러머글 크리스마스 이밴트 >.<
 		if( (*Iter)->itemid >= ITEM_NO_TRADE) {
 			return FALSE;
@@ -5728,9 +5740,10 @@ int CUser::ExchangeDone()
 	pUser = (CUser*)m_pMain->m_Iocport.m_SockArray[m_sExchangeUser];
 	if( !pUser ) return 0;
 
-	list<_EXCHANGE_ITEM*>::iterator	Iter;
-	for( Iter = pUser->m_ExchangeItemList.begin(); Iter != pUser->m_ExchangeItemList.end(); ) {
-		if( (*Iter)->itemid == ITEM_GOLD ) {
+	for (auto Iter = pUser->m_ExchangeItemList.begin(); Iter != pUser->m_ExchangeItemList.end(); )
+	{
+		if ((*Iter)->itemid == ITEM_GOLD)
+		{
 			money = (*Iter)->count;
 			delete (*Iter);
 			Iter = pUser->m_ExchangeItemList.erase(Iter);
@@ -6858,11 +6871,10 @@ void CUser::SendAllKnightsID()
 	int send_index = 0, count = 0, buff_index = 0;
 	char send_buff[4096]; memset( send_buff, 0x00, 4096 );
 	char temp_buff[4096]; memset( temp_buff, 0x00, 4096 );
-	map < int, CKnights*>::iterator Iter1, Iter2;
 	CKnights* pKnights = NULL;
 
-	Iter1 = m_pMain->m_KnightsArray.m_UserTypeMap.begin();
-	Iter2 = m_pMain->m_KnightsArray.m_UserTypeMap.end();
+	auto Iter1 = m_pMain->m_KnightsArray.begin();
+	auto Iter2 = m_pMain->m_KnightsArray.end();
 	
 	for( ; Iter1 != Iter2; Iter1++ ) {
 		pKnights = (*Iter1).second;
@@ -8016,11 +8028,8 @@ BOOL CUser::GetWarpList(int warp_group)
 	if( !pMap )
 		return FALSE;
 
-	map < int, _WARP_INFO* >::iterator		Iter1;
-	map < int, _WARP_INFO* >::iterator		Iter2;
-	
-	Iter1 = pMap->m_WarpArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_WarpArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_WarpArray.begin();
+	auto Iter2 = pMap->m_WarpArray.end();
 
 	for( ; Iter1 != Iter2; Iter1++ ) {
 		pWarp = (*Iter1).second;
@@ -9336,11 +9345,11 @@ void CUser::ClientEvent(char *pBuf)		// The main function for the quest procedur
 	
 	if( !CheckEventLogic(pEventData) ) return;	// Check if all 'A's meet the requirements in Event #1
 
-	list<EXEC*>::iterator	Iter;		        // Execute the 'E' events in Event #1
-	for( Iter = pEventData->m_arExec.begin(); Iter != pEventData->m_arExec.end(); Iter++ ) {
-		if( !RunNpcEvent( pNpc, (*Iter) ) ){
+	// Execute the 'E' events in Event #1
+	for (EXEC* pExec : pEventData->m_arExec)
+	{
+		if (!RunNpcEvent(pNpc, pExec))
 			return;
-		}
 	}
 }
 
@@ -9350,11 +9359,10 @@ BOOL CUser::CheckEventLogic(EVENT_DATA *pEventData) 	// This part reads all the 
 
 	BOOL bExact = TRUE;
 
-	list<LOGIC_ELSE*>::iterator	Iter;
-	for( Iter = pEventData->m_arLogicElse.begin(); Iter != pEventData->m_arLogicElse.end(); Iter++ ) {
+	for (LOGIC_ELSE* pLE : pEventData->m_arLogicElse)
+	{
 		bExact = FALSE;
 
-		LOGIC_ELSE* pLE = (*Iter);
 		if( !pLE ) return FALSE;
 
 		switch( pLE->m_LogicElse ) {
@@ -9534,13 +9542,10 @@ BOOL CUser::RunNpcEvent(CNpc *pNpc, EXEC *pExec)	// This part executes all the '
 
 			if( !CheckEventLogic(pEventData) )	break;
 
-			list<EXEC*>::iterator	Iter;
-			for( Iter = pEventData->m_arExec.begin(); Iter != pEventData->m_arExec.end(); Iter++ ) 
+			for (EXEC* pExec : pEventData->m_arExec)
 			{
-				if( !RunNpcEvent( pNpc, (*Iter) ) )
-				{
+				if (!RunNpcEvent(pNpc, pExec))
 					return FALSE;
-				}
 			}
 		}
 		break;
@@ -9643,13 +9648,10 @@ BOOL CUser::RunNpcEvent(CNpc *pNpc, EXEC *pExec)	// This part executes all the '
 
 BOOL CUser::RunEvent(EVENT_DATA *pEventData)
 {
-	EXEC* pExec = NULL;
-	list<EXEC*>::iterator	Iter;
-
-	for( Iter = pEventData->m_arExec.begin(); Iter != pEventData->m_arExec.end(); Iter++ ) 
+	for (EXEC* pExec : pEventData->m_arExec)
 	{
-		pExec = (*Iter);
-		if( !pExec ) break;
+		if (!pExec)
+			break;
 
 		switch(pExec->m_Exec){
 			case EXEC_SAY:

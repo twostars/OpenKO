@@ -269,22 +269,19 @@ void MAP::RegionUserAdd(int rx, int rz, int uid)
 	LeaveCriticalSection( &g_region_critical );
 }
 
-Iterator MAP::RegionUserRemove(int rx, int rz, int uid)
+void MAP::RegionUserRemove(int rx, int rz, int uid)
 {
 	if( rx<0 || rz<0 || rx>m_sizeRegion.cx || rz>m_sizeRegion.cy )
-		return {};
+		return;
 
 	CRegion	*region = NULL;
-	map < int, int* >::iterator		Iter;
 	
 	EnterCriticalSection( &g_region_critical );
 	
 	region = &m_ppRegion[rx][rz];
-	Iter = region->m_RegionUserArray.DeleteData( uid );
+	region->m_RegionUserArray.DeleteData( uid );
 
 	LeaveCriticalSection( &g_region_critical );
-
-	return Iter;
 }
 
 void MAP::RegionNpcAdd(int rx, int rz, int nid)
@@ -308,22 +305,19 @@ void MAP::RegionNpcAdd(int rx, int rz, int nid)
 	LeaveCriticalSection( &g_region_critical );
 }
 
-Iterator MAP::RegionNpcRemove(int rx, int rz, int nid)
+void MAP::RegionNpcRemove(int rx, int rz, int nid)
 {
 	if( rx<0 || rz<0 || rx>m_sizeRegion.cx || rz>m_sizeRegion.cy )
-		return {};
+		return;
 
 	CRegion	*region = NULL;
-	map < int, int* >::iterator		Iter;
 	
 	EnterCriticalSection( &g_region_critical );
 
 	region = &m_ppRegion[rx][rz];
-	Iter = region->m_RegionNpcArray.DeleteData( nid );
+	region->m_RegionNpcArray.DeleteData( nid );
 
 	LeaveCriticalSection( &g_region_critical );
-
-	return Iter;
 }
 
 void MAP::LoadMapTile(HANDLE hFile)

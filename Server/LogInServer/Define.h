@@ -1,9 +1,7 @@
 ﻿#ifndef _DEFINE_H
 #define _DEFINE_H
 
-#pragma warning(disable : 4786)
 #include <string>
-using namespace std;
 
 #include <mmsystem.h>
 
@@ -58,8 +56,8 @@ struct _VERSION_INFO
 {
 	short sVersion;
 	short sHistoryVersion;
-	string strFileName;
-	string strCompName;
+	std::string strFileName;
+	std::string strCompName;
 };
 
 struct _SERVER_INFO
@@ -121,7 +119,7 @@ inline float Getfloat(char* sBuf, int& index)
 	return *(float*)(sBuf+index-4);
 };
 
-inline void SetString(char* tBuf, char* sBuf, int len, int& index)
+inline void SetString(char* tBuf, const char* sBuf, int len, int& index)
 {
 	memcpy(tBuf+index, sBuf, len);
 	index += len;

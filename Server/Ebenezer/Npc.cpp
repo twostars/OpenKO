@@ -286,11 +286,8 @@ int CNpc::GetRegionNpcList(int region_x, int region_z, char *buff, int &t_count)
 
 	EnterCriticalSection( &g_region_critical );
 
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
-	
-	Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.begin();
+	auto Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.end();
 
 	for( ; Iter1 != Iter2; Iter1++ ) {
 		nid = *( (*Iter1).second );

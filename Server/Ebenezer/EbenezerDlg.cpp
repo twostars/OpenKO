@@ -840,12 +840,9 @@ void CEbenezerDlg::Send_UnitRegion(char *pBuf, int len, int zoneindex, int x, in
 		return;
 
 	EnterCriticalSection( &g_region_critical );
-
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 	
-	Iter1 = pMap->m_ppRegion[x][z].m_RegionUserArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[x][z].m_RegionUserArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[x][z].m_RegionUserArray.begin();
+	auto Iter2 = pMap->m_ppRegion[x][z].m_RegionUserArray.end();
 
 	for( ; Iter1 != Iter2; Iter1++ ) {
 		uid = *( (*Iter1).second );
@@ -913,11 +910,8 @@ void CEbenezerDlg::Send_FilterUnitRegion(char *pBuf, int len, int zoneindex, int
 
 //	EnterCriticalSection( &g_region_critical );
 
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
-	
-	Iter1 = pMap->m_ppRegion[x][z].m_RegionUserArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[x][z].m_RegionUserArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[x][z].m_RegionUserArray.begin();
+	auto Iter2 = pMap->m_ppRegion[x][z].m_RegionUserArray.end();
 
 	for( ; Iter1 != Iter2; Iter1++ ) {
 		uid = *( (*Iter1).second );
@@ -1920,11 +1914,8 @@ int CEbenezerDlg::GetRegionUserIn( C3DMap *pMap, int region_x, int region_z, cha
 
 	EnterCriticalSection( &g_region_critical );
 
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
-	
-	Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionUserArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionUserArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionUserArray.begin();
+	auto Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionUserArray.end();
 
 	for( ; Iter1 != Iter2; Iter1++ ) {
 		uid = *( (*Iter1).second );
@@ -2019,12 +2010,9 @@ int CEbenezerDlg::GetRegionUserList( C3DMap* pMap, int region_x, int region_z, c
 		return 0;
 
 	EnterCriticalSection( &g_region_critical );
-
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 	
-	Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionUserArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionUserArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionUserArray.begin();
+	auto Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionUserArray.end();
 
 	for( ; Iter1 != Iter2; Iter1++ ) {
 		uid = *( (*Iter1).second );
@@ -2114,12 +2102,9 @@ int CEbenezerDlg::GetRegionNpcIn(C3DMap *pMap, int region_x, int region_z, char 
 		return 0;
 
 	EnterCriticalSection( &g_region_critical );
-
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 	
-	Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.begin();
+	auto Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.end();
 
 	//string.Format("---- GetRegionNpcIn , x=%d, z=%d ----\r\n", region_x, region_z);
 	//EnterCriticalSection( &g_LogFile_critical );
@@ -2275,12 +2260,9 @@ int CEbenezerDlg::GetRegionNpcList(C3DMap *pMap, int region_x, int region_z, cha
 		return 0;
 
 	EnterCriticalSection( &g_region_critical );
-
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
 	
-	Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.m_UserTypeMap.begin();
-	Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.m_UserTypeMap.end();
+	auto Iter1 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.begin();
+	auto Iter2 = pMap->m_ppRegion[region_x][region_z].m_RegionNpcArray.end();
 
 	if(nType == 1)	{
 		wsprintf(strLog, "++++ GetRegionNpcList , x=%d, z=%d ++++\r\n", region_x, region_z);
@@ -2471,11 +2453,8 @@ BOOL CEbenezerDlg::PreTranslateMessage(MSG* pMsg)
 			SetShort( buff, strlen(finalstr), buffindex );
 			SetString( buff, finalstr, strlen(finalstr), buffindex );
 
-			map < int, _ZONE_SERVERINFO* >::iterator		Iter1;
-			map < int, _ZONE_SERVERINFO* >::iterator		Iter2;
-			
-			Iter1 = m_ServerArray.m_UserTypeMap.begin();
-			Iter2 = m_ServerArray.m_UserTypeMap.end();
+			auto Iter1 = m_ServerArray.begin();
+			auto Iter2 = m_ServerArray.end();
 
 			for( ; Iter1 != Iter2; Iter1++ ) {
 				pInfo = (*Iter1).second;
@@ -2598,18 +2577,18 @@ void CEbenezerDlg::SyncRegionTest(C3DMap* pMap, int rx, int rz, FILE* pfile, int
 	fprintf(pfile, "ZONE=%d, [%d,%d] : ", pMap->m_nZoneNumber, rx, rz);
 	int nid = 0;
 	EnterCriticalSection( &g_region_critical );
-	map < int, int* >::iterator		Iter1;
-	map < int, int* >::iterator		Iter2;
+	std::map < int, int* >::iterator		Iter1;
+	std::map < int, int* >::iterator		Iter2;
 	CUser* pUser = NULL;
 	CNpc* pNpc = NULL;
 
 	if(nType == 2)	{
-		Iter1 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.m_UserTypeMap.begin();
-		Iter2 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.m_UserTypeMap.end();
+		Iter1 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.begin();
+		Iter2 = pMap->m_ppRegion[rx][rz].m_RegionNpcArray.end();
 	}
 	else if(nType == 1) {
-		Iter1 = pMap->m_ppRegion[rx][rz].m_RegionUserArray.m_UserTypeMap.begin();
-		Iter2 = pMap->m_ppRegion[rx][rz].m_RegionUserArray.m_UserTypeMap.end();
+		Iter1 = pMap->m_ppRegion[rx][rz].m_RegionUserArray.begin();
+		Iter2 = pMap->m_ppRegion[rx][rz].m_RegionUserArray.end();
 	}
 
 	for( ; Iter1 != Iter2; Iter1++ ) {
@@ -3688,19 +3667,19 @@ void CEbenezerDlg::KickOutZoneUsers(short zone)
 
 void CEbenezerDlg::Send_UDP_All( char* pBuf, int len, int group_type )
 {
-	map < int, _ZONE_SERVERINFO* >::iterator		Iter1;
-	map < int, _ZONE_SERVERINFO* >::iterator		Iter2;
+	std::map < int, _ZONE_SERVERINFO* >::iterator		Iter1;
+	std::map < int, _ZONE_SERVERINFO* >::iterator		Iter2;
 
 	int server_number = 0;
 
 	if( group_type == 0 )	{
-		Iter1 = m_ServerArray.m_UserTypeMap.begin();
-		Iter2 = m_ServerArray.m_UserTypeMap.end();
+		Iter1 = m_ServerArray.begin();
+		Iter2 = m_ServerArray.end();
 		server_number = m_nServerNo;
 	}
 	else	{
-		Iter1 = m_ServerGroupArray.m_UserTypeMap.begin();
-		Iter2 = m_ServerGroupArray.m_UserTypeMap.end();
+		Iter1 = m_ServerGroupArray.begin();
+		Iter2 = m_ServerGroupArray.end();
 		server_number = m_nServerGroupNo;
 	}
 
@@ -3750,24 +3729,6 @@ void CEbenezerDlg::Send_CommandChat( char* pBuf, int len, int nation, CUser* pEx
 				pUser->Send( pBuf, len );
 		}
 	}
-}
-
-void CEbenezerDlg::GetCaptainUserPtr()
-{
-	CUser* pUser = NULL;
-	CKnights* pKnights = NULL;
-	map < int, CKnights*>::iterator Iter1, Iter2;
-
-	Iter1 = m_KnightsArray.m_UserTypeMap.begin();
-	Iter2 = m_KnightsArray.m_UserTypeMap.end();
-	
-	for( ; Iter1 != Iter2; Iter1++ ) {
-		pKnights = (*Iter1).second;
-		if( !pKnights ) continue;
-		if( pKnights->m_byRanking == 1 )	{
-		}
-	}
-	
 }
 
 BOOL CEbenezerDlg::LoadKnightsRankTable()

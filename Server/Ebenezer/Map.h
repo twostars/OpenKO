@@ -12,13 +12,12 @@
 #include ".\N3Base\N3ShapeMgr.h"
 #include "Region.h"
 #include "GameEvent.h"
-#include "STLMap.h"
+#include <shared/STLMap.h>
 
 typedef CSTLMap <CGameEvent>		EventArray;
 typedef CSTLMap <_OBJECT_EVENT>		ObjectEventArray;
 typedef CSTLMap <_REGENE_EVENT>		ObjectRegeneArray;
 typedef	CSTLMap <_WARP_INFO>		WarpArray;
-typedef	map < int, int* >::iterator		Iterator;
 
 class CUser;
 class CEbenezerDlg;
@@ -52,9 +51,9 @@ public:
 	void LoadObjectEvent(HANDLE hFile);
 	BOOL LoadEvent();
 	BOOL CheckEvent( float x, float z, CUser* pUser = NULL );
-	Iterator RegionNpcRemove( int rx, int rz, int nid );
+	void RegionNpcRemove( int rx, int rz, int nid );
 	void RegionNpcAdd( int rx, int rz, int nid );
-	Iterator RegionUserRemove( int rx, int rz, int uid );
+	void RegionUserRemove( int rx, int rz, int uid );
 	void RegionUserAdd( int rx, int rz, int uid );
 	BOOL RegionItemRemove( int rx, int rz, int bundle_index, int itemid, int count );
 	BOOL RegionItemAdd( int rx, int rz, _ZONE_ITEM* pItem );

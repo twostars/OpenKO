@@ -2,7 +2,6 @@
 #define _DEFINE_H
 
 #include <string>
-
 #include <mmsystem.h>
 
 #define _LISTEN_PORT		15100
@@ -37,39 +36,41 @@
 #define OVL_CLOSE				0X03
 ////////////////////////////////////////////////////////////
 
-typedef union{
+typedef union {
 	short int	i;
 	BYTE		b[2];
 } MYSHORT;
 
-typedef union{
+typedef union {
 	int			i;
 	BYTE		b[4];
 } MYINT;
 
-typedef union{
+typedef union {
 	DWORD		w;
 	BYTE		b[4];
 } MYDWORD;
 
 struct _VERSION_INFO
 {
-	short sVersion;
-	short sHistoryVersion;
-	std::string strFileName;
-	std::string strCompName;
+	short		sVersion;
+	short		sHistoryVersion;
+	std::string	strFileName;
+	std::string	strCompName;
 };
 
 struct _SERVER_INFO
 {
-	char strServerIP[20];
-	char strServerName[20];
+	char	strServerIP[20];
+	char	strServerName[20];
 	short	sUserCount;
-	_SERVER_INFO() {
-		memset(strServerIP, 0x00, 20);
-		memset(strServerName, 0x00, 20);
+
+	_SERVER_INFO()
+	{
+		memset(strServerIP, 0, sizeof(strServerIP));
+		memset(strServerName, 0, sizeof(strServerName));
 		sUserCount = 0;
-	};
+	}
 };
 
 
@@ -90,105 +91,91 @@ struct _SERVER_INFO
 
 inline void GetString(char* tBuf, char* sBuf, int len, int& index)
 {
-	memcpy(tBuf, sBuf+index, len);
+	memcpy(tBuf, sBuf + index, len);
 	index += len;
-};
+}
 
 inline BYTE GetByte(char* sBuf, int& index)
 {
 	int t_index = index;
 	index++;
-	return (BYTE)(*(sBuf+t_index));
-};
+	return (BYTE) (*(sBuf + t_index));
+}
 
 inline int GetShort(char* sBuf, int& index)
 {
 	index += 2;
-	return *(short*)(sBuf+index-2);
-};
+	return *(short*) (sBuf + index - 2);
+}
 
 inline DWORD GetDWORD(char* sBuf, int& index)
 {
 	index += 4;
-	return *(DWORD*)(sBuf+index-4);
-};
+	return *(DWORD*) (sBuf + index - 4);
+}
 
 inline float Getfloat(char* sBuf, int& index)
 {
 	index += 4;
-	return *(float*)(sBuf+index-4);
-};
+	return *(float*) (sBuf + index - 4);
+}
 
 inline void SetString(char* tBuf, const char* sBuf, int len, int& index)
 {
-	memcpy(tBuf+index, sBuf, len);
+	memcpy(tBuf + index, sBuf, len);
 	index += len;
 };
 
 inline void SetByte(char* tBuf, BYTE sByte, int& index)
 {
-	*(tBuf+index) = (char)sByte;
+	*(tBuf + index) = (char) sByte;
 	index++;
-};
+}
 
 inline void SetShort(char* tBuf, int sShort, int& index)
 {
-	short temp = (short)sShort;
+	short temp = (short) sShort;
 
-	CopyMemory( tBuf+index, &temp, 2);
+	CopyMemory(tBuf + index, &temp, 2);
 	index += 2;
-};
+}
 
 inline void SetDWORD(char* tBuf, DWORD sDWORD, int& index)
 {
-	CopyMemory( tBuf+index, &sDWORD, 4);
+	CopyMemory(tBuf + index, &sDWORD, 4);
 	index += 4;
-};
+}
 
-inline void Setfloat ( char* tBuf, float sFloat, int& index )
+inline void Setfloat(char* tBuf, float sFloat, int& index)
 {
-	CopyMemory( tBuf+index, &sFloat, 4);
+	CopyMemory(tBuf + index, &sFloat, 4);
 	index += 4;
-};
+}
+
 // sungyong 2001.11.06
 inline int GetVarString(TCHAR* tBuf, TCHAR* sBuf, int nSize, int& index)
 {
 	int nLen = 0;
-	
-	if(nSize == sizeof(BYTE))	nLen = GetByte(sBuf, index);
-	else nLen = GetShort(sBuf, index);
+
+	if (nSize == sizeof(BYTE))
+		nLen = GetByte(sBuf, index);
+	else
+		nLen = GetShort(sBuf, index);
 
 	GetString(tBuf, sBuf, nLen, index);
 	*(tBuf + nLen) = 0;
 
 	return nLen;
-};
+}
 
-inline void SetVarString(TCHAR *tBuf, TCHAR* sBuf, int len, int &index)
+inline void SetVarString(TCHAR* tBuf, TCHAR* sBuf, int len, int& index)
 {
-	*(tBuf+index) = (BYTE)len;
+	*(tBuf + index) = (BYTE) len;
 	index ++;
 
-	CopyMemory(tBuf+index, sBuf, len);
+	CopyMemory(tBuf + index, sBuf, len);
 	index += len;
-};
-// ~sungyong 2001.11.06
-inline int ParseSpace( char* tBuf, char* sBuf)
-{
-	int i = 0, index = 0;
-	BOOL flag = FALSE;
-	
-	while(sBuf[index] == ' ' || sBuf[index] == '\t')index++;
-	while(sBuf[index] !=' ' && sBuf[index] !='\t' && sBuf[index] !=(BYTE) 0){
-		tBuf[i++] = sBuf[index++];
-		flag = TRUE;
-	}
-	tBuf[i] = 0;
-
-	while(sBuf[index] == ' ' || sBuf[index] == '\t')index++;
-	if(!flag) return 0;	
-	return index;
-};
+}
 
 inline CString GetProgPath()
 {
@@ -196,30 +183,30 @@ inline CString GetProgPath()
 	char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
 
 	::GetModuleFileName(AfxGetApp()->m_hInstance, Buf, 256);
-	_splitpath(Buf,drive,dir,fname,ext);
+	_splitpath(Buf, drive, dir, fname, ext);
 	strcpy(Path, drive);
-	strcat(Path, dir);		
+	strcat(Path, dir);
 	CString _Path = Path;
 	return _Path;
-};
+}
 
-inline void LogFileWrite( LPCTSTR logstr )
+inline void LogFileWrite(LPCTSTR logstr)
 {
 	CString ProgPath, LogFileName;
 	CFile file;
 	int loglength;
 
 	ProgPath = GetProgPath();
-	loglength = strlen( logstr );
+	loglength = strlen(logstr);
 
 	LogFileName.Format("%s\\Login.log", ProgPath);
-	
-	file.Open( LogFileName, CFile::modeCreate|CFile::modeNoTruncate|CFile::modeWrite );
+
+	file.Open(LogFileName, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite);
 
 	file.SeekToEnd();
 	file.Write(logstr, loglength);
 	file.Close();
-};
+}
 
 inline int DisplayErrorMsg(SQLHANDLE hstmt)
 {
@@ -227,75 +214,21 @@ inline int DisplayErrorMsg(SQLHANDLE hstmt)
 	SQLINTEGER    NativeError;
 	SQLSMALLINT   i, MsgLen;
 	SQLRETURN     rc2;
-	char		  logstr[512];
-	memset( logstr, NULL, 512 );
+	char		  logstr[512] = {};
 
 	i = 1;
 	while ((rc2 = SQLGetDiagRec(SQL_HANDLE_STMT, hstmt, i, SqlState, &NativeError, Msg, sizeof(Msg), &MsgLen)) != SQL_NO_DATA)
 	{
-		sprintf( logstr, "*** %s, %d, %s, %d ***\r\n", SqlState,NativeError,Msg,MsgLen );
-		LogFileWrite( logstr );
+		sprintf(logstr, "*** %s, %d, %s, %d ***\r\n", SqlState, NativeError, Msg, MsgLen);
+		LogFileWrite(logstr);
 
 		i++;
 	}
 
-	if( strcmp((char *)SqlState, "08S01") == 0 )
+	if (strcmp((char*) SqlState, "08S01") == 0)
 		return -1;
 	else
 		return 0;
-};
-
-inline int myrand( int min, int max )
-{
-	if( min == max ) return min;
-	if( min > max )
-	{
-		int temp = min;
-		min = max;
-		max = temp;
-	}
-
-	double gap = max - min + 1;
-	double rrr = (double)RAND_MAX / gap;
-
-	double rand_result;
-
-	rand_result = (double)rand() / rrr;
-
-	if( (int)( min + (int)rand_result ) < min ) return min;
-	if( (int)( min + (int)rand_result ) > max ) return max;
-
-	return (int)( min + (int)rand_result );
-};
-
-inline float TimeGet()
-{
-	static bool bInit = false;
-	static bool bUseHWTimer = FALSE;
-	static LARGE_INTEGER nTime, nFrequency;
-	
-	if(bInit == false)
-	{
-		if(TRUE == ::QueryPerformanceCounter(&nTime))
-		{
-			::QueryPerformanceFrequency(&nFrequency);
-			bUseHWTimer = TRUE;
-		}
-		else 
-		{
-			bUseHWTimer = FALSE;
-		}
-
-		bInit = true;
-	}
-
-	if(bUseHWTimer)
-	{
-		::QueryPerformanceCounter(&nTime);
-		return (float)((double)(nTime.QuadPart)/(double)nFrequency.QuadPart);
-	}
-
-	return (float)timeGetTime();
-};
+}
 
 #endif

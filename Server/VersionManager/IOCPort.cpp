@@ -10,7 +10,7 @@
 
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -27,78 +27,78 @@ DWORD WINAPI AcceptThread(LPVOID lp)
 	WSANETWORKEVENTS	network_event;
 	DWORD				wait_return;
 	int					sid;
-	CIOCPSocket2*		pSocket = NULL;
-	char				logstr[1024];
-	memset( logstr, NULL, 1024 );
+	CIOCPSocket2*		pSocket = nullptr;
+	char				logstr[1024] = {};
 
 	struct sockaddr_in  addr;
 	int					len;
 
-	while(1)
+	while (1)
 	{
-		wait_return = WaitForSingleObject( pIocport->m_hListenEvent, INFINITE);
+		wait_return = WaitForSingleObject(pIocport->m_hListenEvent, INFINITE);
 
-		if(wait_return == WAIT_FAILED)
+		if (wait_return == WAIT_FAILED)
 		{
 			TRACE("Wait failed Error %d\n", GetLastError());
 			return 1;
 		}
 
-		WSAEnumNetworkEvents( pIocport->m_ListenSocket, pIocport->m_hListenEvent, &network_event);
+		WSAEnumNetworkEvents(pIocport->m_ListenSocket, pIocport->m_hListenEvent, &network_event);
 
-		if(network_event.lNetworkEvents &FD_ACCEPT)
+		if (network_event.lNetworkEvents & FD_ACCEPT)
 		{
-			if(network_event.iErrorCode[FD_ACCEPT_BIT] == 0 ) 
+			if (network_event.iErrorCode[FD_ACCEPT_BIT] == 0)
 			{
 				EnterCriticalSection(&g_critical);
 				sid = pIocport->GetNewSid();
 				LeaveCriticalSection(&g_critical);
-				if(sid == -1) {
+				if (sid == -1)
+				{
 					TRACE("Accepting User Socket Fail - New Uid is -1\n");
-					goto loop_pass_accept;
+					continue;
 				}
 
-				pSocket = pIocport->GetIOCPSocket( sid );
-				if( !pSocket ) {
+				pSocket = pIocport->GetIOCPSocket(sid);
+				if (!pSocket)
+				{
 					TRACE("Socket Array has Broken...\n");
-					sprintf( logstr, "Socket Array has Broken...[sid:%d]\r\n", sid);
-					LogFileWrite( logstr );
+					sprintf(logstr, "Socket Array has Broken...[sid:%d]\r\n", sid);
+					LogFileWrite(logstr);
 //					pIocport->PutOldSid( sid );				// Invalid sid must forbidden to use
-					goto loop_pass_accept;
+					continue;
 				}
 
 				len = sizeof(addr);
-				if( !pSocket->Accept( pIocport->m_ListenSocket, (struct sockaddr *)&addr, &len ) ) {
+				if (!pSocket->Accept(pIocport->m_ListenSocket, (struct sockaddr*) &addr, &len))
+				{
 					TRACE("Accept Fail %d\n", sid);
 					EnterCriticalSection(&g_critical);
 					pIocport->RidIOCPSocket(sid, pSocket);
 					pIocport->PutOldSid(sid);
 					LeaveCriticalSection(&g_critical);
-					goto loop_pass_accept;
+					continue;
 				}
 
-				pSocket->InitSocket( pIocport );
+				pSocket->InitSocket(pIocport);
 
-				if( !pIocport->Associate( pSocket, pIocport->m_hServerIOCPort ) ) {
+				if (!pIocport->Associate(pSocket, pIocport->m_hServerIOCPort))
+				{
 					TRACE("Socket Associate Fail\n");
 					EnterCriticalSection(&g_critical);
 					pSocket->CloseProcess();
 					pIocport->RidIOCPSocket(sid, pSocket);
 					pIocport->PutOldSid(sid);
 					LeaveCriticalSection(&g_critical);
-					goto loop_pass_accept;
+					continue;
 				}
 
 				pSocket->Receive();
 
 				TRACE("Success Accepting...%d\n", sid);
 			}
-
-loop_pass_accept:
-			continue;
 		}
 	}
-	
+
 	return 1;
 }
 
@@ -106,92 +106,90 @@ DWORD WINAPI ReceiveWorkerThread(LPVOID lp)
 {
 	CIOCPort* pIocport = (CIOCPort*) lp;
 
-	DWORD			WorkIndex;	
+	DWORD			WorkIndex;
 	BOOL			b;
 	LPOVERLAPPED	pOvl;
 	DWORD			nbytes;
 	DWORD			dwFlag = 0;
-	CIOCPSocket2*	pSocket = NULL;
+	CIOCPSocket2*	pSocket = nullptr;
 
 	while (1)
 	{
-		b = GetQueuedCompletionStatus( 
-									  pIocport->m_hServerIOCPort,
-									  &nbytes,
-									  &WorkIndex,
-									  &pOvl,
-									  INFINITE);
-		if(b || pOvl) 
+		b = GetQueuedCompletionStatus(
+			pIocport->m_hServerIOCPort,
+			&nbytes,
+			&WorkIndex,
+			&pOvl,
+			INFINITE);
+		if (b
+			|| pOvl)
 		{
-			if(b)
+			if (b)
 			{
-				if( WorkIndex > (DWORD)pIocport->m_SocketArraySize )
-					goto loop_pass;
-				pSocket = (CIOCPSocket2 *)pIocport->m_SockArray[WorkIndex];
-				if( !pSocket )
-					goto loop_pass;
+				if (WorkIndex > (DWORD) pIocport->m_SocketArraySize)
+					continue;
 
-				switch( pOvl->Offset )
+				pSocket = (CIOCPSocket2*) pIocport->m_SockArray[WorkIndex];
+				if (!pSocket)
+					continue;
+
+				switch (pOvl->Offset)
 				{
-				case	OVL_RECEIVE:
-					if( !nbytes ) {
-						EnterCriticalSection( &g_critical );
-						TRACE("User Closed By 0 byte Notify...%d\n", WorkIndex);
-						pSocket->CloseProcess();
-						pIocport->RidIOCPSocket( pSocket->GetSocketID(), pSocket );
-						pIocport->PutOldSid( pSocket->GetSocketID() );
-						LeaveCriticalSection( &g_critical );
+					case OVL_RECEIVE:
+						if (!nbytes)
+						{
+							EnterCriticalSection(&g_critical);
+							TRACE("User Closed By 0 byte Notify...%d\n", WorkIndex);
+							pSocket->CloseProcess();
+							pIocport->RidIOCPSocket(pSocket->GetSocketID(), pSocket);
+							pIocport->PutOldSid(pSocket->GetSocketID());
+							LeaveCriticalSection(&g_critical);
+							break;
+						}
+
+						pSocket->m_nPending = 0;
+						pSocket->m_nWouldblock = 0;
+
+						pSocket->ReceivedData((int) nbytes);
+						pSocket->Receive();
 						break;
-					}
 
-					pSocket->m_nPending = 0;
-					pSocket->m_nWouldblock = 0;
+					case OVL_SEND:
+						pSocket->m_nPending = 0;
+						pSocket->m_nWouldblock = 0;
+						break;
 
-					pSocket->ReceivedData((int)nbytes);
-					pSocket->Receive();
+					case OVL_CLOSE:
+						EnterCriticalSection(&g_critical);
+						TRACE("User Closed By Close()...%d\n", WorkIndex);
 
-					break;
-				case	OVL_SEND:
-					pSocket->m_nPending = 0;
-					pSocket->m_nWouldblock = 0;
+						pSocket->CloseProcess();
+						pIocport->RidIOCPSocket(pSocket->GetSocketID(), pSocket);
+						pIocport->PutOldSid(pSocket->GetSocketID());
 
-					break;
-				case	OVL_CLOSE:
-					EnterCriticalSection( &g_critical );
-					TRACE("User Closed By Close()...%d\n", WorkIndex);
-
-					pSocket->CloseProcess();
-					pIocport->RidIOCPSocket( pSocket->GetSocketID(), pSocket );
-					pIocport->PutOldSid( pSocket->GetSocketID() );
-
-					LeaveCriticalSection( &g_critical );
-					break;
-				default:
-					break;
+						LeaveCriticalSection(&g_critical);
+						break;
 				}
 			}
-			else {
-				if( pOvl ) {
-					if( WorkIndex > (DWORD)pIocport->m_SocketArraySize )
-						goto loop_pass;
-					pSocket = (CIOCPSocket2 *)pIocport->m_SockArray[WorkIndex];
-					if( !pSocket )
-						goto loop_pass;
+			else if (pOvl)
+			{
+				if (WorkIndex > (DWORD) pIocport->m_SocketArraySize)
+					continue;
 
-					EnterCriticalSection( &g_critical );
+				pSocket = (CIOCPSocket2*) pIocport->m_SockArray[WorkIndex];
+				if (!pSocket)
+					continue;
 
-					TRACE("User Closed By Abnormal Termination...%d\n", WorkIndex);
-					pSocket->CloseProcess();
-					pIocport->RidIOCPSocket( pSocket->GetSocketID(), pSocket );
-					pIocport->PutOldSid( pSocket->GetSocketID() );
-					
-					LeaveCriticalSection( &g_critical );
-				}
+				EnterCriticalSection(&g_critical);
+
+				TRACE("User Closed By Abnormal Termination...%d\n", WorkIndex);
+				pSocket->CloseProcess();
+				pIocport->RidIOCPSocket(pSocket->GetSocketID(), pSocket);
+				pIocport->PutOldSid(pSocket->GetSocketID());
+
+				LeaveCriticalSection(&g_critical);
 			}
 		}
-
-loop_pass:
-		continue;
 	}
 
 	return 1;
@@ -201,92 +199,91 @@ DWORD WINAPI ClientWorkerThread(LPVOID lp)
 {
 	CIOCPort* pIocport = (CIOCPort*) lp;
 
-	DWORD			WorkIndex;	
+	DWORD			WorkIndex;
 	BOOL			b;
 	LPOVERLAPPED	pOvl;
 	DWORD			nbytes;
 	DWORD			dwFlag = 0;
-	CIOCPSocket2*	pSocket = NULL;
+	CIOCPSocket2*	pSocket = nullptr;
 
 	while (1)
 	{
-		b = GetQueuedCompletionStatus( 
-									  pIocport->m_hClientIOCPort,
-									  &nbytes,
-									  &WorkIndex,
-									  &pOvl,
-									  INFINITE);
-		if(b || pOvl) 
+		b = GetQueuedCompletionStatus(
+			pIocport->m_hClientIOCPort,
+			&nbytes,
+			&WorkIndex,
+			&pOvl,
+			INFINITE);
+		if (b
+			|| pOvl)
 		{
-			if(b)
+			if (b)
 			{
-				if( WorkIndex > (DWORD)pIocport->m_ClientSockSize )
-					goto loop_pass;
-				pSocket = (CIOCPSocket2 *)pIocport->m_ClientSockArray[WorkIndex];
-				if( !pSocket )
-					goto loop_pass;
+				if (WorkIndex > (DWORD) pIocport->m_ClientSockSize)
+					continue;
 
-				switch( pOvl->Offset )
+				pSocket = (CIOCPSocket2*) pIocport->m_ClientSockArray[WorkIndex];
+				if (!pSocket)
+					continue;
+
+				switch (pOvl->Offset)
 				{
-				case	OVL_RECEIVE:
-					EnterCriticalSection( &g_critical );
-					if( !nbytes ) {
-						TRACE("AISocket Closed By 0 Byte Notify\n" );
-						pSocket->CloseProcess();
-						pIocport->RidIOCPSocket( pSocket->GetSocketID(), pSocket );
-//						pIocport->PutOldSid( pSocket->GetSocketID() );		// 클라이언트 소켓은 Sid 관리하지 않음
-						LeaveCriticalSection( &g_critical );
+					case OVL_RECEIVE:
+						EnterCriticalSection(&g_critical);
+						if (!nbytes)
+						{
+							TRACE("AISocket Closed By 0 Byte Notify\n");
+							pSocket->CloseProcess();
+							pIocport->RidIOCPSocket(pSocket->GetSocketID(), pSocket);
+	//						pIocport->PutOldSid( pSocket->GetSocketID() );		// 클라이언트 소켓은 Sid 관리하지 않음
+							LeaveCriticalSection(&g_critical);
+							break;
+						}
+
+						pSocket->m_nPending = 0;
+						pSocket->m_nWouldblock = 0;
+
+						pSocket->ReceivedData((int) nbytes);
+						pSocket->Receive();
+
+						LeaveCriticalSection(&g_critical);
 						break;
-					}
 
-					pSocket->m_nPending = 0;
-					pSocket->m_nWouldblock = 0;
+					case OVL_SEND:
+						pSocket->m_nPending = 0;
+						pSocket->m_nWouldblock = 0;
+						break;
 
-					pSocket->ReceivedData((int)nbytes);
-					pSocket->Receive();
+					case OVL_CLOSE:
+						EnterCriticalSection(&g_critical);
 
-					LeaveCriticalSection( &g_critical );
-					break;
-				case	OVL_SEND:
-					pSocket->m_nPending = 0;
-					pSocket->m_nWouldblock = 0;
+						TRACE("AISocket Closed By Close()\n");
+						pSocket->CloseProcess();
+						pIocport->RidIOCPSocket(pSocket->GetSocketID(), pSocket);
+	//					pIocport->PutOldSid( pSocket->GetSocketID() );
 
-					break;
-				case	OVL_CLOSE:
-					EnterCriticalSection( &g_critical );
-					
-					TRACE("AISocket Closed By Close()\n" );
-					pSocket->CloseProcess();
-					pIocport->RidIOCPSocket( pSocket->GetSocketID(), pSocket );
-//					pIocport->PutOldSid( pSocket->GetSocketID() );
-
-					LeaveCriticalSection( &g_critical );
-					break;
-				default:
-					break;
+						LeaveCriticalSection(&g_critical);
+						break;
 				}
 			}
-			else {
-				if( pOvl ) {
-					if( WorkIndex > (DWORD)pIocport->m_ClientSockSize )
-						goto loop_pass;
-					pSocket = (CIOCPSocket2 *)pIocport->m_ClientSockArray[WorkIndex];
-					if( !pSocket )
-						goto loop_pass;
+			else if (pOvl)
+			{
+				if (WorkIndex > (DWORD) pIocport->m_ClientSockSize)
+					continue;
 
-					EnterCriticalSection( &g_critical );
+				pSocket = (CIOCPSocket2*) pIocport->m_ClientSockArray[WorkIndex];
+				if (!pSocket)
+					continue;
 
-					TRACE("AISocket Closed By Abnormal Termination\n" );
-					pSocket->CloseProcess();
-					pIocport->RidIOCPSocket( pSocket->GetSocketID(), pSocket );
-					
-					LeaveCriticalSection( &g_critical );
-				}
+				EnterCriticalSection(&g_critical);
+
+				TRACE("AISocket Closed By Abnormal Termination\n");
+				pSocket->CloseProcess();
+				pIocport->RidIOCPSocket(pSocket->GetSocketID(), pSocket);
+
+				LeaveCriticalSection(&g_critical);
 			}
 		}
-
-loop_pass:
-		continue;
 	}
 
 	return 1;
@@ -298,9 +295,9 @@ loop_pass:
 
 CIOCPort::CIOCPort()
 {
-	m_SockArray = NULL;
-	m_SockArrayInActive = NULL;
-	m_ClientSockArray = NULL;
+	m_SockArray = nullptr;
+	m_SockArrayInActive = nullptr;
+	m_ClientSockArray = nullptr;
 
 	m_SocketArraySize = 0;
 	m_ClientSockSize = 0;
@@ -310,7 +307,7 @@ CIOCPort::CIOCPort()
 
 CIOCPort::~CIOCPort()
 {
-	DeleteCriticalSection( &g_critical );
+	DeleteCriticalSection(&g_critical);
 	DeleteAllArray();
 
 	WSACleanup();
@@ -318,31 +315,37 @@ CIOCPort::~CIOCPort()
 
 void CIOCPort::DeleteAllArray()
 {
-	for( int i=0; i<m_SocketArraySize; i++ ) {
-		if ( m_SockArray[i] != NULL ) {
+	for (int i = 0; i < m_SocketArraySize; i++)
+	{
+		if (m_SockArray[i] != nullptr)
+		{
 			delete m_SockArray[i];
-			m_SockArray[i] = NULL;
+			m_SockArray[i] = nullptr;
 		}
 	}
 	delete[] m_SockArray;
 
-	for ( int i=0; i < m_SocketArraySize; i++ ) {
-		if ( m_SockArrayInActive[i] != NULL ) {
+	for (int i = 0; i < m_SocketArraySize; i++)
+	{
+		if (m_SockArrayInActive[i] != nullptr)
+		{
 			delete m_SockArrayInActive[i];
-			m_SockArrayInActive[i] = NULL;
+			m_SockArrayInActive[i] = nullptr;
 		}
 	}
 	delete[] m_SockArrayInActive;
 
-	for ( int i=0; i < m_ClientSockSize; i++ ) {
-		if ( m_ClientSockArray[i] != NULL ) {
+	for (int i = 0; i < m_ClientSockSize; i++)
+	{
+		if (m_ClientSockArray[i] != nullptr)
+		{
 			delete m_ClientSockArray[i];
-			m_ClientSockArray[i] = NULL;
+			m_ClientSockArray[i] = nullptr;
 		}
 	}
 	delete[] m_ClientSockArray;
 
-	while( !m_SidList.empty() )
+	while (!m_SidList.empty())
 		m_SidList.pop_back();
 }
 
@@ -350,35 +353,30 @@ void CIOCPort::Init(int serversocksize, int clientsocksize, int workernum)
 {
 	m_SocketArraySize = serversocksize;
 	m_ClientSockSize = clientsocksize;
-	
+
 	m_SockArray = new CIOCPSocket2* [serversocksize];
-	for(int i = 0; i<serversocksize; i++ ) {
-		m_SockArray[i] = NULL;
-	}
+	for (int i = 0; i < serversocksize; i++)
+		m_SockArray[i] = nullptr;
 
 	m_SockArrayInActive = new CIOCPSocket2* [serversocksize];
-	for(int i = 0; i<serversocksize; i++ ) {
-		m_SockArrayInActive[i] = NULL;
-	}
+	for (int i = 0; i < serversocksize; i++)
+		m_SockArrayInActive[i] = nullptr;
 
 	m_ClientSockArray = new CIOCPSocket2* [clientsocksize];		// 해당 서버가 클라이언트로서 다른 컴터에 붙는 소켓수
-	for( int i=0; i<clientsocksize; i++ ) {
-		m_ClientSockArray[i] = NULL;
-	}
+	for (int i = 0; i < clientsocksize; i++)
+		m_ClientSockArray[i] = nullptr;
 
-	for( int i = 0; i<serversocksize; i++)
+	for (int i = 0; i < serversocksize; i++)
 		m_SidList.push_back(i);
 
-	InitializeCriticalSection( &g_critical );
+	InitializeCriticalSection(&g_critical);
 
 	CreateReceiveWorkerThread(workernum);
 	CreateClientWorkerThread();
 
-	WORD wVersionRequested;
 	WSADATA wsaData;
-	int err;
-	wVersionRequested = MAKEWORD( 2, 2 );
-	err = WSAStartup( wVersionRequested, &wsaData ); 
+	WORD wVersionRequested = MAKEWORD(2, 2);
+	(void) WSAStartup(wVersionRequested, &wsaData);
 
 }
 
@@ -387,10 +385,10 @@ BOOL CIOCPort::Listen(int port)
 	int opt;
 	struct sockaddr_in addr;
 	struct linger lingerOpt;
-	
+
 	// Open a TCP socket (an Internet stream socket).
 	//
-	if ( ( m_ListenSocket = socket(AF_INET, SOCK_STREAM, 0) ) < 0 ) 
+	if ((m_ListenSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		TRACE("Can't open stream socket\n");
 		return FALSE;
@@ -398,24 +396,24 @@ BOOL CIOCPort::Listen(int port)
 
 	// Bind our local address so that the client can send to us. 
 	//
-	memset((void *)&addr, 0, sizeof(addr));
-	addr.sin_family			= AF_INET;
-	addr.sin_addr.s_addr	= htonl(INADDR_ANY);
-	addr.sin_port			= htons(port);
-	
+	memset((void*) &addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	addr.sin_port = htons(port);
+
 	// added in an attempt to allow rebinding to the port 
 	//
 	opt = 1;
-	setsockopt( m_ListenSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt));
+	setsockopt(m_ListenSocket, SOL_SOCKET, SO_REUSEADDR, (char*) &opt, sizeof(opt));
 
 	// Linger off -> close socket immediately regardless of existance of data 
 	//
 	lingerOpt.l_onoff = 0;
 	lingerOpt.l_linger = 0;
 
-	setsockopt(m_ListenSocket, SOL_SOCKET, SO_LINGER, (char *)&lingerOpt, sizeof(lingerOpt));
-	
-	if ( bind(m_ListenSocket, (struct sockaddr *)&addr, sizeof(addr)) < 0 )
+	setsockopt(m_ListenSocket, SOL_SOCKET, SO_LINGER, (char*) &lingerOpt, sizeof(lingerOpt));
+
+	if (bind(m_ListenSocket, (struct sockaddr*) &addr, sizeof(addr)) < 0)
 	{
 		TRACE("Can't bind local address\n");
 		return FALSE;
@@ -423,37 +421,38 @@ BOOL CIOCPort::Listen(int port)
 
 	int socklen, len, err;
 
-	socklen = SOCKET_BUFF_SIZE*4;
-	setsockopt( m_ListenSocket, SOL_SOCKET, SO_RCVBUF, (char*)&socklen, sizeof(socklen));
-	
+	socklen = SOCKET_BUFF_SIZE * 4;
+	setsockopt(m_ListenSocket, SOL_SOCKET, SO_RCVBUF, (char*) &socklen, sizeof(socklen));
+
 	len = sizeof(socklen);
-	err = getsockopt( m_ListenSocket, SOL_SOCKET, SO_RCVBUF, (char*)&socklen, &len);
+	err = getsockopt(m_ListenSocket, SOL_SOCKET, SO_RCVBUF, (char*) &socklen, &len);
 	if (err == SOCKET_ERROR)
 	{
 		TRACE("FAIL : Set Socket RecvBuf of port(%d) as %d\n", port, socklen);
 		return FALSE;
 	}
 
-	socklen = SOCKET_BUFF_SIZE*4;
-	setsockopt( m_ListenSocket, SOL_SOCKET, SO_SNDBUF, (char*)&socklen, sizeof(socklen));
+	socklen = SOCKET_BUFF_SIZE * 4;
+	setsockopt(m_ListenSocket, SOL_SOCKET, SO_SNDBUF, (char*) &socklen, sizeof(socklen));
 	len = sizeof(socklen);
-	err = getsockopt( m_ListenSocket, SOL_SOCKET, SO_SNDBUF, (char*)&socklen, &len);
+	err = getsockopt(m_ListenSocket, SOL_SOCKET, SO_SNDBUF, (char*) &socklen, &len);
 
 	if (err == SOCKET_ERROR)
 	{
 		TRACE("FAIL: Set Socket SendBuf of port(%d) as %d\n", port, socklen);
 		return FALSE;
 	}
-	
+
 	listen(m_ListenSocket, 5);
 
 	m_hListenEvent = WSACreateEvent();
-	if( m_hListenEvent == WSA_INVALID_EVENT ) {
+	if (m_hListenEvent == WSA_INVALID_EVENT)
+	{
 		err = WSAGetLastError();
 		TRACE("Listen Event Create Fail!! %d \n", err);
 		return FALSE;
 	}
-	WSAEventSelect( m_ListenSocket, m_hListenEvent, FD_ACCEPT);
+	WSAEventSelect(m_ListenSocket, m_hListenEvent, FD_ACCEPT);
 
 	TRACE("Port (%05d) initialzed\n", port);
 
@@ -462,22 +461,24 @@ BOOL CIOCPort::Listen(int port)
 	return TRUE;
 }
 
-BOOL CIOCPort::Associate(CIOCPSocket2 *pIocpSock, HANDLE hPort)
+BOOL CIOCPort::Associate(CIOCPSocket2* pIocpSock, HANDLE hPort)
 {
-	if (!hPort) {
+	if (!hPort)
+	{
 		TRACE("ERROR : No Completion Port\n");
 		return FALSE;
 	}
-	
+
 	HANDLE hTemp;
-	hTemp = CreateIoCompletionPort( pIocpSock->GetSocketHandle(), hPort, (DWORD)pIocpSock->GetSocketID(), m_dwConcurrency);
-	
+	hTemp = CreateIoCompletionPort(pIocpSock->GetSocketHandle(), hPort, (DWORD) pIocpSock->GetSocketID(), m_dwConcurrency);
+
 	return (hTemp == hPort);
 }
 
 int CIOCPort::GetNewSid()
 {
-	if( m_SidList.empty() ) {
+	if (m_SidList.empty())
+	{
 		TRACE("SID List Is Empty !!\n");
 		return -1;
 	}
@@ -490,15 +491,17 @@ int CIOCPort::GetNewSid()
 
 void CIOCPort::PutOldSid(int sid)
 {
-	if( sid < 0 || sid > m_SocketArraySize ) {
+	if (sid < 0
+		|| sid > m_SocketArraySize)
+	{
 		TRACE("recycle sid invalid value : %d\n", sid);
 		return;
 	}
 
-	auto Iter = std::find( m_SidList.begin(), m_SidList.end(), sid );
-	if( Iter != m_SidList.end() )
+	auto Iter = std::find(m_SidList.begin(), m_SidList.end(), sid);
+	if (Iter != m_SidList.end())
 		return;
-	
+
 	m_SidList.push_back(sid);
 }
 
@@ -506,115 +509,127 @@ void CIOCPort::CreateAcceptThread()
 {
 	DWORD id;
 
-	m_hAcceptThread = ::CreateThread( NULL, 0, AcceptThread, (LPVOID)this, CREATE_SUSPENDED, &id);
+	m_hAcceptThread = ::CreateThread(nullptr, 0, AcceptThread, this, CREATE_SUSPENDED, &id);
 
-	::SetThreadPriority(m_hAcceptThread,THREAD_PRIORITY_ABOVE_NORMAL);
+	::SetThreadPriority(m_hAcceptThread, THREAD_PRIORITY_ABOVE_NORMAL);
 }
 
 void CIOCPort::CreateReceiveWorkerThread(int workernum)
 {
-	SYSTEM_INFO		SystemInfo;
-
-	HANDLE			hWorkerThread[MAX_USER];
-	DWORD			WorkerId[MAX_USER];
+	SYSTEM_INFO SystemInfo;
 
 	//
 	// try to get timing more accurate... Avoid context
 	// switch that could occur when threads are released
 	//
-	SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
 	//
 	// Figure out how many processors we have to size the minimum
 	// number of worker threads and concurrency
 	//
-	GetSystemInfo (&SystemInfo);
-	
-	if( !workernum )
+	GetSystemInfo(&SystemInfo);
+
+	if (!workernum)
 		m_dwNumberOfWorkers = 2 * SystemInfo.dwNumberOfProcessors;
 	else
 		m_dwNumberOfWorkers = workernum;
 	m_dwConcurrency = SystemInfo.dwNumberOfProcessors;
-	
-	m_hServerIOCPort = CreateIoCompletionPort( INVALID_HANDLE_VALUE, NULL, 0, 10 );
-	
-	for(int i = 0; i < (int)m_dwNumberOfWorkers; i++)
+
+	m_hServerIOCPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 10);
+
+	for (int i = 0; i < (int) m_dwNumberOfWorkers; i++)
 	{
-		hWorkerThread[i] = ::CreateThread(
-										NULL,
-										0,
-										ReceiveWorkerThread,
-										(LPVOID)this,
-										0,
-										&WorkerId[i]
-										);
+		HANDLE hWorkerThread;
+		DWORD WorkerId;
+
+		hWorkerThread = ::CreateThread(
+			nullptr,
+			0,
+			ReceiveWorkerThread,
+			this,
+			0,
+			&WorkerId);
+
+		if (hWorkerThread != nullptr)
+			CloseHandle(hWorkerThread);
 	}
 }
 
 void CIOCPort::CreateClientWorkerThread()
 {
-	HANDLE			hWorkerThread[MAX_USER];
-	DWORD			WorkerId[MAX_USER];
+	m_hClientIOCPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 10);
 
-	m_hClientIOCPort = CreateIoCompletionPort( INVALID_HANDLE_VALUE, NULL, 0, 10 );
-	
-	for(int i=0; i<(int)m_dwConcurrency; i++) {
-		hWorkerThread[i] = ::CreateThread(
-										NULL,
-										0,
-										ClientWorkerThread,
-										(LPVOID)this,
-										0,
-										&WorkerId[i]
-										);
+	for (int i = 0; i < (int) m_dwConcurrency; i++)
+	{
+		HANDLE hWorkerThread;
+		DWORD WorkerId;
+
+		hWorkerThread = ::CreateThread(
+			nullptr,
+			0,
+			ClientWorkerThread,
+			this,
+			0,
+			&WorkerId);
+
+		if (hWorkerThread != nullptr)
+			CloseHandle(hWorkerThread);
 	}
 }
 
 CIOCPSocket2* CIOCPort::GetIOCPSocket(int index)
 {
-	CIOCPSocket2 *pIOCPSock = NULL;
+	if (index > m_SocketArraySize)
+	{
+		TRACE("InActiveSocket Array Overflow[%d]\n", index);
+		return nullptr;
+	}
 
-	if( index > m_SocketArraySize ) {
-		TRACE("InActiveSocket Array Overflow[%d]\n", index );
-		return NULL;
+	if (!m_SockArrayInActive[index])
+	{
+		TRACE("InActiveSocket Array Invalid[%d]\n", index);
+		return nullptr;
 	}
-	if ( !m_SockArrayInActive[index] ) {
-		TRACE("InActiveSocket Array Invalid[%d]\n", index );
-		return NULL;
-	}
-	else
-		pIOCPSock = (CIOCPSocket2 *)m_SockArrayInActive[index];
+
+	CIOCPSocket2* pIOCPSock = m_SockArrayInActive[index];
 
 	m_SockArray[index] = pIOCPSock;
-	m_SockArrayInActive[index] = NULL;
+	m_SockArrayInActive[index] = nullptr;
 
-	pIOCPSock->SetSocketID( index );
+	pIOCPSock->SetSocketID(index);
 
 	return pIOCPSock;
 }
 
-void CIOCPort::RidIOCPSocket(int index, CIOCPSocket2 *pSock)
+void CIOCPort::RidIOCPSocket(int index, CIOCPSocket2* pSock)
 {
-	if( index < 0 || (pSock->GetSockType() == TYPE_ACCEPT && index >= m_SocketArraySize) || (pSock->GetSockType() == TYPE_CONNECT && index >= m_ClientSockSize) ) {
+	if (index < 0
+		|| (pSock->GetSockType() == TYPE_ACCEPT && index >= m_SocketArraySize)
+		|| (pSock->GetSockType() == TYPE_CONNECT && index >= m_ClientSockSize))
+	{
 		TRACE("Invalid Sock index - RidIOCPSocket\n");
 		return;
 	}
-	if( pSock->GetSockType() == TYPE_ACCEPT ) {
-		m_SockArray[index] = NULL;
+
+	if (pSock->GetSockType() == TYPE_ACCEPT)
+	{
+		m_SockArray[index] = nullptr;
 		m_SockArrayInActive[index] = pSock;
 	}
-	else if( pSock->GetSockType() == TYPE_CONNECT ){
-		m_ClientSockArray[index] = NULL;
+	else if (pSock->GetSockType() == TYPE_CONNECT)
+	{
+		m_ClientSockArray[index] = nullptr;
 	}
 }
 
 int CIOCPort::GetClientSid()
 {
-	for(int i=0; i<m_ClientSockSize; i++) {
-		if( m_ClientSockArray[i] == NULL ) {
+	for (int i = 0; i < m_ClientSockSize; i++)
+	{
+		if (m_ClientSockArray[i] == nullptr)
 			return i;
-		}
 	}
-		
+
 	return -1;
 }

@@ -10,16 +10,14 @@
 #endif // _MSC_VER > 1000
 
 class CVersionManagerDlg;
-class CDBProcess  
+class CDBProcess
 {
 public:
-	BOOL IsCurrentUser( const char* accountid, char* strServerIP, int &serverno );
-	void ReConnectODBC(CDatabase *m_db, const char *strdb, const char *strname, const char *strpwd);
-	BOOL DeleteVersion( const char* filename );
-	BOOL InsertVersion( int version, const char* filename, const char* compname, int historyversion );
-	BOOL InitDatabase( char* strconnection );
-	int MgameLogin( const char* id, const char* pwd );
-	int AccountLogin( const char* id, const char* pwd );
+	BOOL IsCurrentUser(const char* accountid, char* strServerIP, int& serverno);
+	void ReConnectODBC(CDatabase* m_db, const char* strdb, const char* strname, const char* strpwd);
+	BOOL InitDatabase(char* strconnection);
+	int MgameLogin(const char* id, const char* pwd);
+	int AccountLogin(const char* id, const char* pwd);
 	BOOL LoadVersionList();
 	BOOL LoadUserCountList();
 

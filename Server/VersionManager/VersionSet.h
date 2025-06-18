@@ -13,7 +13,7 @@
 class CVersionSet : public CRecordset
 {
 public:
-	CVersionSet(CDatabase* pDatabase = NULL);
+	CVersionSet(CDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CVersionSet)
 
 // Field/Param Data
@@ -27,7 +27,7 @@ public:
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVersionSet)
-	public:
+public:
 	virtual CString GetDefaultConnect();    // Default connection string
 	virtual CString GetDefaultSQL();    // Default SQL for Recordset
 	virtual void DoFieldExchange(CFieldExchange* pFX);  // RFX support

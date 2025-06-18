@@ -27,8 +27,8 @@ class CVersionManagerDlg : public CDialog
 // Construction
 public:
 	BOOL GetInfoFromIni();
-	
-	CVersionManagerDlg(CWnd* pParent = NULL);	// standard constructor
+
+	CVersionManagerDlg(CWnd* pParent = nullptr);	// standard constructor
 
 	static CIOCPort	m_Iocport;
 
@@ -56,10 +56,10 @@ public:
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVersionManagerDlg)
-	public:
+public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL DestroyWindow();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	//}}AFX_VIRTUAL
 

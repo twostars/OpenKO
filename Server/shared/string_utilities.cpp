@@ -44,7 +44,7 @@ void strtolower(std::string& str)
 {
 	for (size_t i = 0; i < str.length(); ++i)
 		str[i] = (char) tolower(str[i]);
-};
+}
 
 void strtoupper(std::string& str)
 {

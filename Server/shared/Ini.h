@@ -7,13 +7,20 @@
 class CIni
 {
 protected:
+	struct ci_less
+	{
+		inline bool operator() (const std::string& str1, const std::string& str2) const {
+			return _stricmp(str1.c_str(), str2.c_str()) < 0;
+		}
+	};
+
 	std::string m_szPath;
 
 	// Defines key/value pairs within sections
-	using ConfigEntryMap = std::map<std::string, std::string>;
+	using ConfigEntryMap = std::map<std::string, std::string, ci_less>;
 
 	// Defines the sections containing the key/value pairs
-	using ConfigMap = std::map<std::string, ConfigEntryMap>;
+	using ConfigMap = std::map<std::string, ConfigEntryMap, ci_less>;
 
 	ConfigMap m_configMap;
 

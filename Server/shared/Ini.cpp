@@ -62,8 +62,8 @@ bool CIni::Load(
 			if (bSkipNextSection)
 				continue;
 
-			std::string key = line.substr(0, keySeparatorPos),
-				value = line.substr(keySeparatorPos + 1);
+			std::string key = line.substr(0, keySeparatorPos);
+			std::string value = line.substr(keySeparatorPos + 1);
 
 			// Clean up key/value to allow for 'key = value'
 			rtrim(key);   /* remove trailing whitespace from keys */

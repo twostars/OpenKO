@@ -19,7 +19,7 @@ class CUser;
 class MAP;
 //class CParty;
 
-class CGameSocket  : public CIOCPSocket2
+class CGameSocket : public CIOCPSocket2
 {
 public:
 	CServerDlg* m_pMain;
@@ -30,7 +30,7 @@ public:
 	virtual ~CGameSocket();
 
 	void Initialize();
-	void Parsing( int length, char* pData );	// recv data parsing
+	void Parsing(int length, char* pData);	// recv data parsing
 	void CloseProcess();
 	void RecvServerConnect(char* pBuf);
 

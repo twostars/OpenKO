@@ -19,19 +19,19 @@ class CServerDlg;
 
 typedef std::list <_USERLOG*>		UserLogList;
 
-class CUser  
+class CUser
 {
 public:
 	CServerDlg* m_pMain;
 
-	CIOCPort* m_pIocport;	
+	CIOCPort* m_pIocport;
 	CMagicProcess m_MagicProcess;
 
 	UserLogList	m_UserLogList;
 
 	// 필요한 정보 변수만 선언,,,
 	// 캐릭터 기본 속성
-	char m_strUserID[MAX_ID_SIZE+1];	// 캐릭터의 이름
+	char m_strUserID[MAX_ID_SIZE + 1];	// 캐릭터의 이름
 	int		m_iUserId;					// User의 번호
 	BYTE	m_bLive;					// 죽었니? 살았니?
 
@@ -76,7 +76,7 @@ public:
 	float	m_fAvoidrate;				// 방어 민첩률
 	short	m_sAC;						// 방어율
 	short   m_sItemAC;                  // 아이템 방어률
-	
+
 
 	short  m_sSurroundNpcNumber[8];		// Npc 다굴~
 
@@ -102,18 +102,18 @@ public:
 	void Dead(int tid, int nDamage);					// user dead
 	void SetExp(int iNpcExp, int iLoyalty, int iLevel);		// user exp
 	void SetPartyExp(int iNpcExp, int iLoyalty, int iPartyLevel, int iMan);		// user exp
-	short GetDamage(int tid, int magicid=0);
+	short GetDamage(int tid, int magicid = 0);
 	BYTE GetHitRate(float rate);
 	int IsSurroundCheck(float fX, float fY, float fZ, int NpcID);
 	void HealMagic();
 	void HealAreaCheck(int rx, int rz);
 
-	void SendAttackSuccess(int tuid, BYTE result, short sDamage, int nHP=0, short sAttack_type=1);  // 공격 성공
-	void SendMagicAttackResult(int tuid, BYTE result, short sDamage, short sHP=0);  // 공격 성공
+	void SendAttackSuccess(int tuid, BYTE result, short sDamage, int nHP = 0, short sAttack_type = 1);  // 공격 성공
+	void SendMagicAttackResult(int tuid, BYTE result, short sDamage, short sHP = 0);  // 공격 성공
 	void SendHP();												// user의 HP
 	void SendExp(int iExp, int iLoyalty, int tType = 1);
-	void SendSystemMsg(TCHAR *pMsg, BYTE type, int nWho);
-	void SendAll(TCHAR *pBuf, int nLength);						// game server로 패킷 전송...
+	void SendSystemMsg(TCHAR* pMsg, BYTE type, int nWho);
+	void SendAll(TCHAR* pBuf, int nLength);						// game server로 패킷 전송...
 	BOOL IsOpIDCheck(char* szName);
 
 	CUser();

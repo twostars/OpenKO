@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-BOOL g_bNpcExit	= FALSE;
+BOOL g_bNpcExit = FALSE;
 ZoneArray			g_arZone;
 
 CRITICAL_SECTION g_User_critical;
@@ -47,18 +47,17 @@ CRITICAL_SECTION g_LogFileWrite;
 // CAboutDlg dialog used for App About
 
 /*
-     ** Repent AI Server 작업시 참고 사항 **
+	 ** Repent AI Server 작업시 참고 사항 **
 	1. 3개의 함수 추가
-		int GetSpeed(BYTE bySpeed); 
-		int GetAttackSpeed(BYTE bySpeed); 
-		int GetCatsSpeed(BYTE bySpeed); 
+		int GetSpeed(BYTE bySpeed);
+		int GetAttackSpeed(BYTE bySpeed);
+		int GetCatsSpeed(BYTE bySpeed);
 	2. Repent에  맞개 아래의 함수 수정
 		CreateNpcThread();
 		GetMonsterTableData();
 		GetNpcTableData();
 		GetNpcItemTable();
 */
-
 
 class CAboutDlg : public CDialog
 {
@@ -70,9 +69,9 @@ public:
 	enum { IDD = IDD_ABOUTBOX };
 	//}}AFX_DATA
 
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CAboutDlg)
-	protected:
+// ClassWizard generated virtual function overrides
+//{{AFX_VIRTUAL(CAboutDlg)
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
@@ -105,7 +104,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CServerDlg dialog
 
-CServerDlg::CServerDlg(CWnd* pParent /*=NULL*/)
+CServerDlg::CServerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CServerDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CServerDlg)
@@ -113,8 +112,8 @@ CServerDlg::CServerDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	
-	m_iYear = 0; 
+
+	m_iYear = 0;
 	m_iMonth = 0;
 	m_iDate = 0;
 	m_iHour = 0;
@@ -126,10 +125,10 @@ CServerDlg::CServerDlg(CWnd* pParent /*=NULL*/)
 	m_byBattleEvent = BATTLEZONE_CLOSE;
 	m_sKillKarusNpc = 0;
 	m_sKillElmoNpc = 0;
-	m_pZoneEventThread = NULL;
+	m_pZoneEventThread = nullptr;
 	m_byTestMode = 0;
-	//m_ppUserActive = NULL;
-	//m_ppUserInActive = NULL;
+	//m_ppUserActive = nullptr;
+	//m_ppUserInActive = nullptr;
 }
 
 void CServerDlg::DoDataExchange(CDataExchange* pDX)
@@ -148,7 +147,7 @@ BEGIN_MESSAGE_MAP(CServerDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
-	ON_MESSAGE( WM_GAMESERVER_LOGIN, OnGameServerLogin )
+	ON_MESSAGE(WM_GAMESERVER_LOGIN, OnGameServerLogin)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -170,47 +169,50 @@ BOOL CServerDlg::OnInitDialog()
 	//----------------------------------------------------------------------
 	//	Sets a random number starting point.
 	//----------------------------------------------------------------------
-	SetTimer( CHECK_ALIVE, 10000, NULL );
-	srand( (unsigned)time(NULL) );
-	for(int i = 0; i < 10; i++) myrand(1, 10000);	// don't delete
+	SetTimer(CHECK_ALIVE, 10000, nullptr);
+
+	srand((unsigned) time(nullptr));
+	for (int i = 0; i < 10; i++)
+		myrand(1, 10000);	// don't delete
+
 	// Compress Init
-	memset( m_CompBuf, NULL, 10240 );		// 압축할 데이터를 모으는 버퍼
-	m_iCompIndex = 0;						// 압축할 데이터의 길이
-	m_CompCount = 0;						// 압축할 데이터의 개수
-	InitializeCriticalSection( &g_User_critical );
-	InitializeCriticalSection( &g_LogFileWrite );
+	memset(m_CompBuf, 0, sizeof(m_CompBuf));	// 압축할 데이터를 모으는 버퍼
+	m_iCompIndex = 0;							// 압축할 데이터의 길이
+	m_CompCount = 0;							// 압축할 데이터의 개수
+	InitializeCriticalSection(&g_User_critical);
+	InitializeCriticalSection(&g_LogFileWrite);
 	m_sSocketCount = 0;
 	m_sErrorSocketCount = 0;
 	m_sMapEventNpc = 0;
 	m_sReSocketCount = 0;
 	m_fReConnectStart = 0.0f;
-	m_bFirstServerFlag = FALSE;			
+	m_bFirstServerFlag = FALSE;
 	m_byTestMode = NOW_TEST_MODE;
 
 	// User Point Init
-	for(int i=0; i<MAX_USER; i++)
-		m_pUser[i] = NULL;
+	for (int i = 0; i < MAX_USER; i++)
+		m_pUser[i] = nullptr;
 
 	// Server Start
 	CString logstr;
 	CTime time = CTime::GetCurrentTime();
-	logstr.Format("[AI ServerStart - %d-%d-%d, %d:%d]", time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute() );
-	m_StatusList.AddString( logstr );
-	logstr.Format("[AI ServerStart - %d-%d-%d, %d:%d]\r\n", time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute() );
+	logstr.Format("[AI ServerStart - %d-%d-%d, %d:%d]", time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute());
+	m_StatusList.AddString(logstr);
+	logstr.Format("[AI ServerStart - %d-%d-%d, %d:%d]\r\n", time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute());
 	TRACE(logstr);
-	LogFileWrite( logstr );
+	LogFileWrite(logstr);
 
 	//----------------------------------------------------------------------
 	//	Logfile initialize
 	//----------------------------------------------------------------------
 	char strLogFile[50];		memset(strLogFile, 0x00, 50);
 	wsprintf(strLogFile, "UserLog-%d-%d-%d.txt", time.GetYear(), time.GetMonth(), time.GetDay());
-	m_UserLogFile.Open( strLogFile, CFile::modeWrite | CFile::modeCreate | CFile::modeNoTruncate | CFile::shareDenyNone );
+	m_UserLogFile.Open(strLogFile, CFile::modeWrite | CFile::modeCreate | CFile::modeNoTruncate | CFile::shareDenyNone);
 	m_UserLogFile.SeekToEnd();
 
 	memset(strLogFile, 0x00, 50);
 	wsprintf(strLogFile, "ItemLog-%d-%d-%d.txt", time.GetYear(), time.GetMonth(), time.GetDay());
-	m_ItemLogFile.Open( strLogFile, CFile::modeWrite | CFile::modeCreate | CFile::modeNoTruncate | CFile::shareDenyNone );
+	m_ItemLogFile.Open(strLogFile, CFile::modeWrite | CFile::modeCreate | CFile::modeNoTruncate | CFile::shareDenyNone);
 	m_ItemLogFile.SeekToEnd();
 
 
@@ -219,10 +221,14 @@ BOOL CServerDlg::OnInitDialog()
 	//----------------------------------------------------------------------
 	GetServerInfoIni();
 
-	if(m_byZone == UNIFY_ZONE)	m_strStatus.Format("UNIFY_ZONE 서버의 현재 상태");
-	else if(m_byZone == KARUS_ZONE)	m_strStatus.Format("KARUS 서버의 현재 상태");
-	else if(m_byZone == ELMORAD_ZONE) m_strStatus.Format("ELMORAD 서버의 현재 상태");
-	else if(m_byZone == BATTLE_ZONE) m_strStatus.Format("BATTLE 서버의 현재 상태");
+	if (m_byZone == UNIFY_ZONE)
+		m_strStatus.Format("UNIFY_ZONE 서버의 현재 상태");
+	else if (m_byZone == KARUS_ZONE)
+		m_strStatus.Format("KARUS 서버의 현재 상태");
+	else if (m_byZone == ELMORAD_ZONE)
+		m_strStatus.Format("ELMORAD 서버의 현재 상태");
+	else if (m_byZone == BATTLE_ZONE)
+		m_strStatus.Format("BATTLE 서버의 현재 상태");
 
 	//----------------------------------------------------------------------
 	//	DB part initialize
@@ -232,61 +238,73 @@ BOOL CServerDlg::OnInitDialog()
 	//----------------------------------------------------------------------
 	//	Communication Part Initialize ...
 	//----------------------------------------------------------------------
-	m_Iocport.Init(MAX_SOCKET,1, 1);
+	m_Iocport.Init(MAX_SOCKET, 1, 1);
 
-	for(int i=0; i<MAX_SOCKET; i++) {
+	for (int i = 0; i < MAX_SOCKET; i++)
 		m_Iocport.m_SockArrayInActive[i] = new CGameSocket;
-	}
 
 	//----------------------------------------------------------------------
 	//	Load Magic Table
 	//----------------------------------------------------------------------
-	if(!GetMagicTableData())	{
-		EndDialog(IDCANCEL);
-		return FALSE;
-	}	
-	if(!GetMagicType1Data())	{
+	if (!GetMagicTableData())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
 	}
-	if(!GetMagicType2Data())	{
-		EndDialog(IDCANCEL);
-		return FALSE;
-	}
-	if(!GetMagicType3Data())	{
-		EndDialog(IDCANCEL);
-		return FALSE;
-	}
-	if(!GetMagicType4Data())	{
-		EndDialog(IDCANCEL);
-		return FALSE;
-	}	
 
+	if (!GetMagicType1Data())
+	{
+		EndDialog(IDCANCEL);
+		return FALSE;
+	}
+
+	if (!GetMagicType2Data())
+	{
+		EndDialog(IDCANCEL);
+		return FALSE;
+	}
+
+	if (!GetMagicType3Data())
+	{
+		EndDialog(IDCANCEL);
+		return FALSE;
+	}
+
+	if (!GetMagicType4Data())
+	{
+		EndDialog(IDCANCEL);
+		return FALSE;
+	}
 
 	//----------------------------------------------------------------------
 	//	Load NPC Item Table
 	//----------------------------------------------------------------------
-	if(!GetNpcItemTable())	{
+	if (!GetNpcItemTable())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
 	}
 
-	if(!GetMakeWeaponItemTableData())	{
+	if (!GetMakeWeaponItemTableData())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
 	}
 
-	if(!GetMakeDefensiveItemTableData())	{
+	if (!GetMakeDefensiveItemTableData())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
 	}
 
-	if(!GetMakeGradeItemTableData())	{
+	if (!GetMakeGradeItemTableData())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
 	}
 
-	if(!GetMakeLareItemTableData())	{
+	if (!GetMakeLareItemTableData())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
 	}
@@ -294,16 +312,21 @@ BOOL CServerDlg::OnInitDialog()
 	//----------------------------------------------------------------------
 	//	Load NPC Chat Table
 	//----------------------------------------------------------------------
-	
+
 	//----------------------------------------------------------------------
 	//	Load NPC Data & Activate NPC
 	//----------------------------------------------------------------------
-	if(!GetMonsterTableData())	{		// Monster 특성치 테이블 Load
+
+	// Monster 특성치 테이블 Load
+	if (!GetMonsterTableData())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
 	}
 
-	if(!GetNpcTableData())	{			// NPC 특성치 테이블 Load
+	// NPC 특성치 테이블 Load
+	if (!GetNpcTableData())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
 	}
@@ -311,19 +334,19 @@ BOOL CServerDlg::OnInitDialog()
 	//----------------------------------------------------------------------
 	//	Load Zone & Event...
 	//----------------------------------------------------------------------
-	if( !MapFileLoad() )	{
+	if (!MapFileLoad())
 		AfxPostQuitMessage(0);
-	}
 
-	if(!CreateNpcThread())	{
+	if (!CreateNpcThread())
+	{
 		EndDialog(IDCANCEL);
 		return FALSE;
-	}	
+	}
 
 	//----------------------------------------------------------------------
 	//	Load NPC DN Table
 	//----------------------------------------------------------------------
-	
+
 	//----------------------------------------------------------------------
 	//	Start NPC THREAD
 	//----------------------------------------------------------------------
@@ -332,24 +355,25 @@ BOOL CServerDlg::OnInitDialog()
 	//----------------------------------------------------------------------
 	//	Start Accepting...
 	//----------------------------------------------------------------------
-	if( m_byZone == KARUS_ZONE || m_byZone == UNIFY_ZONE )	{
-		if ( !m_Iocport.Listen( AI_KARUS_SOCKET_PORT ) )	{
+	if (m_byZone == KARUS_ZONE
+		|| m_byZone == UNIFY_ZONE)
+	{
+		if (!m_Iocport.Listen(AI_KARUS_SOCKET_PORT))
 			AfxMessageBox("FAIL TO CREATE LISTEN STATE", MB_OK);
-		}
 	}
-	else if(m_byZone == ELMORAD_ZONE)	{
-		if ( !m_Iocport.Listen( AI_ELMO_SOCKET_PORT ) )	{
+	else if (m_byZone == ELMORAD_ZONE)
+	{
+		if (!m_Iocport.Listen(AI_ELMO_SOCKET_PORT))
 			AfxMessageBox("FAIL TO CREATE LISTEN STATE", MB_OK);
-		}
 	}
-	else if(m_byZone == BATTLE_ZONE)	{
-		if ( !m_Iocport.Listen( AI_BATTLE_SOCKET_PORT ) )	{
+	else if (m_byZone == BATTLE_ZONE)
+	{
+		if (!m_Iocport.Listen(AI_BATTLE_SOCKET_PORT))
 			AfxMessageBox("FAIL TO CREATE LISTEN STATE", MB_OK);
-		}
 	}
 
 	//::ResumeThread( m_Iocport.m_hAcceptThread );
-	UpdateData(FALSE);	
+	UpdateData(FALSE);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -370,7 +394,7 @@ void CServerDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CServerDlg::OnPaint() 
+void CServerDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -411,7 +435,7 @@ void CServerDlg::DefaultInit()
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != NULL)
+	if (pSysMenu != nullptr)
 	{
 		CString strAboutMenu;
 		strAboutMenu.LoadString(IDS_ABOUTBOX);
@@ -431,23 +455,27 @@ void CServerDlg::DefaultInit()
 //	Magic Table 을 읽는다.
 BOOL CServerDlg::GetMagicTableData()
 {
-	CMagicTableSet	MagicTableSet;
+	CMagicTableSet MagicTableSet;
 
-	if( !MagicTableSet.Open() ) {
+	if (!MagicTableSet.Open())
+	{
 		AfxMessageBox(_T("MagicTable Open Fail!"));
 		return FALSE;
 	}
-	if(MagicTableSet.IsBOF() || MagicTableSet.IsEOF()) {
+
+	if (MagicTableSet.IsBOF()
+		|| MagicTableSet.IsEOF())
+	{
 		AfxMessageBox(_T("MagicTable Empty!"));
 		return FALSE;
 	}
 
 	MagicTableSet.MoveFirst();
 
-	while( !MagicTableSet.IsEOF() )
+	while (!MagicTableSet.IsEOF())
 	{
 		_MAGIC_TABLE* pTableMagic = new _MAGIC_TABLE;
-				
+
 		pTableMagic->iNum = MagicTableSet.m_MagicNum;
 		pTableMagic->bMoral = MagicTableSet.m_Moral;
 		pTableMagic->bSkillLevel = MagicTableSet.m_SkillLevel;
@@ -464,12 +492,13 @@ BOOL CServerDlg::GetMagicTableData()
 		pTableMagic->sRange = MagicTableSet.m_Range;
 		pTableMagic->bEtc = MagicTableSet.m_Etc;
 
-		if( !m_MagictableArray.PutData(pTableMagic->iNum, pTableMagic) ) {
-			TRACE("MagicTable PutData Fail - %d\n", pTableMagic->iNum );
+		if (!m_MagictableArray.PutData(pTableMagic->iNum, pTableMagic))
+		{
+			TRACE("MagicTable PutData Fail - %d\n", pTableMagic->iNum);
 			delete pTableMagic;
-			pTableMagic = NULL;
+			pTableMagic = nullptr;
 		}
-		
+
 		MagicTableSet.MoveNext();
 	}
 
@@ -480,21 +509,25 @@ BOOL CServerDlg::GetMakeWeaponItemTableData()
 {
 	CMakeWeaponTableSet	MakeItemTableSet;
 
-	if( !MakeItemTableSet.Open() ) {
+	if (!MakeItemTableSet.Open())
+	{
 		AfxMessageBox(_T("GetMakeWeaponItemTableData Open Fail!"));
 		return FALSE;
 	}
-	if(MakeItemTableSet.IsBOF() || MakeItemTableSet.IsEOF()) {
+
+	if (MakeItemTableSet.IsBOF()
+		|| MakeItemTableSet.IsEOF())
+	{
 		AfxMessageBox(_T("GetMakeWeaponItemTableData Empty!"));
 		return FALSE;
 	}
 
 	MakeItemTableSet.MoveFirst();
 
-	while( !MakeItemTableSet.IsEOF() )
+	while (!MakeItemTableSet.IsEOF())
 	{
 		_MAKE_WEAPON* pTable = new _MAKE_WEAPON;
-				
+
 		pTable->byIndex = MakeItemTableSet.m_byLevel;
 		pTable->sClass[0] = MakeItemTableSet.m_sClass_1;
 		pTable->sClass[1] = MakeItemTableSet.m_sClass_2;
@@ -509,36 +542,42 @@ BOOL CServerDlg::GetMakeWeaponItemTableData()
 		pTable->sClass[10] = MakeItemTableSet.m_sClass_11;
 		pTable->sClass[11] = MakeItemTableSet.m_sClass_12;
 
-		if( !m_MakeWeaponItemArray.PutData(pTable->byIndex, pTable) ) {
-			TRACE("GetMakeWeaponItemTableData PutData Fail - %d\n", pTable->byIndex );
+		if (!m_MakeWeaponItemArray.PutData(pTable->byIndex, pTable))
+		{
+			TRACE("GetMakeWeaponItemTableData PutData Fail - %d\n", pTable->byIndex);
 			delete pTable;
-			pTable = NULL;
+			pTable = nullptr;
 		}
-		
+
 		MakeItemTableSet.MoveNext();
 	}
+
 	return TRUE;
 }
 
 BOOL CServerDlg::GetMakeDefensiveItemTableData()
 {
-	CMakeDefensiveTableSet	MakeItemTableSet;
+	CMakeDefensiveTableSet MakeItemTableSet;
 
-	if( !MakeItemTableSet.Open() ) {
+	if (!MakeItemTableSet.Open())
+	{
 		AfxMessageBox(_T("GetMakeDefensiveItemTableData Open Fail!"));
 		return FALSE;
 	}
-	if(MakeItemTableSet.IsBOF() || MakeItemTableSet.IsEOF()) {
+
+	if (MakeItemTableSet.IsBOF()
+		|| MakeItemTableSet.IsEOF())
+	{
 		AfxMessageBox(_T("GetMakeDefensiveItemTableData Empty!"));
 		return FALSE;
 	}
 
 	MakeItemTableSet.MoveFirst();
 
-	while( !MakeItemTableSet.IsEOF() )
+	while (!MakeItemTableSet.IsEOF())
 	{
 		_MAKE_WEAPON* pTable = new _MAKE_WEAPON;
-				
+
 		pTable->byIndex = MakeItemTableSet.m_byLevel;
 		pTable->sClass[0] = MakeItemTableSet.m_sClass_1;
 		pTable->sClass[1] = MakeItemTableSet.m_sClass_2;
@@ -548,36 +587,42 @@ BOOL CServerDlg::GetMakeDefensiveItemTableData()
 		pTable->sClass[5] = MakeItemTableSet.m_sClass_6;
 		pTable->sClass[6] = MakeItemTableSet.m_sClass_7;
 
-		if( !m_MakeDefensiveItemArray.PutData(pTable->byIndex, pTable) ) {
-			TRACE("GetMakeDefensiveItemTableData PutData Fail - %d\n", pTable->byIndex );
+		if (!m_MakeDefensiveItemArray.PutData(pTable->byIndex, pTable))
+		{
+			TRACE("GetMakeDefensiveItemTableData PutData Fail - %d\n", pTable->byIndex);
 			delete pTable;
-			pTable = NULL;
+			pTable = nullptr;
 		}
-		
+
 		MakeItemTableSet.MoveNext();
 	}
+
 	return TRUE;
 }
 
 BOOL CServerDlg::GetMakeGradeItemTableData()
 {
-	CMakeGradeItemTableSet	MakeItemTableSet;
+	CMakeGradeItemTableSet MakeItemTableSet;
 
-	if( !MakeItemTableSet.Open() ) {
+	if (!MakeItemTableSet.Open())
+	{
 		AfxMessageBox(_T("MakeGradeItemTable Open Fail!"));
 		return FALSE;
 	}
-	if(MakeItemTableSet.IsBOF() || MakeItemTableSet.IsEOF()) {
+
+	if (MakeItemTableSet.IsBOF()
+		|| MakeItemTableSet.IsEOF())
+	{
 		AfxMessageBox(_T("MakeGradeItemTable Empty!"));
 		return FALSE;
 	}
 
 	MakeItemTableSet.MoveFirst();
 
-	while( !MakeItemTableSet.IsEOF() )
+	while (!MakeItemTableSet.IsEOF())
 	{
 		_MAKE_ITEM_GRADE_CODE* pTable = new _MAKE_ITEM_GRADE_CODE;
-				
+
 		pTable->byItemIndex = MakeItemTableSet.m_byItemIndex;
 		pTable->sGrade_1 = MakeItemTableSet.m_byGrade_1;
 		pTable->sGrade_2 = MakeItemTableSet.m_byGrade_2;
@@ -589,50 +634,57 @@ BOOL CServerDlg::GetMakeGradeItemTableData()
 		pTable->sGrade_8 = MakeItemTableSet.m_byGrade_8;
 		pTable->sGrade_9 = MakeItemTableSet.m_byGrade_9;
 
-		if( !m_MakeGradeItemArray.PutData(pTable->byItemIndex, pTable) ) {
-			TRACE("MakeGradeItemTable PutData Fail - %d\n", pTable->byItemIndex );
+		if (!m_MakeGradeItemArray.PutData(pTable->byItemIndex, pTable))
+		{
+			TRACE("MakeGradeItemTable PutData Fail - %d\n", pTable->byItemIndex);
 			delete pTable;
-			pTable = NULL;
+			pTable = nullptr;
 		}
-		
+
 		MakeItemTableSet.MoveNext();
 	}
+
 	return TRUE;
 }
 
-
 BOOL CServerDlg::GetMakeLareItemTableData()
 {
-	CMakeLareItemTableSet	MakeItemTableSet;
+	CMakeLareItemTableSet MakeItemTableSet;
 
-	if( !MakeItemTableSet.Open() ) {
+	if (!MakeItemTableSet.Open())
+	{
 		AfxMessageBox(_T("MakeLareItemTable Open Fail!"));
 		return FALSE;
 	}
-	if(MakeItemTableSet.IsBOF() || MakeItemTableSet.IsEOF()) {
+
+	if (MakeItemTableSet.IsBOF()
+		|| MakeItemTableSet.IsEOF())
+	{
 		AfxMessageBox(_T("MakeLareItemTable Empty!"));
 		return FALSE;
 	}
 
 	MakeItemTableSet.MoveFirst();
 
-	while( !MakeItemTableSet.IsEOF() )
+	while (!MakeItemTableSet.IsEOF())
 	{
 		_MAKE_ITEM_LARE_CODE* pTable = new _MAKE_ITEM_LARE_CODE;
-				
+
 		pTable->byItemLevel = MakeItemTableSet.m_byLevelGrade;
 		pTable->sLareItem = MakeItemTableSet.m_sLareItem;
 		pTable->sMagicItem = MakeItemTableSet.m_sMagicItem;
 		pTable->sGereralItem = MakeItemTableSet.m_sGereralItem;
 
-		if( !m_MakeLareItemArray.PutData(pTable->byItemLevel, pTable) ) {
-			TRACE("MakeItemTable PutData Fail - %d\n", pTable->byItemLevel );
+		if (!m_MakeLareItemArray.PutData(pTable->byItemLevel, pTable))
+		{
+			TRACE("MakeItemTable PutData Fail - %d\n", pTable->byItemLevel);
 			delete pTable;
-			pTable = NULL;
+			pTable = nullptr;
 		}
-		
+
 		MakeItemTableSet.MoveNext();
 	}
+
 	return TRUE;
 }
 
@@ -648,23 +700,24 @@ BOOL CServerDlg::GetNpcItemTable()
 
 	try
 	{
-		if(NpcItemSet.IsOpen()) NpcItemSet.Close();
+		if (NpcItemSet.IsOpen())
+			NpcItemSet.Close();
 
 		NpcItemSet.m_strSort = _T("sIndex");
 
-		if(!NpcItemSet.Open())
+		if (!NpcItemSet.Open())
 		{
 			AfxMessageBox(_T("MONSTER ITEM DB Open Fail!"));
 			return FALSE;
 		}
 
-		if(NpcItemSet.IsBOF()) 
+		if (NpcItemSet.IsBOF())
 		{
 			AfxMessageBox(_T("MONSTER ITEM DB Empty!"));
 			return FALSE;
 		}
 
-		while(!NpcItemSet.IsEOF())
+		while (!NpcItemSet.IsEOF())
 		{
 			nRowCount++;
 			NpcItemSet.MoveNext();
@@ -673,18 +726,17 @@ BOOL CServerDlg::GetNpcItemTable()
 		m_NpcItem.m_nField = NpcItemSet.m_nFields;
 		m_NpcItem.m_nRow = nRowCount;
 
-		if(nRowCount == 0) return FALSE;
+		if (nRowCount == 0)
+			return FALSE;
 
 		m_NpcItem.m_ppItem = new int* [m_NpcItem.m_nRow];
-		for(i = 0; i < m_NpcItem.m_nRow; i++)
-		{
+		for (i = 0; i < m_NpcItem.m_nRow; i++)
 			m_NpcItem.m_ppItem[i] = new int[m_NpcItem.m_nField];
-		}
 
 		NpcItemSet.MoveFirst();
 
 		i = 0;
-		while(!NpcItemSet.IsEOF())
+		while (!NpcItemSet.IsEOF())
 		{
 			m_NpcItem.m_ppItem[i][0] = NpcItemSet.m_sIndex;
 			m_NpcItem.m_ppItem[i][1] = NpcItemSet.m_iItem01;
@@ -702,14 +754,14 @@ BOOL CServerDlg::GetNpcItemTable()
 			NpcItemSet.MoveNext();
 		}
 	}
-	catch(CMemoryException * e)
+	catch (CMemoryException* e)
 	{
 		e->ReportError();
 		e->Delete();
 
 		return FALSE;
 	}
-	catch(CDBException* e)
+	catch (CDBException* e)
 	{
 		e->ReportError();
 		e->Delete();
@@ -725,87 +777,90 @@ BOOL CServerDlg::GetMonsterTableData()
 {
 	CMonTableSet NpcTableSet;
 
-	try 
+	try
 	{
 		//if(m_arMonTable.GetSize()) return FALSE;
 
-		if(NpcTableSet.IsOpen()) NpcTableSet.Close();
-		
-		if(!NpcTableSet.Open())
+		if (NpcTableSet.IsOpen())
+			NpcTableSet.Close();
+
+		if (!NpcTableSet.Open())
 		{
 			AfxMessageBox(_T("MONSTER DB Open Fail!"));
 			return FALSE;
 		}
-		if(NpcTableSet.IsBOF()) 
+
+		if (NpcTableSet.IsBOF())
 		{
 			AfxMessageBox(_T("MONSTER DB Empty!"));
 			return FALSE;
 		}
 
-		while(!NpcTableSet.IsEOF())
+		while (!NpcTableSet.IsEOF())
 		{
 			CNpcTable* Npc = new CNpcTable;
 			CString tmpNpcName;
 			Npc->Initialize();
-			
-			Npc->m_sSid			= NpcTableSet.m_sSid;		// MONSTER(NPC) Serial ID
-			_tcscpy(Npc->m_strName, NpcTableSet.m_strName);	// MONSTER(NPC) Name
-			Npc->m_sPid = NpcTableSet.m_sPid;				// MONSTER(NPC) Picture ID
-			Npc->m_sSize = NpcTableSet.m_sSize;				// MONSTER(NPC) 캐릭 크기 비율
-			Npc->m_iWeapon_1 = NpcTableSet.m_iWeapon1;			// 착용무기
-			Npc->m_iWeapon_2 = NpcTableSet.m_iWeapon2;			// 착용무기
-			Npc->m_byGroup = NpcTableSet.m_byGroup;			// 소속집단
-			Npc->m_byActType = NpcTableSet.m_byActType;		// 행동패턴
-			Npc->m_byRank = NpcTableSet.m_byRank;			// 작위
-			Npc->m_byTitle = NpcTableSet.m_byTitle;			// 지위
+
+			Npc->m_sSid = NpcTableSet.m_sSid;						// MONSTER(NPC) Serial ID
+			_tcscpy(Npc->m_strName, NpcTableSet.m_strName);			// MONSTER(NPC) Name
+			Npc->m_sPid = NpcTableSet.m_sPid;						// MONSTER(NPC) Picture ID
+			Npc->m_sSize = NpcTableSet.m_sSize;						// MONSTER(NPC) 캐릭 크기 비율
+			Npc->m_iWeapon_1 = NpcTableSet.m_iWeapon1;				// 착용무기
+			Npc->m_iWeapon_2 = NpcTableSet.m_iWeapon2;				// 착용무기
+			Npc->m_byGroup = NpcTableSet.m_byGroup;					// 소속집단
+			Npc->m_byActType = NpcTableSet.m_byActType;				// 행동패턴
+			Npc->m_byRank = NpcTableSet.m_byRank;					// 작위
+			Npc->m_byTitle = NpcTableSet.m_byTitle;					// 지위
 			Npc->m_iSellingGroup = NpcTableSet.m_iSellingGroup;		// item group
-			Npc->m_sLevel = NpcTableSet.m_sLevel;			// level
-			Npc->m_iExp = NpcTableSet.m_iExp;				// 경험치
-			Npc->m_iLoyalty = NpcTableSet.m_iLoyalty;		// loyalty
-			Npc->m_iMaxHP = NpcTableSet.m_iHpPoint;	// 최대 HP
-			Npc->m_sMaxMP = NpcTableSet.m_sMpPoint;	// 최대 MP
-			Npc->m_sAttack = NpcTableSet.m_sAtk;			// 공격값
-			Npc->m_sDefense = NpcTableSet.m_sAc;			// 방어값
-			Npc->m_sHitRate = NpcTableSet.m_sHitRate;		// 타격성공률
-			Npc->m_sEvadeRate = NpcTableSet.m_sEvadeRate;	// 회피성공률
-			Npc->m_sDamage = NpcTableSet.m_sDamage;			// 기본 데미지
-			Npc->m_sAttackDelay = NpcTableSet.m_sAttackDelay;	// 공격딜레이
+			Npc->m_sLevel = NpcTableSet.m_sLevel;					// level
+			Npc->m_iExp = NpcTableSet.m_iExp;						// 경험치
+			Npc->m_iLoyalty = NpcTableSet.m_iLoyalty;				// loyalty
+			Npc->m_iMaxHP = NpcTableSet.m_iHpPoint;					// 최대 HP
+			Npc->m_sMaxMP = NpcTableSet.m_sMpPoint;					// 최대 MP
+			Npc->m_sAttack = NpcTableSet.m_sAtk;					// 공격값
+			Npc->m_sDefense = NpcTableSet.m_sAc;					// 방어값
+			Npc->m_sHitRate = NpcTableSet.m_sHitRate;				// 타격성공률
+			Npc->m_sEvadeRate = NpcTableSet.m_sEvadeRate;			// 회피성공률
+			Npc->m_sDamage = NpcTableSet.m_sDamage;					// 기본 데미지
+			Npc->m_sAttackDelay = NpcTableSet.m_sAttackDelay;		// 공격딜레이
 			Npc->m_bySpeed_1 = NpcTableSet.m_bySpeed1;				// 이동속도	(걷기)
 			Npc->m_bySpeed_2 = NpcTableSet.m_bySpeed2;				// 이동속도	(뛰기)
-			Npc->m_sSpeed = MONSTER_SPEED;			// 이동속도	
-			Npc->m_sStandTime = NpcTableSet.m_sStandtime;		// 서있는 시간
-			Npc->m_iMagic1 = NpcTableSet.m_iMagic1;			// 사용마법 1
-			Npc->m_iMagic2 = NpcTableSet.m_iMagic2;			// 사용마법 2
-			Npc->m_iMagic3 = NpcTableSet.m_iMagic3;			// 사용마법 3	
-			Npc->m_byFireR = NpcTableSet.m_byFireR;			// 화염 저항력
-			Npc->m_byColdR = NpcTableSet.m_byColdR;			// 냉기 저항력
-			Npc->m_byLightningR = NpcTableSet.m_byLightningR;			// 전기 저항력
-			Npc->m_byMagicR = NpcTableSet.m_byMagicR;			// 마법 저항력
-			Npc->m_byDiseaseR = NpcTableSet.m_byDiseaseR;		// 저주 저항력
-			Npc->m_byPoisonR = NpcTableSet.m_byPoisonR;		// 독 저항력
-			Npc->m_byLightR = NpcTableSet.m_byLightR;		// 빛 저항력
-			Npc->m_sBulk	= NpcTableSet.m_sBulk;
-			Npc->m_bySearchRange = NpcTableSet.m_bySearchRange;	// 적 탐지 범위
-			Npc->m_byAttackRange = NpcTableSet.m_byAttackRange;	// 사정거리
+			Npc->m_sSpeed = MONSTER_SPEED;							// 이동속도	
+			Npc->m_sStandTime = NpcTableSet.m_sStandtime;			// 서있는 시간
+			Npc->m_iMagic1 = NpcTableSet.m_iMagic1;					// 사용마법 1
+			Npc->m_iMagic2 = NpcTableSet.m_iMagic2;					// 사용마법 2
+			Npc->m_iMagic3 = NpcTableSet.m_iMagic3;					// 사용마법 3	
+			Npc->m_byFireR = NpcTableSet.m_byFireR;					// 화염 저항력
+			Npc->m_byColdR = NpcTableSet.m_byColdR;					// 냉기 저항력
+			Npc->m_byLightningR = NpcTableSet.m_byLightningR;		// 전기 저항력
+			Npc->m_byMagicR = NpcTableSet.m_byMagicR;				// 마법 저항력
+			Npc->m_byDiseaseR = NpcTableSet.m_byDiseaseR;			// 저주 저항력
+			Npc->m_byPoisonR = NpcTableSet.m_byPoisonR;				// 독 저항력
+			Npc->m_byLightR = NpcTableSet.m_byLightR;				// 빛 저항력
+			Npc->m_sBulk = NpcTableSet.m_sBulk;
+			Npc->m_bySearchRange = NpcTableSet.m_bySearchRange;		// 적 탐지 범위
+			Npc->m_byAttackRange = NpcTableSet.m_byAttackRange;		// 사정거리
 			Npc->m_byTracingRange = NpcTableSet.m_byTracingRange;	// 추격거리
-			//Npc->m_sAI = NpcTableSet.m_sAI;				// 인공지능 인덱스
-			Npc->m_tNpcType = NpcTableSet.m_byType;			// NPC Type
-								// 0 : Monster
-								// 1 : Normal NPC
-			
-			Npc->m_byFamilyType = NpcTableSet.m_byFamily;		// 몹들사이에서 가족관계를 결정한다.
-			//Npc->m_tItemPer;		// 아이템이 떨어질 확률
-			//Npc->m_tDnPer;			// 돈이 떨어질확률
+			//Npc->m_sAI = NpcTableSet.m_sAI;						// 인공지능 인덱스
+			Npc->m_tNpcType = NpcTableSet.m_byType;					// NPC Type
+																	// 0 : Monster
+																	// 1 : Normal NPC
 
-			Npc->m_iMoney = NpcTableSet.m_iMoney;			// 떨어지는 돈
-			Npc->m_iItem = NpcTableSet.m_sItem;			// 떨어지는 아이템
+			Npc->m_byFamilyType = NpcTableSet.m_byFamily;			// 몹들사이에서 가족관계를 결정한다.
+			//Npc->m_tItemPer;										// 아이템이 떨어질 확률
+			//Npc->m_tDnPer;										// 돈이 떨어질확률
+
+			Npc->m_iMoney = NpcTableSet.m_iMoney;					// 떨어지는 돈
+			Npc->m_iItem = NpcTableSet.m_sItem;						// 떨어지는 아이템
 			Npc->m_byDirectAttack = NpcTableSet.m_byDirectAttack;
 			Npc->m_byMagicAttack = NpcTableSet.m_byMagicAttack;
-			
-			if( !m_arMonTable.PutData(Npc->m_sSid, Npc) )	{
+
+			if (!m_arMonTable.PutData(Npc->m_sSid, Npc))
+			{
 				TRACE("GetMonsterTableData - PutData Fail - %d\n", Npc->m_sSid);
 				delete Npc;
-				Npc = NULL;
+				Npc = nullptr;
 			}
 			//m_arMonTable.Add(Npc);
 
@@ -814,14 +869,14 @@ BOOL CServerDlg::GetMonsterTableData()
 
 		NpcTableSet.Close();
 	}
-	catch(CMemoryException * e)
+	catch (CMemoryException* e)
 	{
 		e->ReportError();
 		e->Delete();
 
 		return FALSE;
 	}
-	catch(CDBException* e)
+	catch (CDBException* e)
 	{
 		e->ReportError();
 		e->Delete();
@@ -837,87 +892,90 @@ BOOL CServerDlg::GetNpcTableData()
 {
 	CNpcTableSet NpcTableSet;
 
-	try 
+	try
 	{
 		//if(m_arNpcTable.GetSize()) return FALSE;
 
-		if(NpcTableSet.IsOpen()) NpcTableSet.Close();
-		
-		if(!NpcTableSet.Open())
+		if (NpcTableSet.IsOpen())
+			NpcTableSet.Close();
+
+		if (!NpcTableSet.Open())
 		{
 			AfxMessageBox(_T("NPC DB Open Fail!"));
 			return FALSE;
 		}
-		if(NpcTableSet.IsBOF()) 
+
+		if (NpcTableSet.IsBOF())
 		{
 			AfxMessageBox(_T("NPC DB Empty!"));
 			return FALSE;
 		}
 
-		while(!NpcTableSet.IsEOF())
+		while (!NpcTableSet.IsEOF())
 		{
 			CNpcTable* Npc = new CNpcTable;
 			CString tmpNpcName;
 			Npc->Initialize();
-			
-			Npc->m_sSid			= NpcTableSet.m_sSid;		// MONSTER(NPC) Serial ID
-			_tcscpy(Npc->m_strName, NpcTableSet.m_strName);	// MONSTER(NPC) Name
-			Npc->m_sPid = NpcTableSet.m_sPid;				// MONSTER(NPC) Picture ID
-			Npc->m_sSize = NpcTableSet.m_sSize;				// MONSTER(NPC) 캐릭 크기 비율
-			Npc->m_iWeapon_1 = NpcTableSet.m_iWeapon1;			// 착용무기
-			Npc->m_iWeapon_2 = NpcTableSet.m_iWeapon2;			// 착용무기
-			Npc->m_byGroup = NpcTableSet.m_byGroup;			// 소속집단
-			Npc->m_byActType = NpcTableSet.m_byActType;		// 행동패턴
-			Npc->m_byRank = NpcTableSet.m_byRank;			// 작위
-			Npc->m_byTitle = NpcTableSet.m_byTitle;			// 지위
+
+			Npc->m_sSid = NpcTableSet.m_sSid;						// MONSTER(NPC) Serial ID
+			_tcscpy(Npc->m_strName, NpcTableSet.m_strName);			// MONSTER(NPC) Name
+			Npc->m_sPid = NpcTableSet.m_sPid;						// MONSTER(NPC) Picture ID
+			Npc->m_sSize = NpcTableSet.m_sSize;						// MONSTER(NPC) 캐릭 크기 비율
+			Npc->m_iWeapon_1 = NpcTableSet.m_iWeapon1;				// 착용무기
+			Npc->m_iWeapon_2 = NpcTableSet.m_iWeapon2;				// 착용무기
+			Npc->m_byGroup = NpcTableSet.m_byGroup;					// 소속집단
+			Npc->m_byActType = NpcTableSet.m_byActType;				// 행동패턴
+			Npc->m_byRank = NpcTableSet.m_byRank;					// 작위
+			Npc->m_byTitle = NpcTableSet.m_byTitle;					// 지위
 			Npc->m_iSellingGroup = NpcTableSet.m_iSellingGroup;		// item group
-			Npc->m_sLevel = NpcTableSet.m_sLevel;			// level
-			Npc->m_iExp = NpcTableSet.m_iExp;				// 경험치
-			Npc->m_iLoyalty = NpcTableSet.m_iLoyalty;		// loyalty
-			Npc->m_iMaxHP = NpcTableSet.m_iHpPoint;	// 최대 HP
-			Npc->m_sMaxMP = NpcTableSet.m_sMpPoint;	// 최대 MP
-			Npc->m_sAttack = NpcTableSet.m_sAtk;			// 공격값
-			Npc->m_sDefense = NpcTableSet.m_sAc;			// 방어값
-			Npc->m_sHitRate = NpcTableSet.m_sHitRate;		// 타격성공률
-			Npc->m_sEvadeRate = NpcTableSet.m_sEvadeRate;	// 회피성공률
-			Npc->m_sDamage = NpcTableSet.m_sDamage;			// 기본 데미지
-			Npc->m_sAttackDelay = NpcTableSet.m_sAttackDelay;	// 공격딜레이
+			Npc->m_sLevel = NpcTableSet.m_sLevel;					// level
+			Npc->m_iExp = NpcTableSet.m_iExp;						// 경험치
+			Npc->m_iLoyalty = NpcTableSet.m_iLoyalty;				// loyalty
+			Npc->m_iMaxHP = NpcTableSet.m_iHpPoint;					// 최대 HP
+			Npc->m_sMaxMP = NpcTableSet.m_sMpPoint;					// 최대 MP
+			Npc->m_sAttack = NpcTableSet.m_sAtk;					// 공격값
+			Npc->m_sDefense = NpcTableSet.m_sAc;					// 방어값
+			Npc->m_sHitRate = NpcTableSet.m_sHitRate;				// 타격성공률
+			Npc->m_sEvadeRate = NpcTableSet.m_sEvadeRate;			// 회피성공률
+			Npc->m_sDamage = NpcTableSet.m_sDamage;					// 기본 데미지
+			Npc->m_sAttackDelay = NpcTableSet.m_sAttackDelay;		// 공격딜레이
 			Npc->m_bySpeed_1 = NpcTableSet.m_bySpeed1;				// 이동속도	(걷기)
 			Npc->m_bySpeed_2 = NpcTableSet.m_bySpeed2;				// 이동속도	(뛰기)
-			Npc->m_sSpeed = MONSTER_SPEED;			// 이동속도	
-			Npc->m_sStandTime = NpcTableSet.m_sStandtime;		// 서있는 시간
-			Npc->m_iMagic1 = NpcTableSet.m_iMagic1;			// 사용마법 1
-			Npc->m_iMagic2 = NpcTableSet.m_iMagic2;			// 사용마법 2
-			Npc->m_iMagic3 = NpcTableSet.m_iMagic3;			// 사용마법 3	
-			Npc->m_byFireR = NpcTableSet.m_byFireR;			// 화염 저항력
-			Npc->m_byColdR = NpcTableSet.m_byColdR;			// 냉기 저항력
-			Npc->m_byLightningR = NpcTableSet.m_byLightningR;			// 전기 저항력
-			Npc->m_byMagicR = NpcTableSet.m_byMagicR;			// 마법 저항력
-			Npc->m_byDiseaseR = NpcTableSet.m_byDiseaseR;		// 저주 저항력
-			Npc->m_byPoisonR = NpcTableSet.m_byPoisonR;		// 독 저항력
-			Npc->m_byLightR = NpcTableSet.m_byLightR;		// 빛 저항력
-			Npc->m_sBulk	= NpcTableSet.m_sBulk;
-			Npc->m_bySearchRange = NpcTableSet.m_bySearchRange;	// 적 탐지 범위
-			Npc->m_byAttackRange = NpcTableSet.m_byAttackRange;	// 사정거리
+			Npc->m_sSpeed = MONSTER_SPEED;							// 이동속도	
+			Npc->m_sStandTime = NpcTableSet.m_sStandtime;			// 서있는 시간
+			Npc->m_iMagic1 = NpcTableSet.m_iMagic1;					// 사용마법 1
+			Npc->m_iMagic2 = NpcTableSet.m_iMagic2;					// 사용마법 2
+			Npc->m_iMagic3 = NpcTableSet.m_iMagic3;					// 사용마법 3	
+			Npc->m_byFireR = NpcTableSet.m_byFireR;					// 화염 저항력
+			Npc->m_byColdR = NpcTableSet.m_byColdR;					// 냉기 저항력
+			Npc->m_byLightningR = NpcTableSet.m_byLightningR;		// 전기 저항력
+			Npc->m_byMagicR = NpcTableSet.m_byMagicR;				// 마법 저항력
+			Npc->m_byDiseaseR = NpcTableSet.m_byDiseaseR;			// 저주 저항력
+			Npc->m_byPoisonR = NpcTableSet.m_byPoisonR;				// 독 저항력
+			Npc->m_byLightR = NpcTableSet.m_byLightR;				// 빛 저항력
+			Npc->m_sBulk = NpcTableSet.m_sBulk;
+			Npc->m_bySearchRange = NpcTableSet.m_bySearchRange;		// 적 탐지 범위
+			Npc->m_byAttackRange = NpcTableSet.m_byAttackRange;		// 사정거리
 			Npc->m_byTracingRange = NpcTableSet.m_byTracingRange;	// 추격거리
-			//Npc->m_sAI = NpcTableSet.m_sAI;				// 인공지능 인덱스
-			Npc->m_tNpcType = NpcTableSet.m_byType;			// NPC Type
-								// 0 : Monster
-								// 1 : Normal NPC
+			//Npc->m_sAI = NpcTableSet.m_sAI;						// 인공지능 인덱스
+			Npc->m_tNpcType = NpcTableSet.m_byType;					// NPC Type
+																	// 0 : Monster
+																	// 1 : Normal NPC
 
-			Npc->m_byFamilyType = NpcTableSet.m_byFamily;		// 몹들사이에서 가족관계를 결정한다.
-			//Npc->m_tItemPer;		// 아이템이 떨어질 확률
-			//Npc->m_tDnPer;			// 돈이 떨어질확률
+			Npc->m_byFamilyType = NpcTableSet.m_byFamily;			// 몹들사이에서 가족관계를 결정한다.
+			//Npc->m_tItemPer;										// 아이템이 떨어질 확률
+			//Npc->m_tDnPer;										// 돈이 떨어질확률
 
-			Npc->m_iMoney = NpcTableSet.m_iMoney;			// 떨어지는 돈
-			Npc->m_iItem = NpcTableSet.m_sItem;			// 떨어지는 아이템
+			Npc->m_iMoney = NpcTableSet.m_iMoney;					// 떨어지는 돈
+			Npc->m_iItem = NpcTableSet.m_sItem;						// 떨어지는 아이템
 			Npc->m_byDirectAttack = NpcTableSet.m_byDirectAttack;
 			Npc->m_byMagicAttack = NpcTableSet.m_byMagicAttack;
-			
-			if( !m_arNpcTable.PutData(Npc->m_sSid, Npc) )	{
+
+			if (!m_arNpcTable.PutData(Npc->m_sSid, Npc))
+			{
 				TRACE("GetNpcTableData - PutData Fail - %d\n", Npc->m_sSid);
 				delete Npc;
-				Npc = NULL;
+				Npc = nullptr;
 			}
 			//m_arNpcTable.Add(Npc);
 
@@ -926,14 +984,14 @@ BOOL CServerDlg::GetNpcTableData()
 
 		NpcTableSet.Close();
 	}
-	catch(CMemoryException * e)
+	catch (CMemoryException* e)
 	{
 		e->ReportError();
 		e->Delete();
 
 		return FALSE;
 	}
-	catch(CDBException* e)
+	catch (CDBException* e)
 	{
 		e->ReportError();
 		e->Delete();
@@ -947,20 +1005,20 @@ BOOL CServerDlg::GetNpcTableData()
 //	Npc Thread 를 만든다.
 BOOL CServerDlg::CreateNpcThread()
 {
-	BOOL	bMoveNext	= TRUE;
-	int		nSerial		= m_sMapEventNpc;
+	BOOL	bMoveNext = TRUE;
+	int		nSerial = m_sMapEventNpc;
 	int		nPathSerial = 1;
-	int		nNpcCount	= 0;
-	int		i=0, j=0;
-	int nRandom = 0, nServerNum = 0;
+	int		nNpcCount = 0;
+	int		i = 0, j = 0;
+	int		nRandom = 0, nServerNum = 0;
 	double  dbSpeed = 0;
 
 	m_TotalNPC = 0;			// DB에 있는 수
 	m_CurrentNPC = 0;
 	m_CurrentNPCError = 0;
 
-	CNpcTable*	pNpcTable = NULL;
-	CRoomEvent* pRoom = NULL;
+	CNpcTable* pNpcTable = nullptr;
+	CRoomEvent* pRoom = nullptr;
 
 	CNpcPosSet NpcPosSet;
 
@@ -973,22 +1031,28 @@ BOOL CServerDlg::CreateNpcThread()
 	BOOL bFindNpcTable = FALSE;
 
 	int nMonsterNumber = 0;
-	
-	try 
+
+	try
 	{
-		if(NpcPosSet.IsOpen()) NpcPosSet.Close();
-		if(!NpcPosSet.Open())	{
+		if (NpcPosSet.IsOpen())
+			NpcPosSet.Close();
+
+		if (!NpcPosSet.Open())
+		{
 			AfxMessageBox(_T("MONSTER_POS DB Open Fail!"));
 			return FALSE;
 		}
-		if(NpcPosSet.IsBOF())	{
+
+		if (NpcPosSet.IsBOF())
+		{
 			AfxMessageBox(_T("MONSTER_POS DB Empty!"));
 			return FALSE;
 		}
 
 		NpcPosSet.MoveFirst();
 
-		while(!NpcPosSet.IsEOF())	{
+		while (!NpcPosSet.IsEOF())
+		{
 			nMonsterNumber = NpcPosSet.m_NumNPC;
 			//if( NpcPosSet.m_ZoneID == 101 )	{	// 테스트를 위해서,, 
 			//	nMonsterNumber = 1;
@@ -997,103 +1061,109 @@ BOOL CServerDlg::CreateNpcThread()
 				//}
 			//}	
 			nServerNum = 0;
-			nServerNum = GetServerNumber( NpcPosSet.m_ZoneID );
+			nServerNum = GetServerNumber(NpcPosSet.m_ZoneID);
 
-			if( m_byZone == nServerNum || m_byZone == UNIFY_ZONE)	{
-				for(j=0; j<nMonsterNumber; j++)		{
-					CNpc*		pNpc		= new CNpc;
-					pNpc->m_sNid	= nSerial++;			// 서버 내에서의 고유 번호
-					pNpc->m_sSid	= (short)NpcPosSet.m_NpcID;		// MONSTER(NPC) Serial ID
+			if (m_byZone == nServerNum
+				|| m_byZone == UNIFY_ZONE)
+			{
+				for (j = 0; j < nMonsterNumber; j++)
+				{
+					CNpc* pNpc = new CNpc;
+					pNpc->m_sNid = nSerial++;					// 서버 내에서의 고유 번호
+					pNpc->m_sSid = (short) NpcPosSet.m_NpcID;	// MONSTER(NPC) Serial ID
 
 					pNpc->m_byMoveType = NpcPosSet.m_ActType;
 					pNpc->m_byInitMoveType = NpcPosSet.m_ActType;
 					bFindNpcTable = FALSE;
 
-					if(NpcPosSet.m_ActType >= 0 && NpcPosSet.m_ActType < 100)	{
+					if (NpcPosSet.m_ActType >= 0 && NpcPosSet.m_ActType < 100)
+					{
 						pNpcTable = m_arMonTable.GetData(pNpc->m_sSid);
-						if(pNpcTable != NULL)	{
+						if (pNpcTable != nullptr)
 							bFindNpcTable = TRUE;
-						}
 					}
-					else if(NpcPosSet.m_ActType >= 100)	{
+					else if (NpcPosSet.m_ActType >= 100)
+					{
 						pNpc->m_byMoveType = NpcPosSet.m_ActType - 100;
 						//pNpc->m_byInitMoveType = NpcPosSet.m_ActType - 100;
 
 						pNpcTable = m_arNpcTable.GetData(pNpc->m_sSid);
-						if(pNpcTable != NULL)	{
+						if (pNpcTable != nullptr)
 							bFindNpcTable = TRUE;
-						}
 					}
 
 					pNpc->m_byBattlePos = 0;
 
-					if(pNpc->m_byMoveType >= 2)	{
-						pNpc->m_byBattlePos = myrand( 1, 3 );
+					if (pNpc->m_byMoveType >= 2)
+					{
+						pNpc->m_byBattlePos = myrand(1, 3);
 						pNpc->m_byPathCount = nPathSerial++;
 					}
 
 					pNpc->InitPos();
 
-					if(bFindNpcTable == FALSE)	{
+					if (bFindNpcTable == FALSE)
+					{
 						TRACE("#### CreateNpcThread Fail : [nid = %d, sid = %d] #####\n", pNpc->m_sNid, pNpc->m_sSid);
 					}
 
-					if( bMoveNext )	{
+					if (bMoveNext)
+					{
 						bMoveNext = FALSE;
 						nNpcCount = NpcPosSet.m_NumNPC;
 					}
-					
-					_tcscpy(pNpc->m_strName, pNpcTable->m_strName);	// MONSTER(NPC) Name
-					pNpc->m_sPid		= pNpcTable->m_sPid;		// MONSTER(NPC) Picture ID
-					pNpc->m_sSize		= pNpcTable->m_sSize;		// 캐릭터의 비율(100 퍼센트 기준)
-					pNpc->m_iWeapon_1		= pNpcTable->m_iWeapon_1;	// 착용무기
-					pNpc->m_iWeapon_2		= pNpcTable->m_iWeapon_2;	// 착용무기
-					pNpc->m_byGroup			= pNpcTable->m_byGroup;		// 소속집단
-					pNpc->m_byActType		= pNpcTable->m_byActType;	// 행동패턴
-					pNpc->m_byRank			= pNpcTable->m_byRank;		// 작위
-					pNpc->m_byTitle			= pNpcTable->m_byTitle;		// 지위
-					pNpc->m_iSellingGroup  = pNpcTable->m_iSellingGroup;
-					pNpc->m_sLevel			= pNpcTable->m_sLevel;		// level
-					pNpc->m_iExp			= pNpcTable->m_iExp;		// 경험치
-					pNpc->m_iLoyalty		= pNpcTable->m_iLoyalty;	// loyalty
-					pNpc->m_iHP				= pNpcTable->m_iMaxHP;		// 최대 HP
-					pNpc->m_iMaxHP			= pNpcTable->m_iMaxHP;		// 현재 HP
-					pNpc->m_sMP				= pNpcTable->m_sMaxMP;		// 최대 MP
-					pNpc->m_sMaxMP			= pNpcTable->m_sMaxMP;		// 현재 MP
-					pNpc->m_sAttack			= pNpcTable->m_sAttack;		// 공격값
-					pNpc->m_sDefense		= pNpcTable->m_sDefense;	// 방어값
-					pNpc->m_sHitRate		= pNpcTable->m_sHitRate;	// 타격성공률
-					pNpc->m_sEvadeRate		= pNpcTable->m_sEvadeRate;	// 회피성공률
-					pNpc->m_sDamage			= pNpcTable->m_sDamage;		// 기본 데미지
-					pNpc->m_sAttackDelay	= pNpcTable->m_sAttackDelay;// 공격딜레이
-					pNpc->m_sSpeed			= pNpcTable->m_sSpeed;		// 이동속도
-					dbSpeed = pNpcTable->m_sSpeed;	
-					pNpc->m_fSpeed_1		= (float)pNpcTable->m_bySpeed_1 * (dbSpeed / 1000);	// 기본 이동 타입
-					pNpc->m_fSpeed_2		= (float)pNpcTable->m_bySpeed_2 * (dbSpeed / 1000);	// 뛰는 이동 타입..
-					pNpc->m_fOldSpeed_1		= (float)pNpcTable->m_bySpeed_1 * (dbSpeed / 1000);	// 기본 이동 타입
-					pNpc->m_fOldSpeed_2		= (float)pNpcTable->m_bySpeed_2 * (dbSpeed / 1000);	// 뛰는 이동 타입..
-					pNpc->m_fSecForMetor    = 4.0f;						// 초당 갈 수 있는 거리..
-					pNpc->m_sStandTime		= pNpcTable->m_sStandTime;	// 서있는 시간
-					pNpc->m_iMagic1			= pNpcTable->m_iMagic1;		// 사용마법 1
-					pNpc->m_iMagic2			= pNpcTable->m_iMagic2;		// 사용마법 2
-					pNpc->m_iMagic3			= pNpcTable->m_iMagic3;		// 사용마법 3
-					pNpc->m_byFireR			= pNpcTable->m_byFireR;		// 화염 저항력
-					pNpc->m_byColdR			= pNpcTable->m_byColdR;		// 냉기 저항력
-					pNpc->m_byLightningR	= pNpcTable->m_byLightningR;	// 전기 저항력
-					pNpc->m_byMagicR		= pNpcTable->m_byMagicR;	// 마법 저항력
-					pNpc->m_byDiseaseR		= pNpcTable->m_byDiseaseR;	// 저주 저항력
-					pNpc->m_byPoisonR		= pNpcTable->m_byPoisonR;	// 독 저항력
-					pNpc->m_byLightR		= pNpcTable->m_byLightR;	// 빛 저항력
-					pNpc->m_fBulk			= (float)( ((double)pNpcTable->m_sBulk / 100) * ((double)pNpcTable->m_sSize / 100) );
-					pNpc->m_bySearchRange	= pNpcTable->m_bySearchRange;	// 적 탐지 범위
-					pNpc->m_byAttackRange	= pNpcTable->m_byAttackRange;	// 사정거리
-					pNpc->m_byTracingRange	= pNpcTable->m_byTracingRange;	// 추격거리
-					pNpc->m_sAI				= pNpcTable->m_sAI;				// 인공지능 인덱스
-					pNpc->m_tNpcType		= pNpcTable->m_tNpcType;		// NPC Type
-					pNpc->m_byFamilyType	= pNpcTable->m_byFamilyType;		// 몹들사이에서 가족관계를 결정한다.
-					pNpc->m_iMoney			= pNpcTable->m_iMoney;			// 떨어지는 돈
-					pNpc->m_iItem			= pNpcTable->m_iItem;			// 떨어지는 아이템
-					pNpc->m_tNpcLongType    = pNpcTable->m_byDirectAttack;
+
+					_tcscpy(pNpc->m_strName, pNpcTable->m_strName);			// MONSTER(NPC) Name
+					pNpc->m_sPid = pNpcTable->m_sPid;						// MONSTER(NPC) Picture ID
+					pNpc->m_sSize = pNpcTable->m_sSize;						// 캐릭터의 비율(100 퍼센트 기준)
+					pNpc->m_iWeapon_1 = pNpcTable->m_iWeapon_1;				// 착용무기
+					pNpc->m_iWeapon_2 = pNpcTable->m_iWeapon_2;				// 착용무기
+					pNpc->m_byGroup = pNpcTable->m_byGroup;					// 소속집단
+					pNpc->m_byActType = pNpcTable->m_byActType;				// 행동패턴
+					pNpc->m_byRank = pNpcTable->m_byRank;					// 작위
+					pNpc->m_byTitle = pNpcTable->m_byTitle;					// 지위
+					pNpc->m_iSellingGroup = pNpcTable->m_iSellingGroup;
+					pNpc->m_sLevel = pNpcTable->m_sLevel;					// level
+					pNpc->m_iExp = pNpcTable->m_iExp;						// 경험치
+					pNpc->m_iLoyalty = pNpcTable->m_iLoyalty;				// loyalty
+					pNpc->m_iHP = pNpcTable->m_iMaxHP;						// 최대 HP
+					pNpc->m_iMaxHP = pNpcTable->m_iMaxHP;					// 현재 HP
+					pNpc->m_sMP = pNpcTable->m_sMaxMP;						// 최대 MP
+					pNpc->m_sMaxMP = pNpcTable->m_sMaxMP;					// 현재 MP
+					pNpc->m_sAttack = pNpcTable->m_sAttack;					// 공격값
+					pNpc->m_sDefense = pNpcTable->m_sDefense;				// 방어값
+					pNpc->m_sHitRate = pNpcTable->m_sHitRate;				// 타격성공률
+					pNpc->m_sEvadeRate = pNpcTable->m_sEvadeRate;			// 회피성공률
+					pNpc->m_sDamage = pNpcTable->m_sDamage;					// 기본 데미지
+					pNpc->m_sAttackDelay = pNpcTable->m_sAttackDelay;		// 공격딜레이
+					pNpc->m_sSpeed = pNpcTable->m_sSpeed;					// 이동속도
+					dbSpeed = pNpcTable->m_sSpeed;
+					pNpc->m_fSpeed_1 = (float) pNpcTable->m_bySpeed_1 * (dbSpeed / 1000);		// 기본 이동 타입
+					pNpc->m_fSpeed_2 = (float) pNpcTable->m_bySpeed_2 * (dbSpeed / 1000);		// 뛰는 이동 타입..
+					pNpc->m_fOldSpeed_1 = (float) pNpcTable->m_bySpeed_1 * (dbSpeed / 1000);	// 기본 이동 타입
+					pNpc->m_fOldSpeed_2 = (float) pNpcTable->m_bySpeed_2 * (dbSpeed / 1000);	// 뛰는 이동 타입..
+					pNpc->m_fSecForMetor = 4.0f;							// 초당 갈 수 있는 거리..
+					pNpc->m_sStandTime = pNpcTable->m_sStandTime;			// 서있는 시간
+					pNpc->m_iMagic1 = pNpcTable->m_iMagic1;					// 사용마법 1
+					pNpc->m_iMagic2 = pNpcTable->m_iMagic2;					// 사용마법 2
+					pNpc->m_iMagic3 = pNpcTable->m_iMagic3;					// 사용마법 3
+					pNpc->m_byFireR = pNpcTable->m_byFireR;					// 화염 저항력
+					pNpc->m_byColdR = pNpcTable->m_byColdR;					// 냉기 저항력
+					pNpc->m_byLightningR = pNpcTable->m_byLightningR;		// 전기 저항력
+					pNpc->m_byMagicR = pNpcTable->m_byMagicR;				// 마법 저항력
+					pNpc->m_byDiseaseR = pNpcTable->m_byDiseaseR;			// 저주 저항력
+					pNpc->m_byPoisonR = pNpcTable->m_byPoisonR;				// 독 저항력
+					pNpc->m_byLightR = pNpcTable->m_byLightR;				// 빛 저항력
+					pNpc->m_fBulk = (float) (((double) pNpcTable->m_sBulk / 100) * ((double) pNpcTable->m_sSize / 100));
+					pNpc->m_bySearchRange = pNpcTable->m_bySearchRange;		// 적 탐지 범위
+					pNpc->m_byAttackRange = pNpcTable->m_byAttackRange;		// 사정거리
+					pNpc->m_byTracingRange = pNpcTable->m_byTracingRange;	// 추격거리
+					pNpc->m_sAI = pNpcTable->m_sAI;							// 인공지능 인덱스
+					pNpc->m_tNpcType = pNpcTable->m_tNpcType;				// NPC Type
+					pNpc->m_byFamilyType = pNpcTable->m_byFamilyType;		// 몹들사이에서 가족관계를 결정한다.
+					pNpc->m_iMoney = pNpcTable->m_iMoney;					// 떨어지는 돈
+					pNpc->m_iItem = pNpcTable->m_iItem;						// 떨어지는 아이템
+					pNpc->m_tNpcLongType = pNpcTable->m_byDirectAttack;
 					pNpc->m_byWhatAttackType = pNpcTable->m_byMagicAttack;
 
 					//////// MONSTER POS ////////////////////////////////////////
@@ -1101,39 +1171,49 @@ BOOL CServerDlg::CreateNpcThread()
 
 					// map에 몬스터의 위치를 랜덤하게 위치시킨다.. (테스트 용 : 수정-DB에서 읽어오는데로 몬 위치 결정)
 					nRandom = abs(NpcPosSet.m_LeftX - NpcPosSet.m_RightX);
-					if(nRandom <= 1)
-						fRandom_X = (float)NpcPosSet.m_LeftX;
-					else	{
-						if(NpcPosSet.m_LeftX < NpcPosSet.m_RightX)
-							fRandom_X = (float)myrand(NpcPosSet.m_LeftX, NpcPosSet.m_RightX);
-						else
-							fRandom_X = (float)myrand(NpcPosSet.m_RightX, NpcPosSet.m_LeftX);
+					if (nRandom <= 1)
+					{
+						fRandom_X = (float) NpcPosSet.m_LeftX;
 					}
-					nRandom = abs(NpcPosSet.m_TopZ - NpcPosSet.m_BottomZ);
-					if(nRandom <= 1)
-						fRandom_Z = (float)NpcPosSet.m_TopZ;
-					else	{
-						if(NpcPosSet.m_TopZ < NpcPosSet.m_BottomZ)
-							fRandom_Z = (float)myrand(NpcPosSet.m_TopZ, NpcPosSet.m_BottomZ);
+					else
+					{
+						if (NpcPosSet.m_LeftX < NpcPosSet.m_RightX)
+							fRandom_X = (float) myrand(NpcPosSet.m_LeftX, NpcPosSet.m_RightX);
 						else
-							fRandom_Z = (float)myrand(NpcPosSet.m_BottomZ, NpcPosSet.m_TopZ);
+							fRandom_X = (float) myrand(NpcPosSet.m_RightX, NpcPosSet.m_LeftX);
 					}
 
-					pNpc->m_fCurX	= fRandom_X;
-					pNpc->m_fCurY	= 0;
-					pNpc->m_fCurZ	= fRandom_Z;
-					
-					if(NpcPosSet.m_RegTime < 15)	{
-						TRACE("##### ServerDlg:CreateNpcThread - RegenTime Error :  nid=%d, name=%s, regentime=%d #####\n", pNpc->m_sNid+NPC_BAND, pNpc->m_strName, NpcPosSet.m_RegTime);
+					nRandom = abs(NpcPosSet.m_TopZ - NpcPosSet.m_BottomZ);
+					if (nRandom <= 1)
+					{
+						fRandom_Z = (float) NpcPosSet.m_TopZ;
+					}
+					else
+					{
+						if (NpcPosSet.m_TopZ < NpcPosSet.m_BottomZ)
+							fRandom_Z = (float) myrand(NpcPosSet.m_TopZ, NpcPosSet.m_BottomZ);
+						else
+							fRandom_Z = (float) myrand(NpcPosSet.m_BottomZ, NpcPosSet.m_TopZ);
+					}
+
+					pNpc->m_fCurX = fRandom_X;
+					pNpc->m_fCurY = 0;
+					pNpc->m_fCurZ = fRandom_Z;
+
+					if (NpcPosSet.m_RegTime < 15)
+					{
+						TRACE("##### ServerDlg:CreateNpcThread - RegenTime Error :  nid=%d, name=%s, regentime=%d #####\n", pNpc->m_sNid + NPC_BAND, pNpc->m_strName, NpcPosSet.m_RegTime);
 						NpcPosSet.m_RegTime = 30;
 					}
 
-					pNpc->m_sRegenTime		= NpcPosSet.m_RegTime * 1000;	// 초(DB)단위-> 밀리세컨드로
+					pNpc->m_sRegenTime = NpcPosSet.m_RegTime * 1000;	// 초(DB)단위-> 밀리세컨드로
 
 					pNpc->m_sMaxPathCount = NpcPosSet.m_DotCnt;
 
-					if( pNpc->m_byMoveType >= 2 && NpcPosSet.m_DotCnt == 0 )	{
-						TRACE("##### ServerDlg:CreateNpcThread - Path type Error :  nid=%d, sid=%d, name=%s, acttype=%d, path=%d #####\n", pNpc->m_sNid+NPC_BAND, pNpc->m_sSid, pNpc->m_strName, pNpc->m_byMoveType, pNpc->m_sMaxPathCount);
+					if (pNpc->m_byMoveType >= 2
+						&& NpcPosSet.m_DotCnt == 0)
+					{
+						TRACE("##### ServerDlg:CreateNpcThread - Path type Error :  nid=%d, sid=%d, name=%s, acttype=%d, path=%d #####\n", pNpc->m_sNid + NPC_BAND, pNpc->m_sSid, pNpc->m_strName, pNpc->m_byMoveType, pNpc->m_sMaxPathCount);
 						return FALSE;
 					}
 
@@ -1141,8 +1221,10 @@ BOOL CServerDlg::CreateNpcThread()
 					memset(szPath, 0, 500);
 					strcpy(szPath, NpcPosSet.m_path);
 
-					if(NpcPosSet.m_DotCnt != 0)	{
-						for(int l = 0; l<NpcPosSet.m_DotCnt; l++)	{
+					if (NpcPosSet.m_DotCnt != 0)
+					{
+						for (int l = 0; l < NpcPosSet.m_DotCnt; l++)
+						{
 							memset(szX, 0x00, 5);
 							memset(szZ, 0x00, 5);
 							GetString(szX, szPath, 4, index);
@@ -1155,74 +1237,82 @@ BOOL CServerDlg::CreateNpcThread()
 
 					//pNpc->m_byType			= NpcPosSet.m_byType;
 
-					pNpc->m_tItemPer		= pNpcTable->m_tItemPer;	// NPC Type
-					pNpc->m_tDnPer			= pNpcTable->m_tDnPer;	// NPC Type
+					pNpc->m_tItemPer = pNpcTable->m_tItemPer;	// NPC Type
+					pNpc->m_tDnPer = pNpcTable->m_tDnPer;	// NPC Type
 
-					pNpc->m_nInitMinX = pNpc->m_nLimitMinX		= NpcPosSet.m_LeftX;
-					pNpc->m_nInitMinY = pNpc->m_nLimitMinZ		= NpcPosSet.m_TopZ;
-					pNpc->m_nInitMaxX = pNpc->m_nLimitMaxX		= NpcPosSet.m_RightX;
-					pNpc->m_nInitMaxY = pNpc->m_nLimitMaxZ		= NpcPosSet.m_BottomZ;
+					pNpc->m_nInitMinX = pNpc->m_nLimitMinX = NpcPosSet.m_LeftX;
+					pNpc->m_nInitMinY = pNpc->m_nLimitMinZ = NpcPosSet.m_TopZ;
+					pNpc->m_nInitMaxX = pNpc->m_nLimitMaxX = NpcPosSet.m_RightX;
+					pNpc->m_nInitMaxY = pNpc->m_nLimitMaxZ = NpcPosSet.m_BottomZ;
 					// dungeon work
-					pNpc->m_byDungeonFamily	= NpcPosSet.m_DungeonFamily;
-					pNpc->m_bySpecialType	= NpcPosSet.m_SpecialType;
-					pNpc->m_byRegenType		= NpcPosSet.m_RegenType;
-					pNpc->m_byTrapNumber    = NpcPosSet.m_TrapNumber;
+					pNpc->m_byDungeonFamily = NpcPosSet.m_DungeonFamily;
+					pNpc->m_bySpecialType = NpcPosSet.m_SpecialType;
+					pNpc->m_byRegenType = NpcPosSet.m_RegenType;
+					pNpc->m_byTrapNumber = NpcPosSet.m_TrapNumber;
 
-					if( pNpc->m_byDungeonFamily > 0 )	{
+					if (pNpc->m_byDungeonFamily > 0)
+					{
 						pNpc->m_nLimitMinX = NpcPosSet.m_LimitMinX;
 						pNpc->m_nLimitMinZ = NpcPosSet.m_LimitMinZ;
 						pNpc->m_nLimitMaxX = NpcPosSet.m_LimitMaxX;
 						pNpc->m_nLimitMaxZ = NpcPosSet.m_LimitMaxZ;
-					}	
-			
-					pNpc->m_ZoneIndex		= -1;
+					}
 
-					for(i = 0; i < g_arZone.size(); i++)	{
-						if(g_arZone[i]->m_nZoneNumber == pNpc->m_sCurZone)	{
+					pNpc->m_ZoneIndex = -1;
+
+					for (i = 0; i < g_arZone.size(); i++)
+					{
+						if (g_arZone[i]->m_nZoneNumber == pNpc->m_sCurZone)
+						{
 							pNpc->m_ZoneIndex = i;
 							break;
 						}
 					}
 
-					if(pNpc->m_ZoneIndex == -1)		{
+					if (pNpc->m_ZoneIndex == -1)
+					{
 						AfxMessageBox("Error : CServerDlg,, Invaild zone Index!!");
 						return FALSE;
 					}
 
 					//pNpc->Init();
 					//m_arNpc.Add(pNpc);
-					if( !m_arNpc.PutData( pNpc->m_sNid, pNpc) )		{
+					if (!m_arNpc.PutData(pNpc->m_sNid, pNpc))
+					{
 						TRACE("Npc PutData Fail - %d\n", pNpc->m_sNid);
 						delete pNpc;
-						pNpc = NULL;
+						pNpc = nullptr;
 					}
 
 					// 
-					if( g_arZone[pNpc->m_ZoneIndex]->m_byRoomEvent > 0 && pNpc->m_byDungeonFamily > 0 )	{
-						pRoom = NULL;
-						pRoom = g_arZone[pNpc->m_ZoneIndex]->m_arRoomEventArray.GetData( pNpc->m_byDungeonFamily );
-						if( !pRoom )	{
-							TRACE("Error : CServerDlg,, Map Room Npc Fail!! : nid=%d, sid=%d, name=%s, fam=%d, zoneindex=%d\n", pNpc->m_sNid+NPC_BAND, pNpc->m_sSid, pNpc->m_strName, pNpc->m_byDungeonFamily, pNpc->m_ZoneIndex);
+					if (g_arZone[pNpc->m_ZoneIndex]->m_byRoomEvent > 0
+						&& pNpc->m_byDungeonFamily > 0)
+					{
+						pRoom = nullptr;
+						pRoom = g_arZone[pNpc->m_ZoneIndex]->m_arRoomEventArray.GetData(pNpc->m_byDungeonFamily);
+						if (!pRoom)
+						{
+							TRACE("Error : CServerDlg,, Map Room Npc Fail!! : nid=%d, sid=%d, name=%s, fam=%d, zoneindex=%d\n", pNpc->m_sNid + NPC_BAND, pNpc->m_sSid, pNpc->m_strName, pNpc->m_byDungeonFamily, pNpc->m_ZoneIndex);
 							AfxMessageBox("Error : CServerDlg,, Map Room Npc Fail!!");
 							return FALSE;
 						}
 
-						int *pInt = NULL;
+						int* pInt = nullptr;
 						pInt = new int;
 						*pInt = pNpc->m_sNid;
-						if( !pRoom->m_mapRoomNpcArray.PutData( pNpc->m_sNid, pInt ) )	{
+						if (!pRoom->m_mapRoomNpcArray.PutData(pNpc->m_sNid, pInt))
+						{
 							TRACE("### Map - Room Array MonsterNid Fail : nid=%d, sid=%d ###\n", pNpc->m_sNid, pNpc->m_sSid);
 						}
 					}
 
-
 					m_TotalNPC = nSerial;
 
-					if(--nNpcCount > 0) continue;
+					if (--nNpcCount > 0)
+						continue;
 
 					bMoveNext = TRUE;
 					nNpcCount = 0;
-
 				}
 			}
 
@@ -1233,58 +1323,57 @@ BOOL CServerDlg::CreateNpcThread()
 		NpcPosSet.Close();
 	}
 
-	catch(CMemoryException * e)
+	catch (CMemoryException* e)
 	{
 		e->ReportError();
 		e->Delete();
-		
+
 		return FALSE;
 	}
-	catch(CDBException* e)
+	catch (CDBException* e)
 	{
 		e->ReportError();
 		e->Delete();
-		
+
 		return FALSE;
 	}
-		
+
 	int step = 0;
 	int nThreadNumber = 0;
-	CNpcThread* pNpcThread = NULL;
+	CNpcThread* pNpcThread = nullptr;
 
-	for(i = 0; i < m_arNpc.GetSize(); i++)
+	for (i = 0; i < m_arNpc.GetSize(); i++)
 	{
-		if( step == 0 )
-		{
+		if (step == 0)
 			pNpcThread = new CNpcThread;
-		}
+
 		pNpcThread->m_pNpc[step] = m_arNpc.GetData(i);
 		pNpcThread->m_pNpc[step]->m_sThreadNumber = nThreadNumber;
 		pNpcThread->m_pNpc[step]->Init();
-		
+
 		++step;
-		
-		if( step == NPC_NUM )
+
+		if (step == NPC_NUM)
 		{
 			pNpcThread->m_sThreadNumber = nThreadNumber++;
 			pNpcThread->pIOCP = &m_Iocport;
-			pNpcThread->m_pThread = AfxBeginThread(NpcThreadProc, &(pNpcThread->m_ThreadInfo), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
-			m_arNpcThread.push_back( pNpcThread );
+			pNpcThread->m_pThread = AfxBeginThread(NpcThreadProc, &pNpcThread->m_ThreadInfo, THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
+			m_arNpcThread.push_back(pNpcThread);
 			step = 0;
 		}
 	}
-	if( step != 0 )
+	if (step != 0)
 	{
 		pNpcThread->m_sThreadNumber = nThreadNumber++;
 		pNpcThread->pIOCP = &m_Iocport;
-		pNpcThread->m_pThread = AfxBeginThread(NpcThreadProc, &(pNpcThread->m_ThreadInfo), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
-		m_arNpcThread.push_back( pNpcThread );
+		pNpcThread->m_pThread = AfxBeginThread(NpcThreadProc, &pNpcThread->m_ThreadInfo, THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
+		m_arNpcThread.push_back(pNpcThread);
 	}
 
 	// Event Npc Logic
 /*
-	pNpcThread = NULL;
-	pNpcThread = new CNpcThread;	
+	pNpcThread = nullptr;
+	pNpcThread = new CNpcThread;
 	pNpcThread->pIOCP = &m_Iocport;
 	pNpcThread->m_sThreadNumber = 1000;
 
@@ -1298,7 +1387,7 @@ BOOL CServerDlg::CreateNpcThread()
 		if( !m_arNpc.PutData( pNpc->m_sNid, pNpc) )	{
 			TRACE("Npc PutData Fail - %d\n", pNpc->m_sNid);
 			delete pNpc;
-			pNpc = NULL;
+			pNpc = nullptr;
 		}
 	}
 
@@ -1306,12 +1395,12 @@ BOOL CServerDlg::CreateNpcThread()
 	m_arEventNpcThread.push_back( pNpcThread );
 	*/
 
-	m_pZoneEventThread = AfxBeginThread(ZoneEventThreadProc, (LPVOID)(this), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
+	m_pZoneEventThread = AfxBeginThread(ZoneEventThreadProc, this, THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
 
 	//TRACE("m_TotalNPC = %d \n", m_TotalNPC);
 	CString logstr;
 	logstr.Format("[Monster Init - %d]", m_TotalNPC);
-	m_StatusList.AddString( logstr );
+	m_StatusList.AddString(logstr);
 
 	return TRUE;
 }
@@ -1321,12 +1410,10 @@ void CServerDlg::ResumeAI()
 {
 	int i, j;
 
-	for(i = 0; i < m_arNpcThread.size(); i++)
+	for (i = 0; i < m_arNpcThread.size(); i++)
 	{
-		for(j = 0; j < NPC_NUM; j++)
-		{
+		for (j = 0; j < NPC_NUM; j++)
 			m_arNpcThread[i]->m_ThreadInfo.pNpc[j] = m_arNpcThread[i]->m_pNpc[j];
-		}
 
 		m_arNpcThread[i]->m_ThreadInfo.pIOCP = &m_Iocport;
 
@@ -1338,35 +1425,34 @@ void CServerDlg::ResumeAI()
 /*	m_arEventNpcThread[0]->m_ThreadInfo.hWndMsg = this->GetSafeHwnd();
 	for(j = 0; j < NPC_NUM; j++)
 	{
-		m_arEventNpcThread[0]->m_ThreadInfo.pNpc[j] = NULL;	// 초기 소환 몹이 당연히 없으므로 NULL로 작동을 안시킴
+		m_arEventNpcThread[0]->m_ThreadInfo.pNpc[j] = nullptr;	// 초기 소환 몹이 당연히 없으므로 NULL로 작동을 안시킴
 		m_arEventNpcThread[0]->m_ThreadInfo.m_byNpcUsed[j] = 0;
 	}
 	m_arEventNpcThread[0]->m_ThreadInfo.pIOCP = &m_Iocport;
 
-	::ResumeThread(m_arEventNpcThread[0]->m_pThread->m_hThread);	
+	::ResumeThread(m_arEventNpcThread[0]->m_pThread->m_hThread);
 	*/
 
 	::ResumeThread(m_pZoneEventThread->m_hThread);
 }
 
 //	메모리 정리
-BOOL CServerDlg::DestroyWindow() 
+BOOL CServerDlg::DestroyWindow()
 {
 	// TODO: Add your specialized code here and/or call the base class
-	KillTimer( CHECK_ALIVE );
+	KillTimer(CHECK_ALIVE);
 	//KillTimer( REHP_TIME );
 
 	g_bNpcExit = TRUE;
 
-	if(m_UserLogFile.m_hFile != CFile::hFileNull) m_UserLogFile.Close();
-	if(m_ItemLogFile.m_hFile != CFile::hFileNull) m_ItemLogFile.Close();
-	
-	int i=0;
+	if (m_UserLogFile.m_hFile != CFile::hFileNull)
+		m_UserLogFile.Close();
 
-	for(i = 0; i < m_arNpcThread.size(); i++)
-	{
+	if (m_ItemLogFile.m_hFile != CFile::hFileNull)
+		m_ItemLogFile.Close();
+
+	for (size_t i = 0; i < m_arNpcThread.size(); i++)
 		WaitForSingleObject(m_arNpcThread[i]->m_pThread->m_hThread, INFINITE);
-	}
 
 	// Event Npc Logic
 /*	for(i = 0; i < m_arEventNpcThread.size(); i++)
@@ -1379,20 +1465,20 @@ BOOL CServerDlg::DestroyWindow()
 	// DB테이블 삭제 부분
 
 	// Map(Zone) Array Delete...
-	for( i=0; i<g_arZone.size(); i++ )
+	for (size_t i = 0; i < g_arZone.size(); i++)
 		delete g_arZone[i];
 	g_arZone.clear();
 
 	// NpcTable Array Delete
-	if( !m_arMonTable.IsEmpty() )
+	if (!m_arMonTable.IsEmpty())
 		m_arMonTable.DeleteAllData();
 
 	// NpcTable Array Delete
-	if( !m_arNpcTable.IsEmpty() )
+	if (!m_arNpcTable.IsEmpty())
 		m_arNpcTable.DeleteAllData();
-	
+
 	// NpcThread Array Delete
-	for(i = 0; i < m_arNpcThread.size(); i++)
+	for (size_t i = 0; i < m_arNpcThread.size(); i++)
 		delete m_arNpcThread[i];
 	m_arNpcThread.clear();
 
@@ -1403,113 +1489,121 @@ BOOL CServerDlg::DestroyWindow()
 	m_arEventNpcThread.clear();		*/
 
 	// Item Array Delete
-	if( m_NpcItem.m_ppItem ) {
-		for(int i=0; i< m_NpcItem.m_nRow; i++) {
+	if (m_NpcItem.m_ppItem)
+	{
+		for (int i = 0; i < m_NpcItem.m_nRow; i++)
+		{
 			delete[] m_NpcItem.m_ppItem[i];
-			m_NpcItem.m_ppItem[i] = NULL;
+			m_NpcItem.m_ppItem[i] = nullptr;
 		}
 		delete[] m_NpcItem.m_ppItem;
-		m_NpcItem.m_ppItem = NULL;
+		m_NpcItem.m_ppItem = nullptr;
 	}
 
-	if( !m_MakeWeaponItemArray.IsEmpty() )
+	if (!m_MakeWeaponItemArray.IsEmpty())
 		m_MakeWeaponItemArray.DeleteAllData();
 
-	if( !m_MakeDefensiveItemArray.IsEmpty() )
+	if (!m_MakeDefensiveItemArray.IsEmpty())
 		m_MakeDefensiveItemArray.DeleteAllData();
 
-	if( !m_MakeGradeItemArray.IsEmpty() )
+	if (!m_MakeGradeItemArray.IsEmpty())
 		m_MakeGradeItemArray.DeleteAllData();
 
-	if( !m_MakeLareItemArray.IsEmpty() )
+	if (!m_MakeLareItemArray.IsEmpty())
 		m_MakeLareItemArray.DeleteAllData();
 
 	// MagicTable Array Delete
-	if( !m_MagictableArray.IsEmpty() )
+	if (!m_MagictableArray.IsEmpty())
 		m_MagictableArray.DeleteAllData();
 
-	if( !m_Magictype1Array.IsEmpty() )
+	if (!m_Magictype1Array.IsEmpty())
 		m_Magictype1Array.DeleteAllData();
 
-	if( !m_Magictype2Array.IsEmpty() )
+	if (!m_Magictype2Array.IsEmpty())
 		m_Magictype2Array.DeleteAllData();
 
-	if( !m_Magictype3Array.IsEmpty() )
+	if (!m_Magictype3Array.IsEmpty())
 		m_Magictype3Array.DeleteAllData();
 
-	if( !m_Magictype4Array.IsEmpty() )
+	if (!m_Magictype4Array.IsEmpty())
 		m_Magictype4Array.DeleteAllData();
 
 	// Npc Array Delete
-	if( !m_arNpc.IsEmpty() )
+	if (!m_arNpc.IsEmpty())
 		m_arNpc.DeleteAllData();
 
 	// User Array Delete
-	for(i = 0; i < MAX_USER; i++)	{
-		if(m_pUser[i])	{
-			delete m_pUser[i];
-			m_pUser[i] = NULL;
-		}
+	for (int i = 0; i < MAX_USER; i++)
+	{
+		delete m_pUser[i];
+		m_pUser[i] = nullptr;
 	}
 
 	// Party Array Delete 
-	if( !m_arParty.IsEmpty() )
+	if (!m_arParty.IsEmpty())
 		m_arParty.DeleteAllData();
 
-	while( !m_ZoneNpcList.empty() )
+	while (!m_ZoneNpcList.empty())
 		m_ZoneNpcList.pop_front();
 
-	DeleteCriticalSection( &g_User_critical );
-	DeleteCriticalSection( &g_LogFileWrite );
+	DeleteCriticalSection(&g_User_critical);
+	DeleteCriticalSection(&g_LogFileWrite);
 
 	return CDialog::DestroyWindow();
 }
 
 void CServerDlg::DeleteUserList(int uid)
 {
-	if(uid < 0 || uid >= MAX_USER)	{
+	if (uid < 0
+		|| uid >= MAX_USER)
+	{
 		TRACE("#### ServerDlg:DeleteUserList Uid Fail : uid=%d\n", uid);
 		return;
 	}
 
-	EnterCriticalSection( &g_User_critical );
+	EnterCriticalSection(&g_User_critical);
 
-	CUser* pUser = NULL;
+	CUser* pUser = nullptr;
 	pUser = m_pUser[uid];
-	if( !pUser )	{
-		LeaveCriticalSection( &g_User_critical );
+	if (!pUser)
+	{
+		LeaveCriticalSection(&g_User_critical);
 		TRACE("#### ServerDlg:DeleteUserList UserPtr Fail : uid=%d\n", uid);
 		return;
 	}
 
-	if( pUser->m_iUserId == uid )	{
+	if (pUser->m_iUserId == uid)
+	{
 		TRACE("*** UserLogOut으로 포인터 반환 : uid=%d, %s ***\n", uid, pUser->m_strUserID);
 		pUser->m_lUsed = 1;
 		delete m_pUser[uid];
-		m_pUser[uid] = NULL;
+		m_pUser[uid] = nullptr;
 	}
 	else
+	{
 		TRACE("#### ServerDlg:DeleteUserList Not Uid Fail : uid=%d\n", uid);
+	}
 
-	LeaveCriticalSection( &g_User_critical );
+	LeaveCriticalSection(&g_User_critical);
 }
 
 BOOL CServerDlg::MapFileLoad()
 {
 	CFile file;
 	CString szFullPath, errormsg, sZoneName;
-	MAP* pMap = NULL;
+	MAP* pMap = nullptr;
 	m_sTotalMap = 0;
 
-	CZoneInfoSet	ZoneInfoSet;
+	CZoneInfoSet ZoneInfoSet;
 
-	if( !ZoneInfoSet.Open() )
+	if (!ZoneInfoSet.Open())
 	{
 		AfxMessageBox(_T("ZoneInfoTable Open Fail!"));
 		return FALSE;
 	}
 
-	if(ZoneInfoSet.IsBOF() || ZoneInfoSet.IsEOF()) 
+	if (ZoneInfoSet.IsBOF()
+		|| ZoneInfoSet.IsEOF())
 	{
 		AfxMessageBox(_T("ZoneInfoTable Empty!"));
 		return FALSE;
@@ -1517,15 +1611,15 @@ BOOL CServerDlg::MapFileLoad()
 
 	ZoneInfoSet.MoveFirst();
 
-	while( !ZoneInfoSet.IsEOF() )
+	while (!ZoneInfoSet.IsEOF())
 	{
 		sZoneName = ZoneInfoSet.m_strZoneName;
 
 		szFullPath.Format(".\\MAP\\%s", sZoneName);
-		
+
 		if (!file.Open(szFullPath, CFile::modeRead))
 		{
-			errormsg.Format( "파일 Open 실패 - %s\n", szFullPath );
+			errormsg.Format("파일 Open 실패 - %s\n", szFullPath);
 			AfxMessageBox(errormsg);
 			return FALSE;
 		}
@@ -1533,33 +1627,37 @@ BOOL CServerDlg::MapFileLoad()
 		pMap = new MAP;
 		pMap->m_nServerNo = ZoneInfoSet.m_ServerNo;
 		pMap->m_nZoneNumber = ZoneInfoSet.m_ZoneNo;
-		strcpy( pMap->m_MapName, (char*)(LPCTSTR)sZoneName );
+		strcpy(pMap->m_MapName, (char*) (LPCTSTR) sZoneName);
 
-		if( !pMap->LoadMap( (HANDLE)file.m_hFile ) ) {
-			errormsg.Format( "Map Load 실패 - %s\n", szFullPath );
+		if (!pMap->LoadMap((HANDLE) file.m_hFile))
+		{
+			errormsg.Format("Map Load 실패 - %s\n", szFullPath);
 			AfxMessageBox(errormsg);
 			delete pMap;
 			return FALSE;
 		}
 
 		// dungeon work
-		if( ZoneInfoSet.m_RoomEvent > 0 )	{
-			if( !pMap->LoadRoomEvent( ZoneInfoSet.m_RoomEvent ) )	{
-				errormsg.Format( "Map Room Event Load 실패 - %s\n", szFullPath );
+		if (ZoneInfoSet.m_RoomEvent > 0)
+		{
+			if (!pMap->LoadRoomEvent(ZoneInfoSet.m_RoomEvent))
+			{
+				errormsg.Format("Map Room Event Load 실패 - %s\n", szFullPath);
 				AfxMessageBox(errormsg);
 				delete pMap;
 				return FALSE;
 			}
-			pMap->m_byRoomEvent = 1;
-		}	
 
-		g_arZone.push_back( pMap );
+			pMap->m_byRoomEvent = 1;
+		}
+
+		g_arZone.push_back(pMap);
 
 		ZoneInfoSet.MoveNext();
 
 		file.Close();
 		m_sTotalMap++;
-	}	
+	}
 
 	return TRUE;
 }
@@ -1569,47 +1667,60 @@ BOOL CServerDlg::MapFileLoad()
 void CServerDlg::AllNpcInfo()
 {
 	// server alive check
-	CNpc* pNpc = NULL;
-	MAP* pMap = NULL;
-	int nZone = 0, i=0;
+	CNpc* pNpc = nullptr;
+	MAP* pMap = nullptr;
+	int nZone = 0, i = 0;
 	int size = m_arNpc.GetSize();
 
 	int send_index = 0, zone_index = 0, packet_size = 0;
 	int count = 0, send_count = 0, send_tot = 0;
-	char send_buff[2048];		::ZeroMemory(send_buff, sizeof(send_buff));
+	char send_buff[2048];
+	::ZeroMemory(send_buff, sizeof(send_buff));
 
-	for(i=0; i<m_sTotalMap; i++)	{
+	for (i = 0; i < m_sTotalMap; i++)
+	{
 		pMap = g_arZone[i];
-		if(pMap == NULL)	continue;
+		if (pMap == nullptr)
+			continue;
+
 		nZone = pMap->m_nZoneNumber;
 
 		::ZeroMemory(send_buff, sizeof(send_buff));
 		send_index = 0;
-		SetByte(send_buff, AG_SERVER_INFO, send_index );
-		SetByte(send_buff, SERVER_INFO_START, send_index );
-		SetByte(send_buff, nZone, send_index );
+		SetByte(send_buff, AG_SERVER_INFO, send_index);
+		SetByte(send_buff, SERVER_INFO_START, send_index);
+		SetByte(send_buff, nZone, send_index);
 		packet_size = Send(send_buff, send_index, nZone);
 
-		zone_index = GetZoneIndex( nZone );
-		send_index = 2;		count = 0;	send_count = 0;
-		m_CompCount = 0;	m_iCompIndex = 0;
+		zone_index = GetZoneIndex(nZone);
+		send_index = 2;
+		count = 0;
+		send_count = 0;
+		m_CompCount = 0;
+		m_iCompIndex = 0;
 		::ZeroMemory(send_buff, sizeof(send_buff));
 
 		TRACE("****  allNpcInfo start = %d *****\n", nZone);
 
-		for(int i=0; i<size; i++)	{
+		for (int i = 0; i < size; i++)
+		{
 			pNpc = m_arNpc.GetData(i);
-			if(pNpc == NULL)	{
+			if (pNpc == nullptr)
+			{
 				TRACE("##### allNpcInfo Fail = %d\n", i);
 				continue;
 			}
-			if(pNpc->m_sCurZone != nZone)	continue;
+
+			if (pNpc->m_sCurZone != nZone)
+				continue;
 
 			pNpc->SendNpcInfoAll(send_buff, send_index, count);
 			count++;
-			if(count == NPC_NUM)	{
-				SetByte(send_buff, NPC_INFO_ALL, send_count );
-				SetByte(send_buff, (BYTE)count, send_count );
+
+			if (count == NPC_NUM)
+			{
+				SetByte(send_buff, NPC_INFO_ALL, send_count);
+				SetByte(send_buff, (BYTE) count, send_count);
 				m_CompCount++;
 				//::CopyMemory(m_CompBuf+m_iCompIndex, send_buff, send_index);
 				memset(m_CompBuf, 0x00, 10240);
@@ -1624,13 +1735,15 @@ void CServerDlg::AllNpcInfo()
 				::ZeroMemory(send_buff, sizeof(send_buff));
 				Sleep(50);
 			}
-		}	
+		}
 
 		//if( count != 0 )	TRACE("--> AllNpcInfo - send_count=%d, count=%d, zone=%d\n", send_tot, count, nZone);
-		if(count != 0 && count < NPC_NUM )	{
+		if (count != 0
+			&& count < NPC_NUM)
+		{
 			send_count = 0;
-			SetByte(send_buff, NPC_INFO_ALL, send_count );
-			SetByte(send_buff, (BYTE)count, send_count );
+			SetByte(send_buff, NPC_INFO_ALL, send_count);
+			SetByte(send_buff, (BYTE) count, send_count);
 			Send(send_buff, send_index, nZone);
 			send_tot++;
 			//TRACE("AllNpcInfo - send_count=%d, count=%d, zone=%d\n", send_tot, count, nZone);
@@ -1639,10 +1752,10 @@ void CServerDlg::AllNpcInfo()
 
 		send_index = 0;
 		::ZeroMemory(send_buff, sizeof(send_buff));
-		SetByte(send_buff, AG_SERVER_INFO, send_index );
-		SetByte(send_buff, SERVER_INFO_END, send_index );
-		SetByte(send_buff, nZone, send_index );
-		SetShort(send_buff, (short)m_TotalNPC, send_index );
+		SetByte(send_buff, AG_SERVER_INFO, send_index);
+		SetByte(send_buff, SERVER_INFO_END, send_index);
+		SetByte(send_buff, nZone, send_index);
+		SetShort(send_buff, (short) m_TotalNPC, send_index);
 		packet_size = Send(send_buff, send_index, nZone);
 
 		TRACE("****  allNpcInfo end = %d *****\n", nZone);
@@ -1654,39 +1767,53 @@ void CServerDlg::AllNpcInfo()
 
 CUser* CServerDlg::GetUserPtr(int nid)
 {
-	CUser* pUser = NULL;
+	CUser* pUser = nullptr;
 
-	if(nid < 0 || nid >= MAX_USER)	{
-		if(nid != -1)		TRACE("### GetUserPtr :: User Array Overflow [%d] ###\n", nid );
-		return NULL;
+	if (nid < 0
+		|| nid >= MAX_USER)
+	{
+		if (nid != -1)
+			TRACE("### GetUserPtr :: User Array Overflow [%d] ###\n", nid);
+
+		return nullptr;
 	}
 
 /*	if( !m_ppUserActive[nid] )
-		return NULL;
+		return nullptr;
 
-	if( m_ppUserActive[nid]->m_lUsed == 1 ) return NULL;	// 포인터 사용을 허락치 않음.. (logout중)
+	if( m_ppUserActive[nid]->m_lUsed == 1 ) return nullptr;	// 포인터 사용을 허락치 않음.. (logout중)
 
 	pUser = (CUser*)m_ppUserActive[nid];
 */
 	pUser = m_pUser[nid];
-	if(pUser == NULL)	return NULL;
-	if( pUser->m_lUsed == 1 ) return NULL;	// 포인터 사용을 허락치 않음.. (logout중)
-	if(pUser->m_iUserId < 0 || pUser->m_iUserId >= MAX_USER)	return NULL;
+	if (pUser == nullptr)
+		return nullptr;
 
-	if( pUser->m_iUserId == nid )	return pUser;
+	// 포인터 사용을 허락치 않음.. (logout중)
+	if (pUser->m_lUsed == 1)
+		return nullptr;
 
-	return NULL;
+	if (pUser->m_iUserId < 0
+		|| pUser->m_iUserId >= MAX_USER)
+		return nullptr;
+
+	if (pUser->m_iUserId == nid)
+		return pUser;
+
+	return nullptr;
 }
 
-void CServerDlg::OnTimer(UINT nIDEvent) 
+void CServerDlg::OnTimer(UINT nIDEvent)
 {
-	switch( nIDEvent ) {
-	case CHECK_ALIVE:
-		CheckAliveTest();
-		break;
-	case REHP_TIME:
-		//RechargeHp();
-		break;
+	switch (nIDEvent)
+	{
+		case CHECK_ALIVE:
+			CheckAliveTest();
+			break;
+
+		case REHP_TIME:
+			//RechargeHp();
+			break;
 	}
 
 	CDialog::OnTimer(nIDEvent);
@@ -1696,25 +1823,31 @@ void CServerDlg::OnTimer(UINT nIDEvent)
 void CServerDlg::CheckAliveTest()
 {
 	int send_index = 0;
-	char send_buff[256];		::ZeroMemory(send_buff, sizeof(send_buff));
+	char send_buff[256];
+	::ZeroMemory(send_buff, sizeof(send_buff));
 	int iErrorCode = 0;
 
 	SetByte(send_buff, AG_CHECK_ALIVE_REQ, send_index);
 
-	CGameSocket* pSocket = NULL;
+	CGameSocket* pSocket = nullptr;
 	int size = 0, count = 0;
 
 	CString logstr;
 	CTime time = CTime::GetCurrentTime();
 
-	for(int i=0; i<MAX_SOCKET; i++) {
-		pSocket = (CGameSocket*)m_Iocport.m_SockArray[i];
-		if(pSocket == NULL) continue;
+	for (int i = 0; i < MAX_SOCKET; i++)
+	{
+		pSocket = (CGameSocket*) m_Iocport.m_SockArray[i];
+		if (pSocket == nullptr)
+			continue;
+
 		size = pSocket->Send(send_buff, send_index);
-		if(size > 0)	{
+		if (size > 0)
+		{
 			++m_sErrorSocketCount;
-			if(m_sErrorSocketCount == 10)	{
-				logstr.Format("*** All Socket Closed ***  %d-%d-%d, %d:%d]\r\n", time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute() );
+			if (m_sErrorSocketCount == 10)
+			{
+				logstr.Format("*** All Socket Closed ***  %d-%d-%d, %d:%d]\r\n", time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute());
 				//LogFileWrite( logstr );
 			}
 			count++;
@@ -1722,32 +1855,35 @@ void CServerDlg::CheckAliveTest()
 		//TRACE("size = %d, socket_num = %d, i=%d \n", size, pSocket->m_sSocketID, i);
 	}
 
-	if(count <= 0)	{
+	if (count <= 0)
 		DeleteAllUserList(9999);
-	}
 
 	RegionCheck();
 }
 
 void CServerDlg::DeleteAllUserList(int zone)
 {
-	if(zone < 0) return;
+	if (zone < 0)
+		return;
 
 	CString logstr;
 
-	if(zone == 9999 && m_bFirstServerFlag == TRUE)	{						// 모든 소켓이 끊어진 상태...
-		CUser* pUser = NULL;
-		MAP* pMap = NULL;
-		int i=0;
-
+	// 모든 소켓이 끊어진 상태...
+	if (zone == 9999
+		&& m_bFirstServerFlag)
+	{
 		TRACE("*** DeleteAllUserList - Start *** \n");
 
-		for(i=0; i<m_sTotalMap; i++)	{
-			pMap = g_arZone[i];
-			if(pMap == NULL)	continue;
-			for( i=0; i<pMap->m_sizeRegion.cx; i++ ) {
-				for( int j=0; j<pMap->m_sizeRegion.cy; j++ ) {
-					if( !pMap->m_ppRegion[i][j].m_RegionUserArray.IsEmpty() )
+		for (MAP* pMap : g_arZone)
+		{
+			if (pMap == nullptr)
+				continue;
+
+			for (int i = 0; i < pMap->m_sizeRegion.cx; i++)
+			{
+				for (int j = 0; j < pMap->m_sizeRegion.cy; j++)
+				{
+					if (!pMap->m_ppRegion[i][j].m_RegionUserArray.IsEmpty())
 						pMap->m_ppRegion[i][j].m_RegionUserArray.DeleteAllData();
 				}
 			}
@@ -1755,31 +1891,32 @@ void CServerDlg::DeleteAllUserList(int zone)
 
 		int size = g_arZone.size();
 
-		EnterCriticalSection( &g_User_critical );
+		EnterCriticalSection(&g_User_critical);
 		// User Array Delete
-		for(i = 0; i < MAX_USER; i++)	{
-			pUser = m_pUser[i];
-			if(pUser == NULL)  continue;
+		for (int i = 0; i < MAX_USER; i++)
+		{
 			delete m_pUser[i];
-			m_pUser[i] = NULL;
+			m_pUser[i] = nullptr;
 		}
 		// 파티 정보 삭제..
-		LeaveCriticalSection( &g_User_critical );
+		LeaveCriticalSection(&g_User_critical);
 
 		// Party Array Delete 
-		if( !m_arParty.IsEmpty() )
+		if (!m_arParty.IsEmpty())
 			m_arParty.DeleteAllData();
 
 		m_bFirstServerFlag = FALSE;
 		TRACE("*** DeleteAllUserList - End *** \n");
 
 		logstr.Format("[ DELETE All User List ]");
-		m_StatusList.AddString( logstr );
+		m_StatusList.AddString(logstr);
 	}
-	else	{
-		if( zone != 9999)	{
+	else
+	{
+		if (zone != 9999)
+		{
 			logstr.Format("[GameServer DisConnect - zone = %d]", zone);
-			m_StatusList.AddString( logstr );
+			m_StatusList.AddString(logstr);
 		}
 	}
 }
@@ -1787,16 +1924,19 @@ void CServerDlg::DeleteAllUserList(int zone)
 
 void CServerDlg::SendCompressedData(int nZone)
 {
-	if( !m_CompCount || m_CompCount < 0 || !m_iCompIndex || m_iCompIndex < 0)
+	if (!m_CompCount
+		|| m_CompCount < 0
+		|| !m_iCompIndex
+		|| m_iCompIndex < 0)
 	{
 		m_CompCount = 0;
 		m_iCompIndex = 0;
-		TRACE("#### SendCompressData Fail --> count=%d, index=%d\n" , m_CompCount, m_iCompIndex);
+		TRACE("#### SendCompressData Fail --> count=%d, index=%d\n", m_CompCount, m_iCompIndex);
 		return;
 	}
 
 	m_CompMng.FlushAddData();
-	m_CompMng.AddData( m_CompBuf, m_iCompIndex );
+	m_CompMng.AddData(m_CompBuf, m_iCompIndex);
 	m_CompMng.PreCompressWork();
 	m_CompMng.Compress();
 
@@ -1806,21 +1946,21 @@ void CServerDlg::SendCompressedData(int nZone)
 
 	int send_index = 0, packet_size = 0;
 	char send_buff[2048];		::ZeroMemory(send_buff, sizeof(send_buff));
-	SetByte(send_buff, AG_COMPRESSED_DATA, send_index );
-	SetShort(send_buff, (short)comp_data_len, send_index );
-	SetShort(send_buff, (short)org_data_len, send_index );
+	SetByte(send_buff, AG_COMPRESSED_DATA, send_index);
+	SetShort(send_buff, (short) comp_data_len, send_index);
+	SetShort(send_buff, (short) org_data_len, send_index);
 	SetDWORD(send_buff, crc_value, send_index);
-	SetShort(send_buff, (short)m_CompCount, send_index );
+	SetShort(send_buff, (short) m_CompCount, send_index);
 
 	char* packet = m_CompMng.GetExtractedBufferPtr();
-	SetString( send_buff, packet, comp_data_len, send_index);
+	SetString(send_buff, packet, comp_data_len, send_index);
 
-	if(packet == NULL)
+	if (packet == nullptr)
 	{
 		m_CompCount = 0;
 		m_iCompIndex = 0;
 		m_CompMng.FlushAddData();
-		TRACE("#### SendCompressData Fail packet==null\n" );
+		TRACE("#### SendCompressData Fail packet==null\n");
 		return;
 	}
 
@@ -1828,37 +1968,40 @@ void CServerDlg::SendCompressedData(int nZone)
 
 	m_CompCount = 0;
 	m_iCompIndex = 0;
-	m_CompMng.FlushAddData();	
+	m_CompMng.FlushAddData();
 }
 
-BOOL CServerDlg::PreTranslateMessage(MSG* pMsg) 
+BOOL CServerDlg::PreTranslateMessage(MSG* pMsg)
 {
-	if( pMsg->message == WM_KEYDOWN ) {
-		if( pMsg->wParam == VK_RETURN )
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->wParam == VK_RETURN)
 			return TRUE;
-		if( pMsg->wParam == VK_F9 )
+
+		if (pMsg->wParam == VK_F9)
 			SyncTest();
 	}
-	
+
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
 // sungyong 2002.05.23
 int CServerDlg::Send(char* pData, int length, int nZone)
 {
-	SEND_DATA* pNewData = NULL;
+	SEND_DATA* pNewData = nullptr;
 	pNewData = new SEND_DATA;
-	if(pNewData == NULL) return 0;
+	if (pNewData == nullptr)
+		return 0;
 
 	pNewData->sCurZone = nZone;
 	pNewData->sLength = length;
 	::CopyMemory(pNewData->pBuf, pData, length);
 
-	EnterCriticalSection( &(m_Iocport.m_critSendData) );
-	m_Iocport.m_SendDataList.push_back( pNewData );
-	LeaveCriticalSection( &(m_Iocport.m_critSendData) );
+	EnterCriticalSection(&(m_Iocport.m_critSendData));
+	m_Iocport.m_SendDataList.push_back(pNewData);
+	LeaveCriticalSection(&(m_Iocport.m_critSendData));
 
-	PostQueuedCompletionStatus( m_Iocport.m_hSendIOCP, 0, 0, NULL );
+	PostQueuedCompletionStatus(m_Iocport.m_hSendIOCP, 0, 0, nullptr);
 
 	return 0;
 }
@@ -1877,7 +2020,7 @@ LRESULT CServerDlg::OnGameServerLogin(WPARAM wParam, LPARAM lParam)
 
 void CServerDlg::GameServerAcceptThread()
 {
-	::ResumeThread( m_Iocport.m_hAcceptThread );
+	::ResumeThread(m_Iocport.m_hAcceptThread);
 }
 
 void CServerDlg::SyncTest()
@@ -1887,28 +2030,30 @@ void CServerDlg::SyncTest()
 	fprintf(stream, "*****   Check ... List  *****\n");
 
 	int send_index = 0;
-	char send_buff[256];		::ZeroMemory(send_buff, sizeof(send_buff));
+	char send_buff[256];
+	::ZeroMemory(send_buff, sizeof(send_buff));
 	int iErrorCode = 0;
 
 	SetByte(send_buff, AG_CHECK_ALIVE_REQ, send_index);
 
-	CGameSocket* pSocket = NULL;
+	CGameSocket* pSocket = nullptr;
 	int size = 0;
 
-	for(int i=0; i<MAX_SOCKET; i++) {
-		pSocket = (CGameSocket*)m_Iocport.m_SockArray[i];
-		if(pSocket == NULL) continue;
+	for (int i = 0; i < MAX_SOCKET; i++)
+	{
+		pSocket = (CGameSocket*) m_Iocport.m_SockArray[i];
+		if (pSocket == nullptr)
+			continue;
+
 		size = pSocket->Send(send_buff, send_index);
 
 		fprintf(stream, " size = %d, socket_num = %d \n", size, pSocket->m_sSocketID);
-
-
 	}
 
 /*
 	int size = m_arNpc.GetSize();
-	CNpc* pNpc = NULL;
-	CUser* pUser = NULL;
+	CNpc* pNpc = nullptr;
+	CUser* pUser = nullptr;
 	__Vector3 vUser;
 	__Vector3 vNpc;
 	__Vector3 vDistance;
@@ -1919,7 +2064,7 @@ void CServerDlg::SyncTest()
 	for(int i=0; i<size; i++)
 	{
 		pNpc = m_arNpc.GetData(i);
-		if(pNpc == NULL)
+		if(pNpc == nullptr)
 		{
 			TRACE("##### allNpcInfo Fail = %d\n", i);
 			continue;
@@ -1931,7 +2076,7 @@ void CServerDlg::SyncTest()
 		if(pNpc->m_byAttackPos)	{
 			//EnterCriticalSection( &g_User_critical );
 			pUser = m_arUser.GetData(pNpc->m_Target.id);
-			if(pUser == NULL) {	
+			if(pUser == nullptr) {
 				fprintf(stream, "## Fail ## nid=(%d, %s), att_pos=%d, x=%.2f, z=%.2f\n", pNpc->m_sNid+NPC_BAND, pNpc->m_strName, pNpc->m_byAttackPos, pNpc->m_fCurX, pNpc->m_fCurZ);
 				continue;
 			}
@@ -1948,17 +2093,17 @@ void CServerDlg::SyncTest()
 	for(i=0; i<MAX_USER; i++)	{
 		//pUser = m_ppUserActive[i];
 		pUser = m_pUser[i];
-		if(pUser == NULL)		continue;
+		if(pUser == nullptr)		continue;
 		fprintf(stream, "nid=(%d, %s), zone=%d, x=%.2f, z=%.2f, rx=%d, rz=%d\n", pUser->m_iUserId, pUser->m_strUserID, pUser->m_curZone, pUser->m_curx, pUser->m_curz, pUser->m_sRegionX, pUser->m_sRegionZ);
-	}	
+	}
 
 	fprintf(stream, "*****   Region List  *****\n");
 	int k=0, total_user = 0, total_mon=0;
-	MAP* pMap = NULL;
+	MAP* pMap = nullptr;
 
 	for(k=0; k<m_sTotalMap; k++)	{
 		pMap = g_arZone[k];
-		if(pMap == NULL)	continue;
+		if(pMap == nullptr)	continue;
 		for( i=0; i<pMap->m_sizeRegion.cx; i++ ) {
 			for( int j=0; j<pMap->m_sizeRegion.cy; j++ ) {
 				EnterCriticalSection( &g_User_critical );
@@ -1978,11 +2123,11 @@ void CServerDlg::SyncTest()
 
 CUser* CServerDlg::GetActiveUserPtr(int index)
 {
-	CUser* pUser = NULL;
+	CUser* pUser = nullptr;
 
 /*	if(index < 0 || index > MAX_USER)	{
 		TRACE("### Fail :: User Array Overflow[%d] ###\n", index );
-		return NULL;
+		return nullptr;
 	}
 
 	EnterCriticalSection( &g_User_critical );
@@ -1990,72 +2135,77 @@ CUser* CServerDlg::GetActiveUserPtr(int index)
 	if ( m_ppUserActive[index] ) {
 		LeaveCriticalSection( &g_User_critical );
 		TRACE("### Fail : ActiveUser Array Invalid[%d] ###\n", index );
-		return NULL;
+		return nullptr;
 	}
 	else {
 		pUser = (CUser *)m_ppUserInActive[index];
 		if( !pUser ) {
 			LeaveCriticalSection( &g_User_critical );
 			TRACE("### Fail : InActiveUser Array Invalid[%d] ###\n", index );
-			return NULL;
+			return nullptr;
 		}
 	}
 
 	m_ppUserActive[index] = pUser;
-	m_ppUserInActive[index] = NULL;
+	m_ppUserInActive[index] = nullptr;
 
 	LeaveCriticalSection( &g_User_critical );	*/
 
 	return pUser;
 }
 
-CNpc*  CServerDlg::GetNpcPtr(TCHAR* pNpcName)
+CNpc* CServerDlg::GetNpcPtr(TCHAR* pNpcName)
 {
-	CNpc* pNpc = NULL;
+	CNpc* pNpc = nullptr;
 
 	int nSize = m_arNpc.GetSize();
 
-	for( int i = 0; i < nSize; i++)
+	for (int i = 0; i < nSize; i++)
 	{
-		pNpc = m_arNpc.GetData( i );
-		if( !pNpc ) continue;
+		pNpc = m_arNpc.GetData(i);
+		if (!pNpc)
+			continue;
 
-		if( _tcscmp(pNpc->m_strName, pNpcName) == 0)
-		{
+		if (_tcscmp(pNpc->m_strName, pNpcName) == 0)
 			return pNpc;
-		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 //	추가할 소환몹의 메모리를 참조하기위해 플래그가 0인 상태것만 넘긴다.
 CNpc* CServerDlg::GetEventNpcPtr()
 {
-	CNpc* pNpc = NULL;
-	for(int i = m_TotalNPC; i < m_arNpc.GetSize(); i++)		{
-		pNpc = m_arNpc.GetData( i );
-		if( !pNpc ) continue;
+	CNpc* pNpc = nullptr;
+	for (int i = m_TotalNPC; i < m_arNpc.GetSize(); i++)
+	{
+		pNpc = m_arNpc.GetData(i);
+		if (!pNpc)
+			continue;
 
-		if( pNpc->m_lEventNpc != 0 )	continue;
+		if (pNpc->m_lEventNpc != 0)
+			continue;
 
 		pNpc->m_lEventNpc = 1;
-
 		return pNpc;
 	}
-	return NULL;
+
+	return nullptr;
 }
 
 int  CServerDlg::MonsterSummon(TCHAR* pNpcName, int zone, float fx, float fz)
 {
-	if(zone < 0 || zone > (g_arZone.size() + 1) ) {
+	if (zone < 0
+		|| zone > (g_arZone.size() + 1))
+	{
 		TRACE("#### 소환 실패 : %s, zoneindex=%d #####\n", pNpcName, zone);
 		return -1;
 	}
 
 	CNpc* pNpc = GetNpcPtr(pNpcName);
-	if(pNpc == NULL)	{
+	if (pNpc == nullptr)
+	{
 		TRACE("소환할  몬스터의 이름(%s)이 잘못되었습니다.\n", pNpcName);
 		return  -1;
 	}
@@ -2070,98 +2220,101 @@ int  CServerDlg::MonsterSummon(TCHAR* pNpcName, int zone, float fx, float fz)
 BOOL CServerDlg::SetSummonNpcData(CNpc* pNpc, int zone, float fx, float fz)
 {
 	int  iCount = 0;
-	CNpc* pEventNpc	= GetEventNpcPtr();
+	CNpc* pEventNpc = GetEventNpcPtr();
 
-	if(pEventNpc == NULL)
+	if (pEventNpc == nullptr)
 	{
 		TRACE("소환할수 있는 몹은 최대 20마리입니다.\n");
 		return FALSE;
 	}
 
-	CString strMsg = _T(""); 
+	CString strMsg = _T("");
 
-	pEventNpc->m_sSid	= pNpc->m_sSid;		// MONSTER(NPC) Serial ID
+	pEventNpc->m_sSid = pNpc->m_sSid;						// MONSTER(NPC) Serial ID
 	pEventNpc->m_byMoveType = 1;
 	pEventNpc->m_byInitMoveType = 1;
 	pEventNpc->m_byBattlePos = 0;
-	_tcscpy(pEventNpc->m_strName, pNpc->m_strName);	// MONSTER(NPC) Name
-	pEventNpc->m_sPid		= pNpc->m_sPid;				// MONSTER(NPC) Picture ID
-	pEventNpc->m_sSize		= pNpc->m_sSize;			// 캐릭터의 비율(100 퍼센트 기준)
-	pEventNpc->m_iWeapon_1		= pNpc->m_iWeapon_1;	// 착용무기
-	pEventNpc->m_iWeapon_2		= pNpc->m_iWeapon_2;	// 착용무기
-	pEventNpc->m_byGroup		= pNpc->m_byGroup;		// 소속집단
-	pEventNpc->m_byActType		= pNpc->m_byActType;	// 행동패턴
-	pEventNpc->m_byRank			= pNpc->m_byRank;		// 작위
-	pEventNpc->m_byTitle		= pNpc->m_byTitle;		// 지위
+	_tcscpy(pEventNpc->m_strName, pNpc->m_strName);			// MONSTER(NPC) Name
+	pEventNpc->m_sPid = pNpc->m_sPid;						// MONSTER(NPC) Picture ID
+	pEventNpc->m_sSize = pNpc->m_sSize;						// 캐릭터의 비율(100 퍼센트 기준)
+	pEventNpc->m_iWeapon_1 = pNpc->m_iWeapon_1;				// 착용무기
+	pEventNpc->m_iWeapon_2 = pNpc->m_iWeapon_2;				// 착용무기
+	pEventNpc->m_byGroup = pNpc->m_byGroup;					// 소속집단
+	pEventNpc->m_byActType = pNpc->m_byActType;				// 행동패턴
+	pEventNpc->m_byRank = pNpc->m_byRank;					// 작위
+	pEventNpc->m_byTitle = pNpc->m_byTitle;					// 지위
 	pEventNpc->m_iSellingGroup = pNpc->m_iSellingGroup;
-	pEventNpc->m_sLevel			= pNpc->m_sLevel;		// level
-	pEventNpc->m_iExp			= pNpc->m_iExp;			// 경험치
-	pEventNpc->m_iLoyalty		= pNpc->m_iLoyalty;		// loyalty
-	pEventNpc->m_iHP			= pNpc->m_iMaxHP;		// 최대 HP
-	pEventNpc->m_iMaxHP			= pNpc->m_iMaxHP;		// 현재 HP
-	pEventNpc->m_sMP			= pNpc->m_sMaxMP;		// 최대 MP
-	pEventNpc->m_sMaxMP			= pNpc->m_sMaxMP;		// 현재 MP
-	pEventNpc->m_sAttack		= pNpc->m_sAttack;		// 공격값
-	pEventNpc->m_sDefense		= pNpc->m_sDefense;		// 방어값
-	pEventNpc->m_sHitRate		= pNpc->m_sHitRate;		// 타격성공률
-	pEventNpc->m_sEvadeRate		= pNpc->m_sEvadeRate;	// 회피성공률
-	pEventNpc->m_sDamage		= pNpc->m_sDamage;		// 기본 데미지
-	pEventNpc->m_sAttackDelay	= pNpc->m_sAttackDelay; // 공격딜레이
-	pEventNpc->m_sSpeed			= pNpc->m_sSpeed;		// 이동속도
-	pEventNpc->m_fSpeed_1		= pNpc->m_fSpeed_1;	// 기본 이동 타입
-	pEventNpc->m_fSpeed_2		= pNpc->m_fSpeed_2;	// 뛰는 이동 타입..
-	pEventNpc->m_fOldSpeed_1	= pNpc->m_fOldSpeed_1;	// 기본 이동 타입
-	pEventNpc->m_fOldSpeed_2	= pNpc->m_fOldSpeed_2;	// 뛰는 이동 타입..
-	pEventNpc->m_fSecForMetor   = 4.0f;					// 초당 갈 수 있는 거리..
-	pEventNpc->m_sStandTime		= pNpc->m_sStandTime;	// 서있는 시간
-	pEventNpc->m_iMagic1		= pNpc->m_iMagic1;		// 사용마법 1
-	pEventNpc->m_iMagic2		= pNpc->m_iMagic2;		// 사용마법 2
-	pEventNpc->m_iMagic3		= pNpc->m_iMagic3;		// 사용마법 3
-	pEventNpc->m_byFireR		= pNpc->m_byFireR;		// 화염 저항력
-	pEventNpc->m_byColdR		= pNpc->m_byColdR;		// 냉기 저항력
-	pEventNpc->m_byLightningR	= pNpc->m_byLightningR;	// 전기 저항력
-	pEventNpc->m_byMagicR		= pNpc->m_byMagicR;		// 마법 저항력
-	pEventNpc->m_byDiseaseR		= pNpc->m_byDiseaseR;	// 저주 저항력
-	pEventNpc->m_byPoisonR		= pNpc->m_byPoisonR;	// 독 저항력
-	pEventNpc->m_byLightR		= pNpc->m_byLightR;		// 빛 저항력
-	pEventNpc->m_fBulk			= pNpc->m_fBulk;
-	pEventNpc->m_bySearchRange	= pNpc->m_bySearchRange;	// 적 탐지 범위
-	pEventNpc->m_byAttackRange	= pNpc->m_byAttackRange;	// 사정거리
-	pEventNpc->m_byTracingRange	= pNpc->m_byTracingRange;	// 추격거리
-	pEventNpc->m_sAI			= pNpc->m_sAI;				// 인공지능 인덱스
-	pEventNpc->m_tNpcType		= pNpc->m_tNpcType;			// NPC Type
-	pEventNpc->m_byFamilyType	= pNpc->m_byFamilyType;		// 몹들사이에서 가족관계를 결정한다.
-	pEventNpc->m_iMoney			= pNpc->m_iMoney;			// 떨어지는 돈
-	pEventNpc->m_iItem			= pNpc->m_iItem;			// 떨어지는 아이템
-	pEventNpc->m_tNpcLongType    = pNpc->m_tNpcLongType;
+	pEventNpc->m_sLevel = pNpc->m_sLevel;					// level
+	pEventNpc->m_iExp = pNpc->m_iExp;						// 경험치
+	pEventNpc->m_iLoyalty = pNpc->m_iLoyalty;				// loyalty
+	pEventNpc->m_iHP = pNpc->m_iMaxHP;						// 최대 HP
+	pEventNpc->m_iMaxHP = pNpc->m_iMaxHP;					// 현재 HP
+	pEventNpc->m_sMP = pNpc->m_sMaxMP;						// 최대 MP
+	pEventNpc->m_sMaxMP = pNpc->m_sMaxMP;					// 현재 MP
+	pEventNpc->m_sAttack = pNpc->m_sAttack;					// 공격값
+	pEventNpc->m_sDefense = pNpc->m_sDefense;				// 방어값
+	pEventNpc->m_sHitRate = pNpc->m_sHitRate;				// 타격성공률
+	pEventNpc->m_sEvadeRate = pNpc->m_sEvadeRate;			// 회피성공률
+	pEventNpc->m_sDamage = pNpc->m_sDamage;					// 기본 데미지
+	pEventNpc->m_sAttackDelay = pNpc->m_sAttackDelay;		// 공격딜레이
+	pEventNpc->m_sSpeed = pNpc->m_sSpeed;					// 이동속도
+	pEventNpc->m_fSpeed_1 = pNpc->m_fSpeed_1;				// 기본 이동 타입
+	pEventNpc->m_fSpeed_2 = pNpc->m_fSpeed_2;				// 뛰는 이동 타입..
+	pEventNpc->m_fOldSpeed_1 = pNpc->m_fOldSpeed_1;			// 기본 이동 타입
+	pEventNpc->m_fOldSpeed_2 = pNpc->m_fOldSpeed_2;			// 뛰는 이동 타입..
+	pEventNpc->m_fSecForMetor = 4.0f;						// 초당 갈 수 있는 거리..
+	pEventNpc->m_sStandTime = pNpc->m_sStandTime;			// 서있는 시간
+	pEventNpc->m_iMagic1 = pNpc->m_iMagic1;					// 사용마법 1
+	pEventNpc->m_iMagic2 = pNpc->m_iMagic2;					// 사용마법 2
+	pEventNpc->m_iMagic3 = pNpc->m_iMagic3;					// 사용마법 3
+	pEventNpc->m_byFireR = pNpc->m_byFireR;					// 화염 저항력
+	pEventNpc->m_byColdR = pNpc->m_byColdR;					// 냉기 저항력
+	pEventNpc->m_byLightningR = pNpc->m_byLightningR;		// 전기 저항력
+	pEventNpc->m_byMagicR = pNpc->m_byMagicR;				// 마법 저항력
+	pEventNpc->m_byDiseaseR = pNpc->m_byDiseaseR;			// 저주 저항력
+	pEventNpc->m_byPoisonR = pNpc->m_byPoisonR;				// 독 저항력
+	pEventNpc->m_byLightR = pNpc->m_byLightR;				// 빛 저항력
+	pEventNpc->m_fBulk = pNpc->m_fBulk;
+	pEventNpc->m_bySearchRange = pNpc->m_bySearchRange;		// 적 탐지 범위
+	pEventNpc->m_byAttackRange = pNpc->m_byAttackRange;		// 사정거리
+	pEventNpc->m_byTracingRange = pNpc->m_byTracingRange;	// 추격거리
+	pEventNpc->m_sAI = pNpc->m_sAI;							// 인공지능 인덱스
+	pEventNpc->m_tNpcType = pNpc->m_tNpcType;				// NPC Type
+	pEventNpc->m_byFamilyType = pNpc->m_byFamilyType;		// 몹들사이에서 가족관계를 결정한다.
+	pEventNpc->m_iMoney = pNpc->m_iMoney;					// 떨어지는 돈
+	pEventNpc->m_iItem = pNpc->m_iItem;						// 떨어지는 아이템
+	pEventNpc->m_tNpcLongType = pNpc->m_tNpcLongType;
 	pEventNpc->m_byWhatAttackType = pNpc->m_byWhatAttackType;
 
 	//////// MONSTER POS ////////////////////////////////////////
 	pEventNpc->m_sCurZone = zone;
-	pEventNpc->m_fCurX	= fx;
-	pEventNpc->m_fCurY	= 0;
-	pEventNpc->m_fCurZ	= fz;
- 	pEventNpc->m_nInitMinX			= pNpc->m_nInitMinX;
-	pEventNpc->m_nInitMinY			= pNpc->m_nInitMinY;
-	pEventNpc->m_nInitMaxX			= pNpc->m_nInitMaxX;
-	pEventNpc->m_nInitMaxY			= pNpc->m_nInitMaxY;
-	pEventNpc->m_sRegenTime		= pNpc->m_sRegenTime;	// 초(DB)단위-> 밀리세컨드로
-	pEventNpc->m_tItemPer		= pNpc->m_tItemPer;	// NPC Type
-	pEventNpc->m_tDnPer			= pNpc->m_tDnPer;	// NPC Type
+	pEventNpc->m_fCurX = fx;
+	pEventNpc->m_fCurY = 0;
+	pEventNpc->m_fCurZ = fz;
+	pEventNpc->m_nInitMinX = pNpc->m_nInitMinX;
+	pEventNpc->m_nInitMinY = pNpc->m_nInitMinY;
+	pEventNpc->m_nInitMaxX = pNpc->m_nInitMaxX;
+	pEventNpc->m_nInitMaxY = pNpc->m_nInitMaxY;
+	pEventNpc->m_sRegenTime = pNpc->m_sRegenTime;			// 초(DB)단위-> 밀리세컨드로
+	pEventNpc->m_tItemPer = pNpc->m_tItemPer;				// NPC Type
+	pEventNpc->m_tDnPer = pNpc->m_tDnPer;					// NPC Type
 
-	pEventNpc->m_ZoneIndex		= -1;
+	pEventNpc->m_ZoneIndex = -1;
 
-	pEventNpc->m_NpcState = NPC_DEAD;	// 상태는 죽은것으로 해야 한다.. 
-	pEventNpc->m_bFirstLive = 1;		// 처음 살아난 경우로 해줘야 한다..
+	pEventNpc->m_NpcState = NPC_DEAD;						// 상태는 죽은것으로 해야 한다.. 
+	pEventNpc->m_bFirstLive = 1;							// 처음 살아난 경우로 해줘야 한다..
 
-	for(int i = 0; i < g_arZone.size(); i++)	{
-		if(g_arZone[i]->m_nZoneNumber == zone)	{
+	for (int i = 0; i < g_arZone.size(); i++)
+	{
+		if (g_arZone[i]->m_nZoneNumber == zone)
+		{
 			pEventNpc->m_ZoneIndex = i;
 			break;
 		}
 	}
 
-	if(pEventNpc->m_ZoneIndex == -1)	{
+	if (pEventNpc->m_ZoneIndex == -1)
+	{
 		TRACE("Invaild zone Index!!\n");
 		return FALSE;
 	}
@@ -2171,11 +2324,13 @@ BOOL CServerDlg::SetSummonNpcData(CNpc* pNpc, int zone, float fx, float fz)
 	BOOL bSuccess = FALSE;
 
 	int test = 0;
-	
-	for(int i = 0; i < NPC_NUM; i++ ) {
+
+	for (int i = 0; i < NPC_NUM; i++)
+	{
 		test = m_arEventNpcThread[0]->m_ThreadInfo.m_byNpcUsed[i];
 		TRACE("setsummon == %d, used=%d\n", i, test);
-		if( m_arEventNpcThread[0]->m_ThreadInfo.m_byNpcUsed[i] == 0 )	{
+		if (m_arEventNpcThread[0]->m_ThreadInfo.m_byNpcUsed[i] == 0)
+		{
 			m_arEventNpcThread[0]->m_ThreadInfo.m_byNpcUsed[i] = 1;
 			bSuccess = TRUE;
 			m_arEventNpcThread[0]->m_ThreadInfo.pNpc[i] = pEventNpc;
@@ -2183,13 +2338,14 @@ BOOL CServerDlg::SetSummonNpcData(CNpc* pNpc, int zone, float fx, float fz)
 		}
 	}
 
-	if(!bSuccess)	{
+	if (!bSuccess)
+	{
 		pEventNpc->m_lEventNpc = 0;
 		TRACE("### 소환에 실패했습니다. ###\n");
 		return FALSE;
 	}
 
-	TRACE("*** %d, %s 를 소환하였습니다. state = %d ***\n", pEventNpc->m_sNid+NPC_BAND, pEventNpc->m_strName, pEventNpc->m_NpcState);
+	TRACE("*** %d, %s 를 소환하였습니다. state = %d ***\n", pEventNpc->m_sNid + NPC_BAND, pEventNpc->m_strName, pEventNpc->m_NpcState);
 
 	return TRUE;
 }
@@ -2198,14 +2354,18 @@ void CServerDlg::TestCode()
 {
 	//InitTrigonometricFunction();
 
-	int random=0, count_1=0, count_2=0, count_3=0;
+	int random = 0, count_1 = 0, count_2 = 0, count_3 = 0;
 
 	// TestCoding
-	for(int i=0; i<100; i++)	{
+	for (int i = 0; i < 100; i++)
+	{
 		random = myrand(1, 3);
-		if(random == 1) count_1++;
-		else if(random == 2) count_2++;
-		else if(random == 3) count_3++;
+		if (random == 1)
+			count_1++;
+		else if (random == 2)
+			count_2++;
+		else if (random == 3)
+			count_3++;
 	}
 
 	//TRACE("$$$ random test == 1=%d, 2=%d, 3=%d,, %d,%s $$$\n", count_1, count_2, count_3, __FILE__, __LINE__);
@@ -2214,24 +2374,27 @@ void CServerDlg::TestCode()
 
 BOOL CServerDlg::GetMagicType1Data()
 {
+	CMagicType1Set MagicType1Set;
 
-	CMagicType1Set	MagicType1Set;
-
-	if( !MagicType1Set.Open() ) {
+	if (!MagicType1Set.Open())
+	{
 		AfxMessageBox(_T("MagicType1 Open Fail!"));
 		return FALSE;
 	}
-	if(MagicType1Set.IsBOF() || MagicType1Set.IsEOF()) {
+
+	if (MagicType1Set.IsBOF()
+		|| MagicType1Set.IsEOF())
+	{
 		AfxMessageBox(_T("MagicType1 Empty!"));
 		return FALSE;
 	}
 
 	MagicType1Set.MoveFirst();
 
-	while( !MagicType1Set.IsEOF() )
+	while (!MagicType1Set.IsEOF())
 	{
 		_MAGIC_TYPE1* pType1Magic = new _MAGIC_TYPE1;
-				
+
 		pType1Magic->iNum = MagicType1Set.m_iNum;
 		pType1Magic->bHitType = MagicType1Set.m_Type;
 		pType1Magic->bDelay = MagicType1Set.m_Delay;
@@ -2242,10 +2405,11 @@ BOOL CServerDlg::GetMagicType1Data()
 		pType1Magic->sHitRate = MagicType1Set.m_HitRate;
 		pType1Magic->sRange = MagicType1Set.m_Range;
 
-		if( !m_Magictype1Array.PutData(pType1Magic->iNum, pType1Magic) ) {
-			TRACE("MagicType1 PutData Fail - %d\n", pType1Magic->iNum );
+		if (!m_Magictype1Array.PutData(pType1Magic->iNum, pType1Magic))
+		{
+			TRACE("MagicType1 PutData Fail - %d\n", pType1Magic->iNum);
 			delete pType1Magic;
-			pType1Magic = NULL;
+			pType1Magic = nullptr;
 		}
 
 		MagicType1Set.MoveNext();
@@ -2256,23 +2420,27 @@ BOOL CServerDlg::GetMagicType1Data()
 
 BOOL CServerDlg::GetMagicType2Data()
 {
-	CMagicType2Set	MagicType2Set;
+	CMagicType2Set MagicType2Set;
 
-	if( !MagicType2Set.Open() ) {
+	if (!MagicType2Set.Open())
+	{
 		AfxMessageBox(_T("MagicType1 Open Fail!"));
 		return FALSE;
 	}
-	if(MagicType2Set.IsBOF() || MagicType2Set.IsEOF()) {
+
+	if (MagicType2Set.IsBOF()
+		|| MagicType2Set.IsEOF())
+	{
 		AfxMessageBox(_T("MagicType1 Empty!"));
 		return FALSE;
 	}
 
 	MagicType2Set.MoveFirst();
 
-	while( !MagicType2Set.IsEOF() )
+	while (!MagicType2Set.IsEOF())
 	{
 		_MAGIC_TYPE2* pType2Magic = new _MAGIC_TYPE2;
-				
+
 		pType2Magic->iNum = MagicType2Set.m_iNum;
 		pType2Magic->bHitType = MagicType2Set.m_HitType;
 		pType2Magic->sHitRate = MagicType2Set.m_HitRate;
@@ -2280,37 +2448,42 @@ BOOL CServerDlg::GetMagicType2Data()
 		pType2Magic->sAddRange = MagicType2Set.m_AddRange;
 		pType2Magic->bNeedArrow = MagicType2Set.m_NeedArrow;
 
-		if( !m_Magictype2Array.PutData(pType2Magic->iNum, pType2Magic) ) {
-			TRACE("MagicType2 PutData Fail - %d\n", pType2Magic->iNum );
+		if (!m_Magictype2Array.PutData(pType2Magic->iNum, pType2Magic))
+		{
+			TRACE("MagicType2 PutData Fail - %d\n", pType2Magic->iNum);
 			delete pType2Magic;
-			pType2Magic = NULL;
+			pType2Magic = nullptr;
 		}
+
 		MagicType2Set.MoveNext();
 	}
 
 	return TRUE;
 }
 
-
 BOOL CServerDlg::GetMagicType3Data()
 {
-	CMagicType3Set	MagicType3Set;
+	CMagicType3Set MagicType3Set;
 
-	if( !MagicType3Set.Open() ) {
+	if (!MagicType3Set.Open())
+	{
 		AfxMessageBox(_T("MagicType3 Open Fail!"));
 		return FALSE;
 	}
-	if(MagicType3Set.IsBOF() || MagicType3Set.IsEOF()) {
+
+	if (MagicType3Set.IsBOF()
+		|| MagicType3Set.IsEOF())
+	{
 		AfxMessageBox(_T("MagicType3 Empty!"));
 		return FALSE;
 	}
 
 	MagicType3Set.MoveFirst();
 
-	while( !MagicType3Set.IsEOF() )
+	while (!MagicType3Set.IsEOF())
 	{
 		_MAGIC_TYPE3* pType3Magic = new _MAGIC_TYPE3;
-				
+
 		pType3Magic->iNum = MagicType3Set.m_iNum;
 		pType3Magic->bAttribute = MagicType3Set.m_Attribute;
 		pType3Magic->bDirectType = MagicType3Set.m_DirectType;
@@ -2322,12 +2495,13 @@ BOOL CServerDlg::GetMagicType3Data()
 		pType3Magic->sFirstDamage = MagicType3Set.m_FirstDamage;
 		pType3Magic->sTimeDamage = MagicType3Set.m_TimeDamage;
 
-		if( !m_Magictype3Array.PutData(pType3Magic->iNum, pType3Magic) ) {
-			TRACE("MagicType3 PutData Fail - %d\n", pType3Magic->iNum );
+		if (!m_Magictype3Array.PutData(pType3Magic->iNum, pType3Magic))
+		{
+			TRACE("MagicType3 PutData Fail - %d\n", pType3Magic->iNum);
 			delete pType3Magic;
-			pType3Magic = NULL;
+			pType3Magic = nullptr;
 		}
-	
+
 		MagicType3Set.MoveNext();
 	}
 
@@ -2336,22 +2510,27 @@ BOOL CServerDlg::GetMagicType3Data()
 
 BOOL CServerDlg::GetMagicType4Data()
 {
-	CMagicType4Set	MagicType4Set;
+	CMagicType4Set MagicType4Set;
 
-	if( !MagicType4Set.Open() ) {
+	if (!MagicType4Set.Open())
+	{
 		AfxMessageBox(_T("MagicType4 Open Fail!"));
 		return FALSE;
 	}
-	if(MagicType4Set.IsBOF() || MagicType4Set.IsEOF()) {
+
+	if (MagicType4Set.IsBOF()
+		|| MagicType4Set.IsEOF())
+	{
 		AfxMessageBox(_T("MagicType4 Empty!"));
 		return FALSE;
 	}
 
 	MagicType4Set.MoveFirst();
 
-	while( !MagicType4Set.IsEOF() )	{
+	while (!MagicType4Set.IsEOF())
+	{
 		_MAGIC_TYPE4* pType4Magic = new _MAGIC_TYPE4;
-						
+
 		pType4Magic->iNum = MagicType4Set.m_iNum;
 		pType4Magic->bBuffType = MagicType4Set.m_BuffType;
 		pType4Magic->bRadius = MagicType4Set.m_Radius;
@@ -2375,31 +2554,37 @@ BOOL CServerDlg::GetMagicType4Data()
 		pType4Magic->bDiseaseR = MagicType4Set.m_DiseaseR;
 		pType4Magic->bPoisonR = MagicType4Set.m_PoisonR;
 
-		if( !m_Magictype4Array.PutData(pType4Magic->iNum, pType4Magic) )	{
-			TRACE("MagicType4 PutData Fail - %d\n", pType4Magic->iNum );
+		if (!m_Magictype4Array.PutData(pType4Magic->iNum, pType4Magic))
+		{
+			TRACE("MagicType4 PutData Fail - %d\n", pType4Magic->iNum);
 			delete pType4Magic;
-			pType4Magic = NULL;
-		}	
+			pType4Magic = nullptr;
+		}
+
 		MagicType4Set.MoveNext();
 	}
+
 	return TRUE;
 }
 
 void CServerDlg::RegionCheck()
 {
-	int i=0,k=0, total_user = 0;
-	MAP* pMap = NULL;
+	for (MAP* pMap : g_arZone)
+	{
+		if (pMap == nullptr)
+			continue;
 
-	for(k=0; k<m_sTotalMap; k++)	{
-		pMap = g_arZone[k];
-		if(pMap == NULL)	continue;
-		for( i=0; i<pMap->m_sizeRegion.cx; i++ ) {
-			for( int j=0; j<pMap->m_sizeRegion.cy; j++ ) {
-				EnterCriticalSection( &g_User_critical );
-				total_user = pMap->m_ppRegion[i][j].m_RegionUserArray.GetSize();
-				LeaveCriticalSection( &g_User_critical );
-				if( total_user > 0 )  	pMap->m_ppRegion[i][j].m_byMoving = 1;
-				else	pMap->m_ppRegion[i][j].m_byMoving = 0; 
+		for (int i = 0; i < pMap->m_sizeRegion.cx; i++)
+		{
+			for (int j = 0; j < pMap->m_sizeRegion.cy; j++)
+			{
+				EnterCriticalSection(&g_User_critical);
+				int total_user = pMap->m_ppRegion[i][j].m_RegionUserArray.GetSize();
+				LeaveCriticalSection(&g_User_critical);
+				if (total_user > 0)  
+					pMap->m_ppRegion[i][j].m_byMoving = 1;
+				else
+					pMap->m_ppRegion[i][j].m_byMoving = 0;
 			}
 		}
 	}
@@ -2407,12 +2592,12 @@ void CServerDlg::RegionCheck()
 
 BOOL CServerDlg::AddObjectEventNpc(_OBJECT_EVENT* pEvent, int zone_number)
 {
-	int i=0, j=0, objectid=0;
-	CNpcTable*	pNpcTable = NULL;
+	int i = 0, j = 0, objectid = 0;
+	CNpcTable* pNpcTable = nullptr;
 	BOOL bFindNpcTable = FALSE;
 	int offset = 0;
 	int nServerNum = 0;
-	nServerNum = GetServerNumber( zone_number );
+	nServerNum = GetServerNumber(zone_number);
 	//if(m_byZone != zone_number)	 return FALSE;
 	//if(m_byZone != UNIFY_ZONE)	{
 	//	if(m_byZone != nServerNum)	 return FALSE;
@@ -2420,19 +2605,20 @@ BOOL CServerDlg::AddObjectEventNpc(_OBJECT_EVENT* pEvent, int zone_number)
 
 	//if( zone_number > 201 )	return FALSE;	// test
 	pNpcTable = m_arNpcTable.GetData(pEvent->sIndex);
-	if(pNpcTable == NULL)	{
+	if (pNpcTable == nullptr)
+	{
 		bFindNpcTable = FALSE;
 		TRACE("#### AddObjectEventNpc Fail : [sid = %d], zone=%d #####\n", pEvent->sIndex, zone_number);
 		return FALSE;
 	}
-	
-	bFindNpcTable = TRUE;
-	
 
-	CNpc*		pNpc		= new CNpc;
-	
-	pNpc->m_sNid	= m_sMapEventNpc++;				// 서버 내에서의 고유 번호
-	pNpc->m_sSid	= (short)pEvent->sIndex;		// MONSTER(NPC) Serial ID
+	bFindNpcTable = TRUE;
+
+
+	CNpc* pNpc = new CNpc;
+
+	pNpc->m_sNid = m_sMapEventNpc++;				// 서버 내에서의 고유 번호
+	pNpc->m_sSid = (short) pEvent->sIndex;			// MONSTER(NPC) Serial ID
 
 	pNpc->m_byMoveType = 100;
 	pNpc->m_byInitMoveType = 100;
@@ -2443,56 +2629,56 @@ BOOL CServerDlg::AddObjectEventNpc(_OBJECT_EVENT* pEvent, int zone_number)
 
 	pNpc->m_byBattlePos = 0;
 
-	_tcscpy(pNpc->m_strName, pNpcTable->m_strName);	// MONSTER(NPC) Name
-	pNpc->m_sPid		= pNpcTable->m_sPid;		// MONSTER(NPC) Picture ID
-	pNpc->m_sSize		= pNpcTable->m_sSize;		// 캐릭터의 비율(100 퍼센트 기준)
-	pNpc->m_iWeapon_1		= pNpcTable->m_iWeapon_1;	// 착용무기
-	pNpc->m_iWeapon_2		= pNpcTable->m_iWeapon_2;	// 착용무기
-	pNpc->m_byGroup			= pNpcTable->m_byGroup;		// 소속집단
-	pNpc->m_byActType		= pNpcTable->m_byActType;	// 행동패턴
-	pNpc->m_byRank			= pNpcTable->m_byRank;		// 작위
-	pNpc->m_byTitle			= pNpcTable->m_byTitle;		// 지위
-	pNpc->m_iSellingGroup  = pNpcTable->m_iSellingGroup;
-	pNpc->m_sLevel			= pNpcTable->m_sLevel;		// level
-	pNpc->m_iExp			= pNpcTable->m_iExp;		// 경험치
-	pNpc->m_iLoyalty		= pNpcTable->m_iLoyalty;	// loyalty
-	pNpc->m_iHP				= pNpcTable->m_iMaxHP;		// 최대 HP
-	pNpc->m_iMaxHP			= pNpcTable->m_iMaxHP;		// 현재 HP
-	pNpc->m_sMP				= pNpcTable->m_sMaxMP;		// 최대 MP
-	pNpc->m_sMaxMP			= pNpcTable->m_sMaxMP;		// 현재 MP
-	pNpc->m_sAttack			= pNpcTable->m_sAttack;		// 공격값
-	pNpc->m_sDefense		= pNpcTable->m_sDefense;	// 방어값
-	pNpc->m_sHitRate		= pNpcTable->m_sHitRate;	// 타격성공률
-	pNpc->m_sEvadeRate		= pNpcTable->m_sEvadeRate;	// 회피성공률
-	pNpc->m_sDamage			= pNpcTable->m_sDamage;		// 기본 데미지
-	pNpc->m_sAttackDelay	= pNpcTable->m_sAttackDelay;// 공격딜레이
-	pNpc->m_sSpeed			= pNpcTable->m_sSpeed;		// 이동속도
-	pNpc->m_fSpeed_1		= (float)pNpcTable->m_bySpeed_1;	// 기본 이동 타입
-	pNpc->m_fSpeed_2		= (float)pNpcTable->m_bySpeed_2;	// 뛰는 이동 타입..
-	pNpc->m_fOldSpeed_1		= (float)pNpcTable->m_bySpeed_1;	// 기본 이동 타입
-	pNpc->m_fOldSpeed_2		= (float)pNpcTable->m_bySpeed_2;	// 뛰는 이동 타입..
-	pNpc->m_fSecForMetor    = 4.0f;						// 초당 갈 수 있는 거리..
-	pNpc->m_sStandTime		= pNpcTable->m_sStandTime;	// 서있는 시간
-	pNpc->m_iMagic1			= pNpcTable->m_iMagic1;		// 사용마법 1
-	pNpc->m_iMagic2			= pNpcTable->m_iMagic2;		// 사용마법 2
-	pNpc->m_iMagic3			= pNpcTable->m_iMagic3;		// 사용마법 3
-	pNpc->m_byFireR			= pNpcTable->m_byFireR;		// 화염 저항력
-	pNpc->m_byColdR			= pNpcTable->m_byColdR;		// 냉기 저항력
-	pNpc->m_byLightningR	= pNpcTable->m_byLightningR;	// 전기 저항력
-	pNpc->m_byMagicR		= pNpcTable->m_byMagicR;	// 마법 저항력
-	pNpc->m_byDiseaseR		= pNpcTable->m_byDiseaseR;	// 저주 저항력
-	pNpc->m_byPoisonR		= pNpcTable->m_byPoisonR;	// 독 저항력
-	pNpc->m_byLightR		= pNpcTable->m_byLightR;	// 빛 저항력
-	pNpc->m_fBulk			= (float)( ((double)pNpcTable->m_sBulk / 100) * ((double)pNpcTable->m_sSize / 100) );
-	pNpc->m_bySearchRange	= pNpcTable->m_bySearchRange;	// 적 탐지 범위
-	pNpc->m_byAttackRange	= pNpcTable->m_byAttackRange;	// 사정거리
-	pNpc->m_byTracingRange	= pNpcTable->m_byTracingRange;	// 추격거리
-	pNpc->m_sAI				= pNpcTable->m_sAI;				// 인공지능 인덱스
-	pNpc->m_tNpcType		= pNpcTable->m_tNpcType;		// NPC Type
-	pNpc->m_byFamilyType	= pNpcTable->m_byFamilyType;		// 몹들사이에서 가족관계를 결정한다.
-	pNpc->m_iMoney			= pNpcTable->m_iMoney;			// 떨어지는 돈
-	pNpc->m_iItem			= pNpcTable->m_iItem;			// 떨어지는 아이템
-	pNpc->m_tNpcLongType    = pNpcTable->m_byDirectAttack;
+	_tcscpy(pNpc->m_strName, pNpcTable->m_strName);			// MONSTER(NPC) Name
+	pNpc->m_sPid = pNpcTable->m_sPid;						// MONSTER(NPC) Picture ID
+	pNpc->m_sSize = pNpcTable->m_sSize;						// 캐릭터의 비율(100 퍼센트 기준)
+	pNpc->m_iWeapon_1 = pNpcTable->m_iWeapon_1;				// 착용무기
+	pNpc->m_iWeapon_2 = pNpcTable->m_iWeapon_2;				// 착용무기
+	pNpc->m_byGroup = pNpcTable->m_byGroup;					// 소속집단
+	pNpc->m_byActType = pNpcTable->m_byActType;				// 행동패턴
+	pNpc->m_byRank = pNpcTable->m_byRank;					// 작위
+	pNpc->m_byTitle = pNpcTable->m_byTitle;					// 지위
+	pNpc->m_iSellingGroup = pNpcTable->m_iSellingGroup;
+	pNpc->m_sLevel = pNpcTable->m_sLevel;					// level
+	pNpc->m_iExp = pNpcTable->m_iExp;						// 경험치
+	pNpc->m_iLoyalty = pNpcTable->m_iLoyalty;				// loyalty
+	pNpc->m_iHP = pNpcTable->m_iMaxHP;						// 최대 HP
+	pNpc->m_iMaxHP = pNpcTable->m_iMaxHP;					// 현재 HP
+	pNpc->m_sMP = pNpcTable->m_sMaxMP;						// 최대 MP
+	pNpc->m_sMaxMP = pNpcTable->m_sMaxMP;					// 현재 MP
+	pNpc->m_sAttack = pNpcTable->m_sAttack;					// 공격값
+	pNpc->m_sDefense = pNpcTable->m_sDefense;				// 방어값
+	pNpc->m_sHitRate = pNpcTable->m_sHitRate;				// 타격성공률
+	pNpc->m_sEvadeRate = pNpcTable->m_sEvadeRate;			// 회피성공률
+	pNpc->m_sDamage = pNpcTable->m_sDamage;					// 기본 데미지
+	pNpc->m_sAttackDelay = pNpcTable->m_sAttackDelay;		// 공격딜레이
+	pNpc->m_sSpeed = pNpcTable->m_sSpeed;					// 이동속도
+	pNpc->m_fSpeed_1 = (float) pNpcTable->m_bySpeed_1;		// 기본 이동 타입
+	pNpc->m_fSpeed_2 = (float) pNpcTable->m_bySpeed_2;		// 뛰는 이동 타입..
+	pNpc->m_fOldSpeed_1 = (float) pNpcTable->m_bySpeed_1;	// 기본 이동 타입
+	pNpc->m_fOldSpeed_2 = (float) pNpcTable->m_bySpeed_2;	// 뛰는 이동 타입..
+	pNpc->m_fSecForMetor = 4.0f;							// 초당 갈 수 있는 거리..
+	pNpc->m_sStandTime = pNpcTable->m_sStandTime;			// 서있는 시간
+	pNpc->m_iMagic1 = pNpcTable->m_iMagic1;					// 사용마법 1
+	pNpc->m_iMagic2 = pNpcTable->m_iMagic2;					// 사용마법 2
+	pNpc->m_iMagic3 = pNpcTable->m_iMagic3;					// 사용마법 3
+	pNpc->m_byFireR = pNpcTable->m_byFireR;					// 화염 저항력
+	pNpc->m_byColdR = pNpcTable->m_byColdR;					// 냉기 저항력
+	pNpc->m_byLightningR = pNpcTable->m_byLightningR;		// 전기 저항력
+	pNpc->m_byMagicR = pNpcTable->m_byMagicR;				// 마법 저항력
+	pNpc->m_byDiseaseR = pNpcTable->m_byDiseaseR;			// 저주 저항력
+	pNpc->m_byPoisonR = pNpcTable->m_byPoisonR;				// 독 저항력
+	pNpc->m_byLightR = pNpcTable->m_byLightR;				// 빛 저항력
+	pNpc->m_fBulk = (float) (((double) pNpcTable->m_sBulk / 100) * ((double) pNpcTable->m_sSize / 100));
+	pNpc->m_bySearchRange = pNpcTable->m_bySearchRange;		// 적 탐지 범위
+	pNpc->m_byAttackRange = pNpcTable->m_byAttackRange;		// 사정거리
+	pNpc->m_byTracingRange = pNpcTable->m_byTracingRange;	// 추격거리
+	pNpc->m_sAI = pNpcTable->m_sAI;							// 인공지능 인덱스
+	pNpc->m_tNpcType = pNpcTable->m_tNpcType;				// NPC Type
+	pNpc->m_byFamilyType = pNpcTable->m_byFamilyType;		// 몹들사이에서 가족관계를 결정한다.
+	pNpc->m_iMoney = pNpcTable->m_iMoney;					// 떨어지는 돈
+	pNpc->m_iItem = pNpcTable->m_iItem;						// 떨어지는 아이템
+	pNpc->m_tNpcLongType = pNpcTable->m_byDirectAttack;
 	pNpc->m_byWhatAttackType = pNpcTable->m_byDirectAttack;
 
 	//////// MONSTER POS ////////////////////////////////////////
@@ -2500,20 +2686,20 @@ BOOL CServerDlg::AddObjectEventNpc(_OBJECT_EVENT* pEvent, int zone_number)
 	pNpc->m_sCurZone = zone_number;
 
 	pNpc->m_byGateOpen = pEvent->sStatus;
-	pNpc->m_fCurX	= pEvent->fPosX;
-	pNpc->m_fCurY	= pEvent->fPosY;
-	pNpc->m_fCurZ	= pEvent->fPosZ;
-	
- 	pNpc->m_nInitMinX			= pEvent->fPosX-1;
-	pNpc->m_nInitMinY			= pEvent->fPosZ-1;
-	pNpc->m_nInitMaxX			= pEvent->fPosX+1;
-	pNpc->m_nInitMaxY			= pEvent->fPosZ+1;	
+	pNpc->m_fCurX = pEvent->fPosX;
+	pNpc->m_fCurY = pEvent->fPosY;
+	pNpc->m_fCurZ = pEvent->fPosZ;
 
-	pNpc->m_sRegenTime		= 10000 * 1000;	// 초(DB)단위-> 밀리세컨드로
+	pNpc->m_nInitMinX = pEvent->fPosX - 1;
+	pNpc->m_nInitMinY = pEvent->fPosZ - 1;
+	pNpc->m_nInitMaxX = pEvent->fPosX + 1;
+	pNpc->m_nInitMaxY = pEvent->fPosZ + 1;
+
+	pNpc->m_sRegenTime = 10000 * 1000;	// 초(DB)단위-> 밀리세컨드로
 	//pNpc->m_sRegenTime		= 30 * 1000;	// 초(DB)단위-> 밀리세컨드로
 	pNpc->m_sMaxPathCount = 0;
-	pNpc->m_tItemPer		= pNpcTable->m_tItemPer;	// NPC Type
-	pNpc->m_tDnPer			= pNpcTable->m_tDnPer;	// NPC Type
+	pNpc->m_tItemPer = pNpcTable->m_tItemPer;	// NPC Type
+	pNpc->m_tDnPer = pNpcTable->m_tDnPer;	// NPC Type
 
 	pNpc->m_ZoneIndex = -1;
 	pNpc->m_byObjectType = SPECIAL_OBJECT;
@@ -2526,10 +2712,11 @@ BOOL CServerDlg::AddObjectEventNpc(_OBJECT_EVENT* pEvent, int zone_number)
 	}	*/
 
 	//pNpc->Init();
-	if( !m_arNpc.PutData( pNpc->m_sNid, pNpc) )	{
+	if (!m_arNpc.PutData(pNpc->m_sNid, pNpc))
+	{
 		TRACE("Npc PutData Fail - %d\n", pNpc->m_sNid);
 		delete pNpc;
-		pNpc = NULL;
+		pNpc = nullptr;
 	}
 
 	m_TotalNPC = m_sMapEventNpc;
@@ -2537,42 +2724,49 @@ BOOL CServerDlg::AddObjectEventNpc(_OBJECT_EVENT* pEvent, int zone_number)
 	return TRUE;
 }
 
-int CServerDlg::GetZoneIndex( int zonenumber )
+int CServerDlg::GetZoneIndex(int zonenumber)
 {
 	int t_count = g_arZone.size();
-	for(int i=0; i<t_count; i++) {
-		if( g_arZone[i] && (zonenumber == g_arZone[i]->m_nZoneNumber) )
+	for (int i = 0; i < t_count; i++)
+	{
+		if (g_arZone[i]
+			&& (zonenumber == g_arZone[i]->m_nZoneNumber))
 			return i;
 	}
 
 	return -1;
 }
 
-int CServerDlg::GetServerNumber( int zonenumber )
+int CServerDlg::GetServerNumber(int zonenumber)
 {
 	int t_count = g_arZone.size();
-	for(int i=0; i<t_count; i++) {
-		if( g_arZone[i] && (zonenumber == g_arZone[i]->m_nZoneNumber) )
+	for (int i = 0; i < t_count; i++)
+	{
+		if (g_arZone[i]
+			&& (zonenumber == g_arZone[i]->m_nZoneNumber))
 			return g_arZone[i]->m_nServerNo;
 	}
 
 	return -1;
 }
 
-void CServerDlg::ClostSocket( int zonenumber )
+void CServerDlg::ClostSocket(int zonenumber)
 {
-	CGameSocket* pSocket = NULL;
+	CGameSocket* pSocket = nullptr;
 
-	for(int i=0; i<MAX_SOCKET; i++) {
-		pSocket = (CGameSocket*)m_Iocport.m_SockArray[i];
-		if(pSocket == NULL) continue;
-		if(pSocket->m_sSocketID == zonenumber) {
-		//TRACE("size = %d, socket_num = %d, i=%d \n", size, pSocket->m_sSocketID, i);
+	for (int i = 0; i < MAX_SOCKET; i++)
+	{
+		pSocket = (CGameSocket*) m_Iocport.m_SockArray[i];
+		if (pSocket == nullptr)
+			continue;
+
+		if (pSocket->m_sSocketID == zonenumber)
+		{
+			//TRACE("size = %d, socket_num = %d, i=%d \n", size, pSocket->m_sSocketID, i);
 			pSocket->CloseProcess();
-			m_Iocport.RidIOCPSocket( pSocket->GetSocketID(), pSocket );
+			m_Iocport.RidIOCPSocket(pSocket->GetSocketID(), pSocket);
 		}
 	}
-	
 }
 
 void CServerDlg::GetServerInfoIni()
@@ -2582,35 +2776,41 @@ void CServerDlg::GetServerInfoIni()
 	m_byZone = inifile.GetProfileInt("SERVER", "ZONE", 1);
 }
 
-void CServerDlg::SendSystemMsg( char* pMsg, int zone, int type, int who )
+void CServerDlg::SendSystemMsg(char* pMsg, int zone, int type, int who)
 {
 	int send_index = 0;
 	char buff[256];
-	memset( buff, 0x00, 256 );
+	memset(buff, 0x00, 256);
 	short sLength = _tcslen(pMsg);
 
-	SetByte(buff, AG_SYSTEM_MSG, send_index );
-	SetByte(buff, type, send_index );				// 채팅형식
-	SetShort(buff, who, send_index );				// 누구에게
-	SetShort(buff, sLength, send_index );
-	SetString( buff, pMsg, sLength, send_index );
+	SetByte(buff, AG_SYSTEM_MSG, send_index);
+	SetByte(buff, type, send_index);				// 채팅형식
+	SetShort(buff, who, send_index);				// 누구에게
+	SetShort(buff, sLength, send_index);
+	SetString(buff, pMsg, sLength, send_index);
 
-	Send(buff, send_index, zone);   	
+	Send(buff, send_index, zone);
 }
 
 void CServerDlg::ResetBattleZone()
 {
 	TRACE("ServerDlg - ResetBattleZone() : start \n");
-	MAP* pMap = NULL;
-	CRoomEvent* pRoom = NULL ;
-	int i=0, j=0;
 
-	for( i=0; i<g_arZone.size(); i++)	{
-		pMap = g_arZone[i];
-		if( !pMap ) continue;
-		if( pMap->m_byRoomEvent == 0 ) continue;		// 현재의 존이 던젼담당하는 존이 아니면 리턴..
-		//if( pMap->IsRoomStatusCheck() == TRUE )	continue;	// 전체방이 클리어 되었다면
+	for (MAP* pMap : g_arZone)
+	{
+		if (!pMap)
+			continue;
+
+		// 현재의 존이 던젼담당하는 존이 아니면 리턴..
+		if (pMap->m_byRoomEvent == 0)
+			continue;
+
+		// 전체방이 클리어 되었다면
+		// if (pMap->IsRoomStatusCheck())
+		//	continue;
+
 		pMap->InitializeRoom();
 	}
+
 	TRACE("ServerDlg - ResetBattleZone() : end \n");
 }

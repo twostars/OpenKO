@@ -58,7 +58,7 @@ struct  _NpcGiveItem
 
 struct	_ExpUserList
 {
-	TCHAR	strUserID[MAX_ID_SIZE+1];		// 아이디(캐릭터 이름)
+	TCHAR	strUserID[MAX_ID_SIZE + 1];		// 아이디(캐릭터 이름)
 	int		iUid;							// User uid
 	int		nDamage;						// 타격치 합
 	BOOL	bIs;							// 시야에 존재하는지를 판단(true:존재)
@@ -116,11 +116,11 @@ struct _TargetHealer
 class CServerDlg;
 
 /*
-     ** Repent AI Server 작업시 참고 사항 **
+	 ** Repent AI Server 작업시 참고 사항 **
 	1. MONSTER DB 쪽에 있는 변수들 전부 수정..
 */
 
-class CNpc  
+class CNpc
 {
 public:
 
@@ -151,7 +151,7 @@ public:
 
 	short	m_sNid;				// NPC (서버상의)일련번호
 
-	CMapInfo	**m_pOrgMap;		// 원본 MapInfo 에 대한 포인터
+	CMapInfo** m_pOrgMap;		// 원본 MapInfo 에 대한 포인터
 
 	float		m_nInitX;			// 처음 생성된 위치 X
 	float		m_nInitY;			// 처음 생성된 위치 Y
@@ -184,7 +184,7 @@ public:
 	short m_sStepCount;
 
 	CPathFind m_vPathFind;
-	_PathNode	*m_pPath;
+	_PathNode* m_pPath;
 
 	int		m_nInitMinX;					// 초기위치
 	int		m_nInitMinY;
@@ -205,7 +205,7 @@ public:
 	//	MONSTER DB 쪽에 있는 변수들
 	//----------------------------------------------------------------
 	short	m_sSid;				// MONSTER(NPC) Serial ID
-	TCHAR	m_strName[MAX_ID_SIZE+1];		// MONSTER(NPC) Name
+	TCHAR	m_strName[MAX_ID_SIZE + 1];		// MONSTER(NPC) Name
 	short	m_sPid;							// MONSTER(NPC) Picture ID
 	short   m_sSize;						// 캐릭터의 비율(100 퍼센트 기준)
 	int     m_iWeapon_1;			// 착용 무기
@@ -246,7 +246,7 @@ public:
 	BYTE	m_byTracingRange;	// 추격 거리
 
 	short	m_sAI;				// 인공지능 인덱스
-	
+
 	BYTE	m_tNpcType;			// NPC Type
 								// 0 : Normal Monster
 								// 1 : NPC
@@ -262,7 +262,7 @@ public:
 
 	int			m_iHP;				// 현재 HP
 	short		m_sMP;				// 현재 MP
-	
+
 	float   m_fSecForMetor;		// 초당 갈 수 있는 거리..
 
 	//----------------------------------------------------------------
@@ -315,7 +315,7 @@ public:
 	float m_fAdd_x;
 	float m_fAdd_z;
 
-	float m_fBattlePos_x;	
+	float m_fBattlePos_x;
 	float m_fBattlePos_z;
 
 	float m_fSecForRealMoveMetor;		// 초당 갈 수 있는 거리..(실제 클라이언트에 보내주는 거리)
@@ -361,23 +361,23 @@ protected:
 
 public:
 
-	void FillNpcInfo(char *temp_send, int &index, BYTE flag);
+	void FillNpcInfo(char* temp_send, int& index, BYTE flag);
 	void NpcStrategy(BYTE type);
 	void NpcTypeParser();
-	int  FindFriend(int type=0);
-	void  FindFriendRegion(int x, int z, MAP* pMap, _TargetHealer* pHealer, int type=0);
+	int  FindFriend(int type = 0);
+	void  FindFriendRegion(int x, int z, MAP* pMap, _TargetHealer* pHealer, int type = 0);
 	//void  FindFriendRegion(int x, int z, MAP* pMap, int type=0);
-	BOOL IsCloseTarget(CUser *pUser, int nRange);
+	BOOL IsCloseTarget(CUser* pUser, int nRange);
 	void ToTargetMove(CIOCPort* pIOCP, CUser* pUser);
 	int SendDead(CIOCPort* pIOCP, int type = 1);			// Npc Dead
 	void SendExpToUserList();								// User 경험치 분배..
 	BOOL SetDamage(int nAttackType, int nDamage, const char* id, int uid, CIOCPort* pIOCP);	// Npc의 데미지 계산..
 	BOOL SetHMagicDamage(int nDamage, CIOCPort* pIOCP);	// Npc의 데미지 계산..
 	int GetDefense();										// Npc의 방어값..
-	void ChangeTarget(int nAttackType, CUser *pUser, CIOCPort* pIOCP);
-	void ChangeNTarget(CNpc *pNpc, CIOCPort* pIOCP);
-	int GetFinalDamage(CUser *pUser, int type = 1);
-	int GetNFinalDamage(CNpc *pNpc);
+	void ChangeTarget(int nAttackType, CUser* pUser, CIOCPort* pIOCP);
+	void ChangeNTarget(CNpc* pNpc, CIOCPort* pIOCP);
+	int GetFinalDamage(CUser* pUser, int type = 1);
+	int GetNFinalDamage(CNpc* pNpc);
 	BYTE GetHitRate(float rate);
 	BOOL ResetPath();
 	BOOL GetTargetPos(float& x, float& z);
@@ -387,13 +387,13 @@ public:
 	int TracingAttack(CIOCPort* pIOCP);
 	int GetTargetPath(int option = 0);
 	int	GetPartyDamage(int iNumber);
-	int IsCloseTarget(int nRange, int Flag=0);
+	int IsCloseTarget(int nRange, int Flag = 0);
 	BOOL StepMove(int nStep, CIOCPort* pIOCP);
 	BOOL StepNoPathMove(int nStep);
 	BOOL IsMovingEnd();
 	BOOL IsMovable(float x, float z);
 	int  IsSurround(CUser* pUser);
-	BOOL IsDamagedUserList(CUser *pUser);
+	BOOL IsDamagedUserList(CUser* pUser);
 	void IsUserInSight();
 	BOOL IsLevelCheck(int iLevel);
 	BOOL IsHPCheck(int iHP);
@@ -422,9 +422,9 @@ public:
 	int GetNearPathPoint();			//
 
 	// Packet Send부분..
-	void SendAll(CIOCPort* pIOCP, TCHAR *pBuf, int nLength);
-	void SendAttackSuccess(CIOCPort* pIOCP, BYTE byResult, int tuid, short sDamage, int nHP=0, BYTE byFlag = 0, short sAttack_type=1);
-	void SendNpcInfoAll(char *temp_send, int &index, int count);	// game server에 npc정보를 전부 전송...
+	void SendAll(CIOCPort* pIOCP, TCHAR* pBuf, int nLength);
+	void SendAttackSuccess(CIOCPort* pIOCP, BYTE byResult, int tuid, short sDamage, int nHP = 0, BYTE byFlag = 0, short sAttack_type = 1);
+	void SendNpcInfoAll(char* temp_send, int& index, int count);	// game server에 npc정보를 전부 전송...
 
 	// Inline Function
 	BOOL SetUid(float x, float z, int id);
@@ -448,7 +448,7 @@ public:
 	__Vector3 GetVectorPosition(__Vector3 vOrig, __Vector3 vDest, float fDis);
 	// CalcAdaptivePosition : vPosDest->vPosOrig방향으로 vPosDest에서 fDis거리만큼 떨어진 좌표를 리턴
 	__Vector3 CalcAdaptivePosition(__Vector3 vPosOrig, __Vector3 vPosDest, float fAttackDistance);
-	__Vector3 ComputeDestPos( __Vector3 vCur, float fDegree, float fDegreeOffset, float fDistance);
+	__Vector3 ComputeDestPos(__Vector3 vCur, float fDegree, float fDegreeOffset, float fDistance);
 	void Yaw2D(float fDirX, float fDirZ, float& fYawResult);
 	float GetDistance(__Vector3 vOrig, __Vector3 vDest);
 	int  PathFind(CPoint start, CPoint end, float fDistance);
@@ -457,7 +457,7 @@ public:
 	void MoveAttack(CIOCPort* pIOCP);
 	void HpChange(CIOCPort* pIOCP);
 	void MSpChange(int type, int amount);
-	void ItemWoreOut( int type, int damage );
+	void ItemWoreOut(int type, int damage);
 	int	 ItemProdution(int item_number);
 	int  GetItemGrade(int item_grade);
 	int  GetItemCodeNumber(int level, int item_type);
@@ -465,7 +465,7 @@ public:
 	void DurationMagic_4(CIOCPort* pIOCP, float currenttime);
 	void DurationMagic_3(CIOCPort* pIOCP, float currenttime);
 	void ChangeMonsterInfomation(int iChangeType);
-	int  GetPartyExp( int party_level, int man, int nNpcExp );
+	int  GetPartyExp(int party_level, int man, int nNpcExp);
 	void ChangeAbility(int iChangeType);
 	BOOL Teleport(CIOCPort* pIOCP);
 };

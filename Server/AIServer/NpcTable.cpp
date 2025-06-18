@@ -8,7 +8,7 @@
 
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -29,7 +29,7 @@ CNpcTable::~CNpcTable()
 void CNpcTable::Initialize()
 {
 	m_sSid = -1;				// MONSTER(NPC) Serial ID
-	memset(m_strName, 0x00, MAX_ID_SIZE+1);		// MONSTER(NPC) Name
+	memset(m_strName, 0x00, MAX_ID_SIZE + 1);		// MONSTER(NPC) Name
 	m_sPid = 0;
 	m_sSize = 0;
 	m_iWeapon_1 = 0;			// 무기계열
@@ -61,7 +61,7 @@ void CNpcTable::Initialize()
 	m_byMagicR = 0;			// 마법 저항력
 	m_byDiseaseR = 0;		// 저주 저항력
 	m_byPoisonR = 0;		// 독 저항력
-	m_sBulk  = 0;
+	m_sBulk = 0;
 	m_bySearchRange = 0;	// 적 탐지 범위
 	m_byAttackRange = 0;	// 사정거리
 	m_byTracingRange = 0;

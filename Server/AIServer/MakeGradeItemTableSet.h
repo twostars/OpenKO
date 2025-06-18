@@ -13,7 +13,7 @@
 class CMakeGradeItemTableSet : public CRecordset
 {
 public:
-	CMakeGradeItemTableSet(CDatabase* pDatabase = NULL);
+	CMakeGradeItemTableSet(CDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CMakeGradeItemTableSet)
 
 // Field/Param Data
@@ -34,7 +34,7 @@ public:
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMakeGradeItemTableSet)
-	public:
+public:
 	virtual CString GetDefaultConnect();    // Default connection string
 	virtual CString GetDefaultSQL();    // Default SQL for Recordset
 	virtual void DoFieldExchange(CFieldExchange* pFX);  // RFX support

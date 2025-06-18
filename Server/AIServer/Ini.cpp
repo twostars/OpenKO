@@ -24,21 +24,23 @@ int CIni::GetProfileInt(
 	const char* lpKeyName,
 	int nDefault)
 {
-	if (m_szFileName[0] == '\0') {
+	if (m_szFileName[0] == '\0')
+	{
 		m_nError = 0X01;
 		strcpy(m_strError, "File이 Set되지 않았습니다.");
 		return -1;
 	}
 
-	GetPrivateProfileInt(lpAppName,lpKeyName,nDefault,m_szFileName);
+	GetPrivateProfileInt(lpAppName, lpKeyName, nDefault, m_szFileName);
 	char tmpDefault[500];
-	if (!GetPrivateProfileString(lpAppName,lpKeyName,"",tmpDefault,500,m_szFileName)) {
-		sprintf(tmpDefault,"%d",nDefault);
-		WritePrivateProfileString(lpAppName,lpKeyName,tmpDefault,m_szFileName);
+	if (!GetPrivateProfileString(lpAppName, lpKeyName, "", tmpDefault, 500, m_szFileName))
+	{
+		sprintf(tmpDefault, "%d", nDefault);
+		WritePrivateProfileString(lpAppName, lpKeyName, tmpDefault, m_szFileName);
 		return nDefault;
 	}
 
-	return GetPrivateProfileInt(lpAppName,lpKeyName,nDefault,m_szFileName);
+	return GetPrivateProfileInt(lpAppName, lpKeyName, nDefault, m_szFileName);
 }
 
 char* CIni::GetProfileString(
@@ -46,21 +48,23 @@ char* CIni::GetProfileString(
 	const char* lpKeyName,
 	const char* lpDefault)
 {
-	static char retString[200]="";
-	if (m_szFileName[0] == '\0') {
+	static char retString[200] = "";
+	if (m_szFileName[0] == '\0')
+	{
 		m_nError = 0X01;
 		strcpy(m_strError, "File이 Set되지 않았습니다.");
-		strcpy(retString , "");
+		strcpy(retString, "");
 		return retString;
 	}
-	
+
 	char tmpReturn[500];
-	DWORD ret=GetPrivateProfileString(lpAppName,lpKeyName,"",tmpReturn,500,m_szFileName);
-	if (!ret) {
-		WritePrivateProfileString(lpAppName,lpKeyName,lpDefault,m_szFileName);
-		strcpy(tmpReturn,lpDefault);
+	DWORD ret = GetPrivateProfileString(lpAppName, lpKeyName, "", tmpReturn, 500, m_szFileName);
+	if (!ret)
+	{
+		WritePrivateProfileString(lpAppName, lpKeyName, lpDefault, m_szFileName);
+		strcpy(tmpReturn, lpDefault);
 	}
-	strcpy(retString , tmpReturn);
+	strcpy(retString, tmpReturn);
 	return retString;
 
 }
@@ -72,14 +76,14 @@ bool CIni::SetPath(
 	char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
 
 	::GetModuleFileName(AfxGetApp()->m_hInstance, Buf, 256);
-	_splitpath(Buf,drive,dir,fname,ext);
+	_splitpath(Buf, drive, dir, fname, ext);
 	strcpy(Path, drive);
-	strcat(Path, dir);		
-	char IniPath[256]="";
+	strcat(Path, dir);
+	char IniPath[256] = "";
 	strcpy(IniPath, Path);
 	wsprintf(IniPath, "%s%s", IniPath, filename);
 	//IniPath += filename;
-	strcpy(m_szFileName,(LPCTSTR)IniPath);
+	strcpy(m_szFileName, (LPCTSTR) IniPath);
 	return true;
 }
 
@@ -88,8 +92,9 @@ int CIni::SetProfileInt(
 	const char* lpKeyName,
 	int nDefault)
 {
-	int nRet  = -1;
-	if (m_szFileName[0] == '\0') {
+	int nRet = -1;
+	if (m_szFileName[0] == '\0')
+	{
 		m_nError = 0X01;
 		strcpy(m_strError, "File이 Set되지 않았습니다.");
 		return nRet;
@@ -97,8 +102,8 @@ int CIni::SetProfileInt(
 
 	char tmpDefault[500];
 	memset(tmpDefault, 0x00, 500);
-	sprintf(tmpDefault,"%d",nDefault);
-	nRet = WritePrivateProfileString(lpAppName,lpKeyName,tmpDefault,m_szFileName);
+	sprintf(tmpDefault, "%d", nDefault);
+	nRet = WritePrivateProfileString(lpAppName, lpKeyName, tmpDefault, m_szFileName);
 
 	return nRet;
 }
@@ -108,14 +113,15 @@ int CIni::SetProfileString(
 	const char* lpKeyName,
 	const char* lpDefault)
 {
-	int nRet  = -1;
-	if (m_szFileName[0] == '\0') {
+	int nRet = -1;
+	if (m_szFileName[0] == '\0')
+	{
 		m_nError = 0X01;
 		strcpy(m_strError, "File이 Set되지 않았습니다.");
 		return nRet;
 	}
 
-	nRet = WritePrivateProfileString(lpAppName, lpKeyName, lpDefault,m_szFileName);
+	nRet = WritePrivateProfileString(lpAppName, lpKeyName, lpDefault, m_szFileName);
 
 	return nRet;
 }

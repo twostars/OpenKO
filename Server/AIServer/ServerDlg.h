@@ -49,11 +49,11 @@ typedef std::list <int>						ZoneNpcInfoList;
 typedef std::vector <MAP*>				ZoneArray;
 
 /*
-     ** Repent AI Server 작업시 참고 사항 **
+	 ** Repent AI Server 작업시 참고 사항 **
 	1. 3개의 함수 추가
-		int GetSpeed(BYTE bySpeed); 
-		int GetAttackSpeed(BYTE bySpeed); 
-		int GetCatsSpeed(BYTE bySpeed); 
+		int GetSpeed(BYTE bySpeed);
+		int GetAttackSpeed(BYTE bySpeed);
+		int GetCatsSpeed(BYTE bySpeed);
 */
 
 class CServerDlg : public CDialog
@@ -75,7 +75,7 @@ private:
 	BOOL GetMakeLareItemTableData();
 	BOOL MapFileLoad();
 	void GetServerInfoIni();
-	
+
 	void SyncTest();
 	void RegionCheck();		// region안에 들어오는 유저 체크 (스레드에서 FindEnermy()함수의 부하를 줄이기 위한 꽁수)
 	void TestCode();
@@ -86,37 +86,39 @@ public:
 	void AllNpcInfo();			// ~sungyong 2002.05.23
 	CUser* GetUserPtr(int nid);
 	CUser* GetActiveUserPtr(int index);
-	CNpc*  GetNpcPtr(TCHAR* pNpcName);
-	CNpc*  GetEventNpcPtr();
+	CNpc* GetNpcPtr(TCHAR* pNpcName);
+	CNpc* GetEventNpcPtr();
 	BOOL   SetSummonNpcData(CNpc* pNpc, int zone, float fx, float fz);
 	int    MonsterSummon(TCHAR* pNpcName, int zone, float fx, float fz);
-	int GetZoneIndex( int zonenumber );
-	int GetServerNumber( int zonenumber );
-	void ClostSocket( int zonenumber );
+	int GetZoneIndex(int zonenumber);
+	int GetServerNumber(int zonenumber);
+	void ClostSocket(int zonenumber);
 
 	void CheckAliveTest();
 	void DeleteUserList(int uid);
 	void DeleteAllUserList(int zone);
 	void SendCompressedData(int nZone);			// 패킷을 압축해서 보낸다..
-	int Send(char* pData, int length, int nZone=0);
-	void SendSystemMsg( char* pMsg, int zone, int type=0, int who=0 );
+	int Send(char* pData, int length, int nZone = 0);
+	void SendSystemMsg(char* pMsg, int zone, int type = 0, int who = 0);
 	void ResetBattleZone();
 
-	CServerDlg(CWnd* pParent = NULL);	// standard constructor
+	CServerDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CServerDlg)
-	enum { IDD = IDD_SERVER_DIALOG };
+	enum {
+		IDD = IDD_SERVER_DIALOG
+	};
 	CListBox	m_StatusList;
 	CString	m_strStatus;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CServerDlg)
-	public:
+public:
 	virtual BOOL DestroyWindow();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	//}}AFX_VIRTUAL
 
@@ -172,24 +174,24 @@ public:
 	BYTE	m_byNight;			// 밤인지,, 낮인지를 판단... 1:낮, 2:밤
 	BYTE    m_byTestMode;
 
-	CIOCPort m_Iocport;	
+	CIOCPort m_Iocport;
 
 private:
 	// 패킷 압축에 필요 변수   -------------
-	CCompressManager	m_CompMng;				
+	CCompressManager	m_CompMng;
 	int					m_CompCount;
 	TCHAR				m_CompBuf[10240];
 	int					m_iCompIndex;
 	// ~패킷 압축에 필요 변수   -------------
 
 	BYTE				m_byZone;
-	
+
 
 // Implementation
 protected:
 	void DefaultInit();
 
-	
+
 //	CGameSocket m_GameSocket;
 
 	HICON m_hIcon;

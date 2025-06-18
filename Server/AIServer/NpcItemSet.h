@@ -13,7 +13,7 @@
 class CNpcItemSet : public CRecordset
 {
 public:
-	CNpcItemSet(CDatabase* pDatabase = NULL);
+	CNpcItemSet(CDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CNpcItemSet)
 
 // Field/Param Data
@@ -35,7 +35,7 @@ public:
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CNpcItemSet)
-	public:
+public:
 	virtual CString GetDefaultConnect();    // Default connection string
 	virtual CString GetDefaultSQL();    // Default SQL for Recordset
 	virtual void DoFieldExchange(CFieldExchange* pFX);  // RFX support

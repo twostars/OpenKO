@@ -9,11 +9,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-class CNpcItem  
+class CNpcItem
 {
 public:
 
-	int **m_ppItem;
+	int** m_ppItem;
 	int m_nRow;
 	int m_nField;
 

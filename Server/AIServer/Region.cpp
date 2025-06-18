@@ -10,7 +10,7 @@
 
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -24,10 +24,10 @@ CRegion::CRegion()
 
 CRegion::~CRegion()
 {
-	if( !m_RegionUserArray.IsEmpty() )
+	if (!m_RegionUserArray.IsEmpty())
 		m_RegionUserArray.DeleteAllData();
 
-	if( !m_RegionNpcArray.IsEmpty() )
+	if (!m_RegionNpcArray.IsEmpty())
 		m_RegionNpcArray.DeleteAllData();
 }
 

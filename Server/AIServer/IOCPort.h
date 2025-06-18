@@ -27,21 +27,21 @@ typedef  std::list<_SEND_DATA*>  SendDataList;	// sungyong~ 2002.05.22
 
 class CIOCPSocket2;
 
-class CIOCPort  
+class CIOCPort
 {
 public:
 	void CreateSendThread();	// sungyong~ 2002.05.22
 	int GetClientSid();
 	void CreateAcceptThread();
 	void CreateClientWorkerThread();
-	void RidIOCPSocket(int index, CIOCPSocket2 *pSock);
+	void RidIOCPSocket(int index, CIOCPSocket2* pSock);
 	CIOCPSocket2* GetIOCPSocket(int index);
 	void CreateReceiveWorkerThread(int workernum);
 	void PutOldSid(int sid);
 	int GetNewSid();
-	BOOL Associate(CIOCPSocket2 *pIocpSock, HANDLE hPort);
-	BOOL Listen( int port );
-	void Init( int serversocksize, int clientsocksize, int workernum = 0 );
+	BOOL Associate(CIOCPSocket2* pIocpSock, HANDLE hPort);
+	BOOL Listen(int port);
+	void Init(int serversocksize, int clientsocksize, int workernum = 0);
 	void DeleteAllArray();
 	CIOCPort();
 	virtual ~CIOCPort();
@@ -59,10 +59,10 @@ public:
 
 	SidList m_SidList;
 	SendDataList m_SendDataList;		// sungyong~ 2002.05.22
-	CIOCPSocket2 **m_SockArray;
-	CIOCPSocket2 **m_SockArrayInActive;
+	CIOCPSocket2** m_SockArray;
+	CIOCPSocket2** m_SockArrayInActive;
 
-	CIOCPSocket2 **m_ClientSockArray;		// Connect용 소켓
+	CIOCPSocket2** m_ClientSockArray;		// Connect용 소켓
 
 	CRITICAL_SECTION	m_critSendData;	// sungyong~ 2002.05.22
 

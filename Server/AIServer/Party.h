@@ -15,7 +15,7 @@
 //typedef CSTLMap <CPartyUser>			PartyUserArray;
 class CServerDlg;
 
-class CParty  
+class CParty
 {
 public:
 	//int		m_iSid;				// Party Number
@@ -30,11 +30,11 @@ public:
 
 	void Initialize();
 
-	void PartyDelete( char* pBuf );
-	void PartyRemove( char* pBuf );
-	void PartyInsert( char* pBuf );
-	void PartyCreate( char* pBuf );
-	void PartyProcess( char* pBuf );
+	void PartyDelete(char* pBuf);
+	void PartyRemove(char* pBuf);
+	void PartyInsert(char* pBuf);
+	void PartyCreate(char* pBuf);
+	void PartyProcess(char* pBuf);
 
 };
 

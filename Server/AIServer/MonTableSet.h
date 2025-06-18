@@ -13,7 +13,7 @@
 class CMonTableSet : public CRecordset
 {
 public:
-	CMonTableSet(CDatabase* pDatabase = NULL);
+	CMonTableSet(CDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CMonTableSet)
 
 // Field/Param Data
@@ -69,7 +69,7 @@ public:
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMonTableSet)
-	public:
+public:
 	virtual CString GetDefaultConnect();    // Default connection string
 	virtual CString GetDefaultSQL();    // Default SQL for Recordset
 	virtual void DoFieldExchange(CFieldExchange* pFX);  // RFX support

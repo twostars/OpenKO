@@ -35,7 +35,7 @@ BOOL AFXAPI AfxDumpMemoryLeaks();
 
 // Return TRUE if valid memory block of nBytes
 BOOL AFXAPI AfxIsMemoryBlock(const void* p, UINT nBytes,
-	LONG* plRequestNumber = NULL);
+	LONG* plRequestNumber = nullptr);
 
 // Return TRUE if memory is sane or print out what is wrong
 BOOL AFXAPI AfxCheckMemory();
@@ -146,7 +146,6 @@ void AFX_CDECL AfxTrace(const char* lpszFormat, ...);
 
 
 
-#pragma warning(disable:4786)
 #include <list>
 
 

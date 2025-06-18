@@ -132,7 +132,6 @@
   <ItemGroup>
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="Compress.cpp" />
-    <ClCompile Include="Extern.cpp" />
     <ClCompile Include="GameSocket.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Ini.cpp" />
@@ -181,7 +180,6 @@
     <ClInclude Include="Extern.h" />
     <ClInclude Include="GameSocket.h" />
     <ClInclude Include="global.h" />
-    <ClInclude Include="IMPLODE.H" />
     <ClInclude Include="Ini.h" />
     <ClInclude Include="IOCPort.h" />
     <ClInclude Include="IOCPSocket2.h" />
@@ -198,7 +196,6 @@
     <ClInclude Include="MAP.h" />
     <ClInclude Include="MonTableSet.h" />
     <ClInclude Include="N3BASE\My_3DStruct.h" />
-    <ClInclude Include="N3BASE\My_Macro.h" />
     <ClInclude Include="N3BASE\N3ShapeMgr.h" />
     <ClInclude Include="N3BASE\StdAfxBase.h" />
     <ClInclude Include="Npc.h" />

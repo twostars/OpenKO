@@ -10,20 +10,22 @@ struct	_PARTY_GROUP
 {
 	WORD wIndex;
 	short uid[8];		// 하나의 파티에 8명까지 가입가능
-	_PARTY_GROUP() {
-		for(int i=0;i<8;i++)
+	_PARTY_GROUP()
+	{
+		for (int i = 0;i < 8;i++)
 			uid[i] = -1;
-	};
+	}
 };
 
 struct _MAKE_WEAPON
 {
 	BYTE	byIndex;		// 몹의 레벨 기준
 	short	sClass[MAX_UPGRADE_WEAPON];		// 1차무기 확률
-	_MAKE_WEAPON() {
-		for(int i=0;i<MAX_UPGRADE_WEAPON;i++)
+	_MAKE_WEAPON()
+	{
+		for (int i = 0;i < MAX_UPGRADE_WEAPON;i++)
 			sClass[i] = 0;
-	};
+	}
 };
 
 struct _MAKE_ITEM_GRADE_CODE
@@ -136,7 +138,7 @@ struct	_USERLOG
 	CTime t;
 	BYTE  byFlag;	// 
 	BYTE  byLevel;
-	char  strUserID[MAX_ID_SIZE+1];		// 아이디(캐릭터 이름)
+	char  strUserID[MAX_ID_SIZE + 1];		// 아이디(캐릭터 이름)
 };
 
 #endif

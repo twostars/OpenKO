@@ -23,9 +23,6 @@
     <ClCompile Include="Compress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Extern.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameSocket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -154,9 +151,6 @@
     <ClInclude Include="global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IMPLODE.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Ini.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -253,9 +247,6 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STLMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="User.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -263,9 +254,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="N3BASE\My_3DStruct.h">
-      <Filter>N3Base</Filter>
-    </ClInclude>
-    <ClInclude Include="N3BASE\My_Macro.h">
       <Filter>N3Base</Filter>
     </ClInclude>
     <ClInclude Include="N3BASE\N3ShapeMgr.h">

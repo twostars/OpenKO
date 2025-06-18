@@ -205,7 +205,6 @@
     <ClInclude Include="MagicType8Set.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="N3Base\My_3DStruct.h" />
-    <ClInclude Include="N3Base\My_Macro.h" />
     <ClInclude Include="N3Base\N3ShapeMgr.h" />
     <ClInclude Include="N3Base\StdAfxBase.h" />
     <ClInclude Include="Npc.h" />

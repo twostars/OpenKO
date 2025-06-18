@@ -25,7 +25,7 @@ struct _RoomEvent
 class CNpc;
 class CServerDlg;
 
-class CRoomEvent  
+class CRoomEvent
 {
 public:
 	int     m_iZoneNumber;		// zone number
@@ -60,16 +60,16 @@ public:
 	CRoomEvent();
 	virtual ~CRoomEvent();
 
-	void MainRoom( float fcurtime );
+	void MainRoom(float fcurtime);
 	void InitializeRoom();
 
 private:
 	void Initialize();
-	BOOL  CheckEvent( int event_num, float fcurtime );
-	BOOL  RunEvent( int event_num );
-	BOOL  CheckMonsterCount( int sid, int count, int type );
-	CNpc* GetNpcPtr( int sid );
-	void  EndEventSay( int option1, int option2 );
+	BOOL  CheckEvent(int event_num, float fcurtime);
+	BOOL  RunEvent(int event_num);
+	BOOL  CheckMonsterCount(int sid, int count, int type);
+	CNpc* GetNpcPtr(int sid);
+	void  EndEventSay(int option1, int option2);
 
 };
 

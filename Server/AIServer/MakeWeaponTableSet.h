@@ -13,7 +13,7 @@
 class CMakeWeaponTableSet : public CRecordset
 {
 public:
-	CMakeWeaponTableSet(CDatabase* pDatabase = NULL);
+	CMakeWeaponTableSet(CDatabase* pDatabase = nullptr);
 	DECLARE_DYNAMIC(CMakeWeaponTableSet)
 
 // Field/Param Data
@@ -37,7 +37,7 @@ public:
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMakeWeaponTableSet)
-	public:
+public:
 	virtual CString GetDefaultConnect();    // Default connection string
 	virtual CString GetDefaultSQL();    // Default SQL for Recordset
 	virtual void DoFieldExchange(CFieldExchange* pFX);  // RFX support

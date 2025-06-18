@@ -2,7 +2,7 @@
 #define _DEFINE_H
 
 /*
-     ** Repent AI Server 작업시 참고 사항 **
+	 ** Repent AI Server 작업시 참고 사항 **
 	1. #define AI_SOCKET_PORT	10020 -> 11020으로 수정됨..
 */
 
@@ -73,8 +73,6 @@
 #define SOCKET_BUFF_SIZE	(1024*32)
 #define MAX_PACKET_SIZE		(1024*8)
 
-#define MYDELETE(x) if(x!=NULL){delete x; x = NULL;} 
-#define INIT_PTR(p)		{ (p) = NULL;}
 #define COMPARE(x,min,max) ((x>=min)&&(x<max))
 
 #define PACKET_START1				0XAA
@@ -93,17 +91,17 @@
 #define OVL_CLOSE				0X03
 ////////////////////////////////////////////////////////////
 
-typedef union{
+typedef union {
 	short int	i;
 	BYTE		b[2];
 } MYSHORT;
 
-typedef union{
+typedef union {
 	int			i;
 	BYTE		b[4];
 } MYINT;
 
-typedef union{
+typedef union {
 	DWORD		w;
 	BYTE		b[4];
 } MYDWORD;
@@ -165,7 +163,7 @@ struct _OBJECT_EVENT
 //
 #define NPC_NUM					20
 #define MAX_DUNGEON_BOSS_MONSTER	20
-	
+
 #define NPC_DEAD				0X00
 #define NPC_LIVE				0X01
 #define NPC_ATTACKING			0X02

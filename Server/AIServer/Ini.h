@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-class CIni  
+class CIni
 {
 public:
 	char m_szFileName[200];

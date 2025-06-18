@@ -9,11 +9,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-class CNpcTable  
+class CNpcTable
 {
 public:
 	short	m_sSid;							// MONSTER(NPC) Serial ID
-	TCHAR	m_strName[MAX_ID_SIZE+1];		// MONSTER(NPC) Name
+	TCHAR	m_strName[MAX_ID_SIZE + 1];		// MONSTER(NPC) Name
 	short	m_sPid;							// MONSTER(NPC) Picture ID
 	short   m_sSize;						// 캐릭터의 비율(100 퍼센트 기준)
 	int 	m_iWeapon_1;		// 무기계열(오른손)
@@ -62,8 +62,8 @@ public:
 	BYTE	m_byTracingRange;	// 추격거리
 
 	short	m_sAI;				// 인공지능 인덱스
-	
-	
+
+
 	BYTE	m_tItemPer;			// 아이템이 떨어질 확률
 	BYTE	m_tDnPer;			// 돈이 떨어질확률
 
@@ -71,7 +71,7 @@ public:
 	int		m_iItem;			// 떨어지는 아이템
 	BYTE	m_byDirectAttack;	// 공격방법( 0 : 직접, 1:롱공격(간접공격), 2:직,간접공격 )
 	BYTE	m_byMagicAttack;	// 마법공격( 0:마법공격 없음, 1:마법공격, 2:독공격, 3:힐링)
-		
+
 public:
 	CNpcTable();
 	virtual ~CNpcTable();

@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#ifndef _WIN32 
-#include <sys/time.h>
-#endif
-
 #include "version.h"
 #include "packets.h"
 #include "Packet.h"
@@ -23,29 +19,21 @@ constexpr int MAX_IP_SIZE	= 15; // IPv4 addresses are max ###.###.###.### (3*4 +
 
 #define VIEW_DISTANCE		48
 
-#define DAY                HOUR   * 24
-
-#define HOUR               MINUTE * 60
-// Define a minute as 60s.
-#define MINUTE				60u
-// Define a second as 1000ms.
-#define SECOND				1000u
-
-enum NameType
+enum e_NameType
 {
-	TYPE_ACCOUNT,
-	TYPE_CHARACTER
+	NAME_TYPE_ACCOUNT,
+	NAME_TYPE_CHARACTER
 };
 
-enum Nation
+enum e_Nation
 {
-	ALL = 0,
-	KARUS,
-	ELMORAD,
-	NONE
+	NATION_ALL = 0,
+	NATION_KARUS,
+	NATION_ELMORAD,
+	NATION_NONE
 };
 
-enum NpcState
+enum e_NpcState
 {
 	NPC_DEAD = 0,
 	NPC_LIVE,
@@ -287,49 +275,14 @@ constexpr int CLAN_SYMBOL_COST		= 5000000;
 #define NEWCHAR_POINTS_REMAINING			uint8_t(10)
 #define NEWCHAR_STAT_TOO_LOW				uint8_t(11)
 
-enum ItemFlag
+enum e_ItemFlag
 {
 	ITEM_FLAG_NONE		= 0,
 	ITEM_FLAG_RENTED	= 1,
 	ITEM_FLAG_DUPLICATE = 3
 };
 
-struct	_ITEM_DATA
-{
-	uint32_t		nNum;
-	int16_t		sDuration;
-	uint16_t		sCount;	
-	uint8_t		bFlag; // see ItemFlag
-	uint16_t		sRemainingRentalTime; // in minutes
-	uint32_t		nExpirationTime; // in unix time
-	uint64_t		nSerialNum;
-	bool		IsSelling;
-
-	INLINE bool isRented() { return bFlag == ITEM_FLAG_RENTED; }
-	INLINE bool isDuplicate() { return bFlag == ITEM_FLAG_DUPLICATE; }
-};
-
-enum HairData
-{
-	HAIR_R,
-	HAIR_G,
-	HAIR_B,
-	HAIR_TYPE
-};
-
-struct _MERCH_DATA
-{
-	uint32_t nNum;
-	int16_t sDuration;
-	uint16_t sCount;
-	uint16_t bCount;
-	uint64_t nSerialNum;
-	uint32_t nPrice;
-	uint8_t bOriginalSlot;
-	bool IsSoldOut;
-};
-
-enum AuthorityTypes
+enum e_Authority
 {
 	AUTHORITY_GAME_MASTER			= 0,
 	AUTHORITY_PLAYER				= 1,
@@ -339,17 +292,7 @@ enum AuthorityTypes
 	AUTHORITY_BANNED				= 255
 };
 
-enum StatType
-{
-	STAT_STR = 0,
-	STAT_STA = 1,
-	STAT_DEX = 2,
-	STAT_INT = 3, 
-	STAT_CHA = 4, // MP
-	STAT_COUNT
-};
-
-enum AttackResult
+enum e_AttackResult
 {
 	ATTACK_FAIL					= 0,
 	ATTACK_SUCCESS				= 1,
@@ -358,81 +301,5 @@ enum AttackResult
 	MAGIC_ATTACK_TARGET_DEAD	= 4
 };
 
-#define STAT_MAX 255
-#define QUEST_ARRAY_SIZE	600 // That's a limit of 200 quests (3 bytes per quest)
-#define QUEST_LIMIT			(QUEST_ARRAY_SIZE / 3)
-
-enum InvisibilityType
-{
-	INVIS_NONE				= 0,
-	INVIS_DISPEL_ON_MOVE	= 1,
-	INVIS_DISPEL_ON_ATTACK	= 2
-};
-
-int32_t myrand(int32_t min, int32_t max);
 uint64_t RandUInt64();
-
-INLINE bool CheckPercent(int16_t percent)
-{
-	if (percent < 0 || percent > 1000) 
-		return false;
-
-	return (percent > myrand(0, 1000));
-}
-
-INLINE time_t getMSTime()
-{
-#ifdef _WIN32
-#if WINVER >= 0x0600
-	typedef ULONGLONG (WINAPI *GetTickCount64_t)(void);
-	static GetTickCount64_t pGetTickCount64 = nullptr;
-
-	if (!pGetTickCount64)
-	{
-		HMODULE hModule = LoadLibraryA("KERNEL32.DLL");
-		pGetTickCount64 = (GetTickCount64_t)GetProcAddress(hModule, "GetTickCount64");
-		if (!pGetTickCount64)
-			pGetTickCount64 = (GetTickCount64_t)GetTickCount;
-		FreeLibrary(hModule);
-	}
-
-	return pGetTickCount64();
-#else
-	return GetTickCount();
-#endif
-#else
-	struct timeval tv;
-	gettimeofday(&tv, nullptr);
-	return (tv.tv_sec * SECOND) + (tv.tv_usec / SECOND);
-#endif
-}
-
-INLINE void STRTOLOWER(std::string& str)
-{
-	for(size_t i = 0; i < str.length(); ++i)
-		str[i] = (char)tolower(str[i]);
-};
-
-INLINE void STRTOUPPER(std::string& str)
-{
-	for(size_t i = 0; i < str.length(); ++i)
-		str[i] = (char)toupper(str[i]);
-};
-
-#define foreach(itr, arr) \
-	for (auto itr = arr.begin(); itr != arr.end(); itr++)
-
-// ideally this guard should be scoped within the loop...
-#define foreach_stlmap(itr, arr) \
-	Guard _lock(arr.m_lock); \
-	foreach_stlmap_nolock(itr, arr)
-
-#define foreach_stlmap_nolock(itr, arr) \
-	for (auto itr = arr.m_UserTypeMap.begin(); itr != arr.m_UserTypeMap.end(); itr++)
-
-#define foreach_array(itr, arr) foreach_array_n(itr, arr, sizeof(arr) / sizeof(arr[0]))
-#define foreach_array_n(itr, arr, len) for (auto itr = 0; itr < len; itr++)
-
-#define foreach_region(x, z) for (int x = -1; x <= 1; x++) \
-	for (int z = -1; z <= 1; z++)
-
+time_t getMSTime();

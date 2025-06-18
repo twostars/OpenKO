@@ -1,4 +1,4 @@
-/*
+﻿/*
  * $Id: crc32.c,v 1.1.1.1 1996/02/18 21:38:12 ylo Exp $
  * $Log: crc32.c,v $
  * Revision 1.1.1.1  1996/02/18 21:38:12  ylo
@@ -113,7 +113,7 @@ static uint32_t crc32_tab[] = {
 
 /* Return a 32-bit CRC of the contents of the buffer. */
 
-uint32_t crc32(const uint8_t *s, uint32_t len, uint32_t startVal)
+uint32_t crc32(const uint8_t* s, uint32_t len, uint32_t startVal)
 {
 	uint32_t i, crc32val = startVal;
 	for (i = 0; i < len; i++)

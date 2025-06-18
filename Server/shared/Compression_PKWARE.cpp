@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "pkware/pklib.h"
 #include "crc32.h"
 #include "Compression.h"

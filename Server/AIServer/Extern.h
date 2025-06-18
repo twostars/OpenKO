@@ -1,55 +1,144 @@
-﻿#pragma once
+﻿#ifndef _EXTERN_H_
+#define _EXTERN_H_
 
-extern bool	g_bNpcExit;
+// -------------------------------------------------
+// 전역 객체 변수
+// -------------------------------------------------
+extern BOOL	g_bNpcExit;
+
+struct	_PARTY_GROUP
+{
+	WORD wIndex;
+	short uid[8];		// 하나의 파티에 8명까지 가입가능
+	_PARTY_GROUP()
+	{
+		for (int i = 0;i < 8;i++)
+			uid[i] = -1;
+	}
+};
 
 struct _MAKE_WEAPON
 {
-	uint8_t	byIndex;
-	uint16_t	sClass[MAX_UPGRADE_WEAPON];
-	_MAKE_WEAPON() { memset(&sClass, 0, sizeof(sClass)); }
+	BYTE	byIndex;		// 몹의 레벨 기준
+	short	sClass[MAX_UPGRADE_WEAPON];		// 1차무기 확률
+	_MAKE_WEAPON()
+	{
+		for (int i = 0;i < MAX_UPGRADE_WEAPON;i++)
+			sClass[i] = 0;
+	}
 };
 
 struct _MAKE_ITEM_GRADE_CODE
 {
-	uint8_t	byItemIndex;		// item grade
-	uint16_t	sGrade[9];
-};	
+	BYTE	byItemIndex;		// item grade
+	short	sGrade_1;			// 단계별 확률
+	short	sGrade_2;
+	short	sGrade_3;
+	short	sGrade_4;
+	short	sGrade_5;
+	short	sGrade_6;
+	short	sGrade_7;
+	short	sGrade_8;
+	short	sGrade_9;
+};
 
 struct _MAKE_ITEM_LARE_CODE
 {
-	uint8_t	byItemLevel;
-	uint16_t	sLareItem;
-	uint16_t	sMagicItem;
-	uint16_t	sGeneralItem;
+	BYTE	byItemLevel;			// item level 판단 
+	short	sLareItem;				// lareitem 나올 확률
+	short	sMagicItem;				// magicitem 나올 확률
+	short	sGereralItem;			// gereralitem 나올 확률
 };
 
-struct _K_MONSTER_ITEM
+struct _MAGIC_TABLE
 {
-	uint16_t sIndex;
-	uint32_t iItem[5];
-	uint16_t sPercent[5];
-
-	_K_MONSTER_ITEM()
-	{
-		memset(&iItem, 0, sizeof(iItem));
-		memset(&sPercent, 0, sizeof(sPercent));
-	}
+	int		iNum;
+	BYTE	bMoral;
+	BYTE	bSkillLevel;
+	short	sSkill;
+	short	sMsp;
+	short   sHP;
+	BYTE	bItemGroup;
+	int		iUseItem;
+	BYTE	bCastTime;
+	BYTE	bReCastTime;
+	BYTE	bSuccessRate;
+	BYTE	bType1;
+	BYTE	bType2;
+	short   sRange;
+	BYTE	bEtc;
 };
 
-struct _MAKE_ITEM_GROUP
+struct _MAGIC_TYPE1
 {
-	uint32_t	iItemGroupNum;
-	std::vector<uint32_t> iItems;
+	int		iNum;
+	BYTE	bHitType;
+	short	sHitRate;
+	short	sHit;
+	BYTE	bDelay;
+	BYTE	bComboType;
+	BYTE	bComboCount;
+	short	sComboDamage;
+	short	sRange;
 };
 
-struct _NPC_LIVE_TIME
+struct _MAGIC_TYPE2
 {
-	uint16_t nIndex;
-	int16_t SocketID;
-	uint16_t Nid;
-	uint16_t Duration;
-	int32_t SpawnedTime;
-
+	int     iNum;
+	BYTE    bHitType;
+	short   sHitRate;
+	short	sAddDamage;
+	short   sAddRange;
+	BYTE    bNeedArrow;
 };
 
-#include "../shared/database/structs.h"
+struct _MAGIC_TYPE3
+{
+	int		iNum;
+	//BYTE	bDistance;
+	BYTE	bRadius;
+	short	sAngle;
+	short	sFirstDamage;
+	short	sEndDamage;
+	short	sTimeDamage;
+	BYTE	bDirectType;
+	short	sDuration;
+	BYTE	bAttribute;
+};
+
+struct _MAGIC_TYPE4
+{
+	int     iNum;
+	short   sMSP;
+	BYTE    bBuffType;
+	BYTE    bRadius;
+	short   sDuration;
+	BYTE    bAttackSpeed;
+	BYTE    bSpeed;
+	short   sAC;
+	BYTE    bAttack;
+	short   sMaxHP;
+	BYTE    bHitRate;
+	short   sAvoidRate;
+	BYTE    bStr;
+	BYTE    bSta;
+	BYTE    bDex;
+	BYTE    bIntel;
+	BYTE    bCha;
+	BYTE    bFireR;
+	BYTE    bColdR;
+	BYTE    bLightningR;
+	BYTE    bMagicR;
+	BYTE    bDiseaseR;
+	BYTE    bPoisonR;
+};
+
+struct	_USERLOG
+{
+	CTime t;
+	BYTE  byFlag;	// 
+	BYTE  byLevel;
+	char  strUserID[MAX_ID_SIZE + 1];		// 아이디(캐릭터 이름)
+};
+
+#endif

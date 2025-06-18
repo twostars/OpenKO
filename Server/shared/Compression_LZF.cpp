@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Compression.h"
 #include "lzf.h"
 #include "crc32.h"

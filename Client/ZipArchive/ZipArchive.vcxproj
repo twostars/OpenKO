@@ -111,7 +111,6 @@
     </ClCompile>
     <ClCompile Include="ZipArchive.cpp" />
     <ClCompile Include="ZipAutoBuffer.cpp" />
-    <ClCompile Include="ZipBigFile.cpp" />
     <ClCompile Include="ZipCentralDir.cpp" />
     <ClCompile Include="ZipException.cpp" />
     <ClCompile Include="ZipFileHeader.cpp" />
@@ -123,16 +122,12 @@
     <ClInclude Include="zconf.h" />
     <ClInclude Include="ZipArchive.h" />
     <ClInclude Include="ZipAutoBuffer.h" />
-    <ClInclude Include="ZipBigFile.h" />
     <ClInclude Include="ZipCentralDir.h" />
     <ClInclude Include="ZipException.h" />
     <ClInclude Include="ZipFileHeader.h" />
     <ClInclude Include="ZipInternalInfo.h" />
     <ClInclude Include="ZipStorage.h" />
     <ClInclude Include="zlib.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Appnote.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

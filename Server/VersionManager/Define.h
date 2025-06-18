@@ -153,7 +153,7 @@ inline void Setfloat(char* tBuf, float sFloat, int& index)
 }
 
 // sungyong 2001.11.06
-inline int GetVarString(TCHAR* tBuf, TCHAR* sBuf, int nSize, int& index)
+inline int GetVarString(char* tBuf, char* sBuf, int nSize, int& index)
 {
 	int nLen = 0;
 
@@ -168,7 +168,7 @@ inline int GetVarString(TCHAR* tBuf, TCHAR* sBuf, int nSize, int& index)
 	return nLen;
 }
 
-inline void SetVarString(TCHAR* tBuf, TCHAR* sBuf, int len, int& index)
+inline void SetVarString(char* tBuf, char* sBuf, int len, int& index)
 {
 	*(tBuf + index) = (BYTE) len;
 	index ++;

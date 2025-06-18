@@ -338,50 +338,50 @@ inline void GetString(char* tBuf, char* sBuf, int len, int& index)
 {
 	memcpy(tBuf, sBuf+index, len);
 	index += len;
-};
+}
 
 inline BYTE GetByte(char* sBuf, int& index)
 {
 	int t_index = index;
 	index++;
 	return (BYTE)(*(sBuf+t_index));
-};
+}
 
 inline int GetShort(char* sBuf, int& index)
 {
 	index += 2;
 	return *(short*)(sBuf+index-2);
-};
+}
 
 inline DWORD GetDWORD(char* sBuf, int& index)
 {
 	index += 4;
 	return *(DWORD*)(sBuf+index-4);
-};
+}
 
 inline float Getfloat(char* sBuf, int& index)
 {
 	index += 4;
 	return *(float*)(sBuf+index-4);
-};
+}
 
 inline __int64 GetInt64(char* sBuf, int& index)
 {
 	index += 8;
 	return *(__int64*)(sBuf+index-8);
-};
+}
 
 inline void SetString(char* tBuf, char* sBuf, int len, int& index)
 {
 	memcpy(tBuf+index, sBuf, len);
 	index += len;
-};
+}
 
 inline void SetByte(char* tBuf, BYTE sByte, int& index)
 {
 	*(tBuf+index) = (char)sByte;
 	index++;
-};
+}
 
 inline void SetShort(char* tBuf, int sShort, int& index)
 {
@@ -389,47 +389,51 @@ inline void SetShort(char* tBuf, int sShort, int& index)
 
 	CopyMemory( tBuf+index, &temp, 2);
 	index += 2;
-};
+}
 
 inline void SetDWORD(char* tBuf, DWORD sDWORD, int& index)
 {
 	CopyMemory( tBuf+index, &sDWORD, 4);
 	index += 4;
-};
+}
 
 inline void Setfloat ( char* tBuf, float sFloat, int& index )
 {
 	CopyMemory( tBuf+index, &sFloat, 4);
 	index += 4;
-};
+}
 
 inline void SetInt64 ( char* tBuf, __int64 nInt64, int& index )
 {
 	CopyMemory( tBuf+index, &nInt64, 8);
 	index += 8;
-};
+}
+
 // sungyong 2001.11.06
-inline int GetVarString(TCHAR* tBuf, TCHAR* sBuf, int nSize, int& index)
+inline int GetVarString(char* tBuf, char* sBuf, int nSize, int& index)
 {
 	int nLen = 0;
 	
-	if(nSize == sizeof(BYTE))	nLen = GetByte(sBuf, index);
-	else nLen = GetShort(sBuf, index);
+	if (nSize == sizeof(BYTE))
+		nLen = GetByte(sBuf, index);
+	else
+		nLen = GetShort(sBuf, index);
 
 	GetString(tBuf, sBuf, nLen, index);
 	*(tBuf + nLen) = 0;
 
 	return nLen;
-};
+}
 
-inline void SetVarString(TCHAR *tBuf, TCHAR* sBuf, int len, int &index)
+inline void SetVarString(char *tBuf, char* sBuf, int len, int &index)
 {
 	*(tBuf+index) = (BYTE)len;
 	index ++;
 
 	CopyMemory(tBuf+index, sBuf, len);
 	index += len;
-};
+}
+
 // ~sungyong 2001.11.06
 inline int ParseSpace( char* tBuf, char* sBuf)
 {
@@ -446,7 +450,7 @@ inline int ParseSpace( char* tBuf, char* sBuf)
 	while(sBuf[index] == ' ' || sBuf[index] == '\t')index++;
 	if(!flag) return 0;	
 	return index;
-};
+}
 
 inline CString GetProgPath()
 {
@@ -459,7 +463,7 @@ inline CString GetProgPath()
 	strcat(Path, dir);		
 	CString _Path = Path;
 	return _Path;
-};
+}
 
 inline void LogFileWrite( LPCTSTR logstr )
 {
@@ -477,7 +481,7 @@ inline void LogFileWrite( LPCTSTR logstr )
 	file.SeekToEnd();
 	file.Write(logstr, loglength);
 	file.Close();
-};
+}
 
 inline void DisplayErrorMsg(SQLHANDLE hstmt)
 {
@@ -493,7 +497,7 @@ inline void DisplayErrorMsg(SQLHANDLE hstmt)
 
 		i++;
 	}
-};
+}
 
 inline int myrand( int min, int max )
 {
@@ -516,7 +520,7 @@ inline int myrand( int min, int max )
 	if( (int)( min + (int)rand_result ) > max ) return max;
 
 	return (int)( min + (int)rand_result );
-};
+}
 
 inline float TimeGet()
 {
@@ -546,7 +550,7 @@ inline float TimeGet()
 	}
 
 	return (float)timeGetTime();
-};
+}
 
 inline void	TimeTrace(TCHAR* pMsg)
 {
@@ -554,6 +558,6 @@ inline void	TimeTrace(TCHAR* pMsg)
 	CTime time = CTime::GetCurrentTime();
 	szMsg.Format("%s,,  time : %d-%d-%d, %d:%d]\n", pMsg, time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute() );
 	TRACE(szMsg);
-};
+}
 
 #endif

@@ -2,8 +2,8 @@
 
 //#include "stdafx.h"
 
-BOOL	CheckGetVarString(int nLength, TCHAR* tBuf, TCHAR* sBuf, int nSize, int& index);
-int		GetVarString(TCHAR* tBuf, TCHAR* sBuf, int nSize, int& index);
+BOOL	CheckGetVarString(int nLength, char* tBuf, char* sBuf, int nSize, int& index);
+int		GetVarString(char* tBuf, char* sBuf, int nSize, int& index);
 void	GetString(char* tBuf, char* sBuf, int len, int& index);
 BYTE	GetByte(char* sBuf, int& index);
 int		GetShort(char* sBuf, int& index);
@@ -11,7 +11,7 @@ int		GetInt(char* sBuf, int& index);
 DWORD	GetDWORD(char* sBuf, int& index);
 float	Getfloat(char* sBuf, int& index);
 void	SetString(char* tBuf, const char* sBuf, int len, int& index);
-void	SetVarString(TCHAR* tBuf, const TCHAR* sBuf, int len, int& index);
+void	SetVarString(char* tBuf, const char* sBuf, int len, int& index);
 void	SetByte(char* tBuf, BYTE sByte, int& index);
 void	SetShort(char* tBuf, int sShort, int& index);
 void	SetInt(char* tBuf, int sInt, int& index);

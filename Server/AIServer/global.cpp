@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "global.h"
 
-BOOL CheckGetVarString(int nLength, TCHAR* tBuf, TCHAR* sBuf, int nSize, int& index)
+BOOL CheckGetVarString(int nLength, char* tBuf, char* sBuf, int nSize, int& index)
 {
 	int nRet = GetVarString(tBuf, sBuf, nSize, index);
 	if (nRet <= 0
@@ -11,7 +11,7 @@ BOOL CheckGetVarString(int nLength, TCHAR* tBuf, TCHAR* sBuf, int nSize, int& in
 	return TRUE;
 }
 
-int GetVarString(TCHAR* tBuf, TCHAR* sBuf, int nSize, int& index)
+int GetVarString(char* tBuf, char* sBuf, int nSize, int& index)
 {
 	int nLen = 0;
 
@@ -69,7 +69,7 @@ void SetString(char* tBuf, const char* sBuf, int len, int& index)
 	index += len;
 }
 
-void SetVarString(TCHAR* tBuf, const TCHAR* sBuf, int len, int& index)
+void SetVarString(char* tBuf, const char* sBuf, int len, int& index)
 {
 	*(tBuf + index) = (BYTE) len;
 	index ++;

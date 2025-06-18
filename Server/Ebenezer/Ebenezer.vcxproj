@@ -134,7 +134,6 @@
     <ClCompile Include="EXEC.cpp" />
     <ClCompile Include="GameEvent.cpp" />
     <ClCompile Include="HomeSet.cpp" />
-    <ClCompile Include="Ini.cpp" />
     <ClCompile Include="IOCPort.cpp" />
     <ClCompile Include="IOCPSocket2.cpp" />
     <ClCompile Include="ItemTableSet.cpp" />
@@ -184,7 +183,6 @@
     <ClInclude Include="GameDefine.h" />
     <ClInclude Include="GameEvent.h" />
     <ClInclude Include="HomeSet.h" />
-    <ClInclude Include="Ini.h" />
     <ClInclude Include="IOCPort.h" />
     <ClInclude Include="IOCPSocket2.h" />
     <ClInclude Include="ItemTableSet.h" />

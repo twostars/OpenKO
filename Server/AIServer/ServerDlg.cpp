@@ -21,7 +21,8 @@
 #include "MakeGradeItemTableSet.h"
 #include "MakeLareItemTableSet.h"
 #include "Region.h"
-#include "ini.h"
+
+#include <shared/Ini.h>
 
 //#include "extern.h"			// 전역 객체
 
@@ -2772,8 +2773,8 @@ void CServerDlg::ClostSocket(int zonenumber)
 void CServerDlg::GetServerInfoIni()
 {
 	CIni inifile;
-	inifile.SetPath("server.ini");
-	m_byZone = inifile.GetProfileInt("SERVER", "ZONE", 1);
+	inifile.Load("server.ini");
+	m_byZone = inifile.GetInt("SERVER", "ZONE", 1);
 }
 
 void CServerDlg::SendSystemMsg(char* pMsg, int zone, int type, int who)

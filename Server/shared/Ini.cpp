@@ -11,19 +11,29 @@
 
 constexpr int INI_BUFFER = 512;
 
-CIni::CIni(const char* lpFilename)
+CIni::CIni(
+	std::string_view szPath)
 {
-	m_szFileName = lpFilename;
-	Load(lpFilename);
+	m_szPath = szPath;
+
+	Load(szPath);
 }
 
-bool CIni::Load(const char* lpFilename /*= nullptr*/)
+bool CIni::Load()
 {
-	const char* fn = (lpFilename == nullptr ? m_szFileName.c_str() : lpFilename);
-	std::ifstream file(fn);
+	return Load(
+		m_szPath);
+}
+
+bool CIni::Load(
+	std::string_view szPath)
+{
+	m_szPath = szPath;
+
+	std::ifstream file(szPath.data());
 	if (!file)
 	{
-		printf("Warning: %s does not exist, will use configured defaults.\n", fn);
+		TRACE("Warning: %s does not exist, will use configured defaults.\n", szPath.data());
 		return false;
 	}
 
@@ -59,10 +69,11 @@ bool CIni::Load(const char* lpFilename /*= nullptr*/)
 			rtrim(key);   /* remove trailing whitespace from keys */
 			ltrim(value); /* remove preleading whitespace from values */
 
-			ConfigMap::iterator itr = m_configMap.find(currentSection);
+			auto itr = m_configMap.find(currentSection);
 			if (itr == m_configMap.end())
 			{
-				m_configMap.insert(std::make_pair(currentSection, ConfigEntryMap()));
+				m_configMap.insert(
+					std::make_pair(currentSection, std::move(ConfigEntryMap())));
 				itr = m_configMap.find(currentSection);
 			}
 
@@ -91,10 +102,15 @@ bool CIni::Load(const char* lpFilename /*= nullptr*/)
 	return true;
 }
 
-void CIni::Save(const char* lpFilename /*= nullptr*/)
+void CIni::Save()
 {
-	const char* fn = (lpFilename == nullptr ? m_szFileName.c_str() : lpFilename);
-	FILE* fp = fopen(fn, "w");
+	Save(m_szPath);
+}
+
+void CIni::Save(
+	std::string_view szPath)
+{
+	FILE* fp = fopen(szPath.data(), "w");
 	if (fp == nullptr)
 		return;
 
@@ -110,61 +126,79 @@ void CIni::Save(const char* lpFilename /*= nullptr*/)
 		// Use a trailing newline to finish the section, to make it easier to read
 		fprintf(fp, INI_NEWLINE);
 	}
+
 	fclose(fp);
 }
 
-int CIni::GetInt(const char* lpAppName, const char* lpKeyName, const int nDefault)
+int CIni::GetInt(
+	std::string_view szAppName,
+	std::string_view szKeyName,
+	const int nDefault)
 {
-	ConfigMap::iterator sectionItr = m_configMap.find(lpAppName);
+	auto sectionItr = m_configMap.find(szAppName.data());
 	if (sectionItr != m_configMap.end())
 	{
-		ConfigEntryMap::iterator keyItr = sectionItr->second.find(lpKeyName);
+		auto keyItr = sectionItr->second.find(szKeyName.data());
 		if (keyItr != sectionItr->second.end())
 			return atoi(keyItr->second.c_str());
 	}
 
-	SetInt(lpAppName, lpKeyName, nDefault);
+	SetInt(szAppName, szKeyName, nDefault);
 	return nDefault;
 }
 
-bool CIni::GetBool(const char* lpAppName, const char* lpKeyName, const bool bDefault)
+bool CIni::GetBool(
+	std::string_view szAppName,
+	std::string_view szKeyName,
+	const bool bDefault)
 {
-	return GetInt(lpAppName, lpKeyName, bDefault) == 1;
+	return GetInt(szAppName, szKeyName, bDefault) == 1;
 }
 
-void CIni::GetString(const char* lpAppName, const char* lpKeyName, const char* lpDefault, std::string& lpOutString, bool bAllowEmptyStrings /*= true*/)
+std::string CIni::GetString(
+	std::string_view szAppName,
+	std::string_view szKeyName,
+	std::string_view szDefault,
+	bool bAllowEmptyStrings /*= true*/)
 {
-	ConfigMap::iterator sectionItr = m_configMap.find(lpAppName);
+	auto sectionItr = m_configMap.find(szAppName.data());
 	if (sectionItr != m_configMap.end())
 	{
-		ConfigEntryMap::iterator keyItr = sectionItr->second.find(lpKeyName);
+		auto keyItr = sectionItr->second.find(szKeyName.data());
 		if (keyItr != sectionItr->second.end())
-		{
-			lpOutString = keyItr->second;
-			return;
-		}
+			return keyItr->second;
 	}
 
-	SetString(lpAppName, lpKeyName, lpDefault);
-	lpOutString = lpDefault;
+	SetString(szAppName, szKeyName, szDefault);
+	return szDefault.data();
 }
 
-int CIni::SetInt(const char* lpAppName, const char* lpKeyName, const int nDefault)
+int CIni::SetInt(
+	std::string_view szAppName,
+	std::string_view szKeyName,
+	const int nDefault)
 {
-	char tmpDefault[INI_BUFFER];
-	_snprintf(tmpDefault, INI_BUFFER, "%d", nDefault);
-	return SetString(lpAppName, lpKeyName, tmpDefault);
+	char tmpDefault[INI_BUFFER + 1] = {};
+	snprintf(tmpDefault, sizeof(tmpDefault), "%d", nDefault);
+	return SetString(szAppName, szKeyName, tmpDefault);
 }
 
-int CIni::SetString(const char* lpAppName, const char* lpKeyName, const char* lpDefault)
+int CIni::SetString(
+	std::string_view szAppName,
+	std::string_view szKeyName,
+	std::string_view szDefault)
 {
-	ConfigMap::iterator itr = m_configMap.find(lpAppName);
+	auto itr = m_configMap.find(szAppName.data());
 	if (itr == m_configMap.end())
 	{
-		m_configMap.insert(std::make_pair(lpAppName, ConfigEntryMap()));
-		itr = m_configMap.find(lpAppName);
+		auto ret = m_configMap.insert(
+			std::make_pair(szAppName.data(), std::move(ConfigEntryMap())));
+		if (!ret.second)
+			return 0;
+
+		itr = ret.first;
 	}
-	itr->second[lpKeyName] = lpDefault;
-	Save();
+
+	itr->second[szKeyName.data()] = szDefault.data();
 	return 1;
 }

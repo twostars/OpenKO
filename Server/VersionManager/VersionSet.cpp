@@ -28,7 +28,6 @@ CVersionSet::CVersionSet(CDatabase* pdb)
 	m_nDefaultType = snapshot;
 }
 
-
 CString CVersionSet::GetDefaultConnect()
 {
 	return _T("ODBC;DSN=Knight_Account;UID=knight;PWD=dnlwhrpdlxm");

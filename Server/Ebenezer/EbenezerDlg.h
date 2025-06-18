@@ -17,13 +17,13 @@
 #include "AISocket.h"
 #include "Npc.h"
 #include "SharedMem.h"
-#include "ini.h"
 #include "Compress.h"
 #include "Knights.h"
 #include "KnightsManager.h"
 #include "EVENT.h"
 #include "UdpSocket.h"
 
+#include <shared/Ini.h>
 #include <shared/STLMap.h>
 #include <vector>
 

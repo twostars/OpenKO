@@ -722,7 +722,8 @@ BOOL CEbenezerDlg::AIServerConnect()
 {
 	C3DMap* pMap = NULL;
 
-	strcpy(m_AIServerIP, m_Ini.GetProfileString("AI_SERVER", "IP", "192.203.143.119"));
+	std::string szAIServerIP = m_Ini.GetString("AI_SERVER", "IP", "192.203.143.119");
+	strcpy_s(m_AIServerIP, szAIServerIP.c_str());
 	
 	
 	for( int i=0; i<MAX_AI_SOCKET; i++ ) {
@@ -1577,22 +1578,22 @@ void CEbenezerDlg::GetTimeFromIni()
 	int year=0, month=0, date=0, hour=0, server_count=0, sgroup_count = 0, i=0;
 	char ipkey[20]; memset( ipkey, 0x00, 20 );
 
-	m_Ini.SetPath("server.ini");
-	m_nYear = m_Ini.GetProfileInt("TIMER", "YEAR", 1);
-	m_nMonth = m_Ini.GetProfileInt("TIMER", "MONTH", 1);
-	m_nDate = m_Ini.GetProfileInt("TIMER", "DATE", 1);
-	m_nHour = m_Ini.GetProfileInt("TIMER", "HOUR", 1);
-	m_nWeather = m_Ini.GetProfileInt("TIMER", "WEATHER", 1);
+	m_Ini.Load("server.ini");
+	m_nYear = m_Ini.GetInt("TIMER", "YEAR", 1);
+	m_nMonth = m_Ini.GetInt("TIMER", "MONTH", 1);
+	m_nDate = m_Ini.GetInt("TIMER", "DATE", 1);
+	m_nHour = m_Ini.GetInt("TIMER", "HOUR", 1);
+	m_nWeather = m_Ini.GetInt("TIMER", "WEATHER", 1);
 
-//	m_nBattleZoneOpenWeek  = m_Ini.GetProfileInt("BATTLE", "WEEK", 3);
-	m_nBattleZoneOpenWeek  = m_Ini.GetProfileInt("BATTLE", "WEEK", 5);
-	m_nBattleZoneOpenHourStart  = m_Ini.GetProfileInt("BATTLE", "START_TIME", 20);
-	m_nBattleZoneOpenHourEnd  = m_Ini.GetProfileInt("BATTLE", "END_TIME", 0);
+//	m_nBattleZoneOpenWeek  = m_Ini.GetInt("BATTLE", "WEEK", 3);
+	m_nBattleZoneOpenWeek  = m_Ini.GetInt("BATTLE", "WEEK", 5);
+	m_nBattleZoneOpenHourStart  = m_Ini.GetInt("BATTLE", "START_TIME", 20);
+	m_nBattleZoneOpenHourEnd  = m_Ini.GetInt("BATTLE", "END_TIME", 0);
 
-	m_nCastleCapture = m_Ini.GetProfileInt("CASTLE", "NATION", 1);
-	m_nServerNo = m_Ini.GetProfileInt("ZONE_INFO", "MY_INFO", 1);
-	m_nServerGroup = m_Ini.GetProfileInt("ZONE_INFO", "SERVER_NUM", 0);
-	server_count = m_Ini.GetProfileInt("ZONE_INFO", "SERVER_COUNT", 1);
+	m_nCastleCapture = m_Ini.GetInt("CASTLE", "NATION", 1);
+	m_nServerNo = m_Ini.GetInt("ZONE_INFO", "MY_INFO", 1);
+	m_nServerGroup = m_Ini.GetInt("ZONE_INFO", "SERVER_NUM", 0);
+	server_count = m_Ini.GetInt("ZONE_INFO", "SERVER_COUNT", 1);
 	if( server_count < 1 ) {
 		AfxMessageBox("ServerCount Error!!");
 		return;
@@ -1601,17 +1602,19 @@ void CEbenezerDlg::GetTimeFromIni()
 	for( i=0; i<server_count; i++ ) {
 		_ZONE_SERVERINFO *pInfo = new _ZONE_SERVERINFO;
 		sprintf( ipkey, "SERVER_%02d", i );
-		pInfo->sServerNo = m_Ini.GetProfileInt("ZONE_INFO", ipkey, 1);
+		pInfo->sServerNo = m_Ini.GetInt("ZONE_INFO", ipkey, 1);
 		sprintf( ipkey, "SERVER_IP_%02d", i );
-		strcpy(pInfo->strServerIP, m_Ini.GetProfileString("ZONE_INFO", ipkey, "210.92.91.242"));
+
+		std::string szServerIP = m_Ini.GetString("ZONE_INFO", ipkey, "210.92.91.242");
+		strcpy_s(pInfo->strServerIP, szServerIP.c_str());
 		pInfo->sPort = _LISTEN_PORT + pInfo->sServerNo;
 
 		m_ServerArray.PutData(pInfo->sServerNo, pInfo);
 	}
 
 	if( m_nServerGroup != 0 )	{
-		m_nServerGroupNo = m_Ini.GetProfileInt("SG_INFO", "GMY_INFO", 1);
-		sgroup_count = m_Ini.GetProfileInt("SG_INFO", "GSERVER_COUNT", 1);
+		m_nServerGroupNo = m_Ini.GetInt("SG_INFO", "GMY_INFO", 1);
+		sgroup_count = m_Ini.GetInt("SG_INFO", "GSERVER_COUNT", 1);
 		if( server_count < 1 ) {
 			AfxMessageBox("ServerCount Error!!");
 			return;
@@ -1619,9 +1622,11 @@ void CEbenezerDlg::GetTimeFromIni()
 		for( i=0; i<sgroup_count; i++ ) {
 			_ZONE_SERVERINFO *pInfo = new _ZONE_SERVERINFO;
 			sprintf( ipkey, "GSERVER_%02d", i );
-			pInfo->sServerNo = m_Ini.GetProfileInt("SG_INFO", ipkey, 1);
+			pInfo->sServerNo = m_Ini.GetInt("SG_INFO", ipkey, 1);
 			sprintf( ipkey, "GSERVER_IP_%02d", i );
-			strcpy(pInfo->strServerIP, m_Ini.GetProfileString("SG_INFO", ipkey, "210.92.91.242"));
+
+			std::string szServerIP = m_Ini.GetString("SG_INFO", ipkey, "210.92.91.242");
+			strcpy_s(pInfo->strServerIP, szServerIP.c_str());
 			pInfo->sPort = _LISTEN_PORT + pInfo->sServerNo;
 
 			m_ServerGroupArray.PutData(pInfo->sServerNo, pInfo);
@@ -1730,11 +1735,11 @@ void CEbenezerDlg::UpdateWeather()
 
 void CEbenezerDlg::SetGameTime()
 {
-	m_Ini.SetProfileInt( "TIMER", "YEAR", m_nYear );
-	m_Ini.SetProfileInt( "TIMER", "MONTH", m_nMonth );
-	m_Ini.SetProfileInt( "TIMER", "DATE", m_nDate );
-	m_Ini.SetProfileInt( "TIMER", "HOUR", m_nHour );
-	m_Ini.SetProfileInt( "TIMER", "WEATHER", m_nWeather );
+	m_Ini.SetInt( "TIMER", "YEAR", m_nYear );
+	m_Ini.SetInt( "TIMER", "MONTH", m_nMonth );
+	m_Ini.SetInt( "TIMER", "DATE", m_nDate );
+	m_Ini.SetInt( "TIMER", "HOUR", m_nHour );
+	m_Ini.SetInt( "TIMER", "WEATHER", m_nWeather );
 }
 
 void CEbenezerDlg::UserInOutForMe(CUser *pSendUser)
@@ -3791,7 +3796,7 @@ BOOL CEbenezerDlg::LoadKnightsRankTable()
 			}
 			if( pUser->m_pUserData->m_bKnights == nKnightsIndex	)	{
 				pUser->m_pUserData->m_bFame = COMMAND_CAPTAIN;
-				sprintf( strKarusCaptain[nKaursRank], "[%s][%s]", strKnightsName, pUser->m_pUserData->m_id);
+				sprintf( strKarusCaptain[nKaursRank], "[%s][%s]", strKnightsName.GetString(), pUser->m_pUserData->m_id);
 				nKaursRank++;
 				nFindKarus = 1;
 				memset( send_buff, NULL, 1024 );	send_index = 0;
@@ -3826,7 +3831,7 @@ BOOL CEbenezerDlg::LoadKnightsRankTable()
 			}
 			if( pUser->m_pUserData->m_bKnights == nKnightsIndex	)	{
 				pUser->m_pUserData->m_bFame = COMMAND_CAPTAIN;
-				sprintf( strElmoCaptain[nElmoRank], "[%s][%s]", strKnightsName, pUser->m_pUserData->m_id);
+				sprintf( strElmoCaptain[nElmoRank], "[%s][%s]", strKnightsName.GetString(), pUser->m_pUserData->m_id);
 				nFindElmo = 1;
 				nElmoRank++;
 				memset( send_buff, NULL, 1024 );	send_index = 0;

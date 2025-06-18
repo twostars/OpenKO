@@ -211,7 +211,8 @@ int CDBProcess::MgameLogin(const char* id, const char* pwd)
 		if (retcode == SQL_SUCCESS)
 		{
 			retcode = SQLExecDirect(hstmt, (SQLCHAR*) szSQL, SQL_NTS);
-			if (retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO)
+			if (retcode != SQL_SUCCESS
+				&& retcode != SQL_SUCCESS_WITH_INFO)
 			{
 				if (DisplayErrorMsg(hstmt) == -1)
 				{
